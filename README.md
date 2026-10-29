@@ -25,7 +25,20 @@ The development server binds to loopback by default and emits no request logs. T
 - Source provenance, check date, and caveats on directory records
 - No accounts, analytics, ad tech, remote fonts, third-party JavaScript or search APIs
 - Security headers in the local development server and automated catalog tests
-- GitHub Actions checks and Pages deployment workflow
+- GitHub Actions checks and an on-demand Pages deployment workflow
+
+## Publish the prototype with GitHub Pages
+
+One manual repository-setting step is required because the connected automation cannot change this repository's Pages settings on your behalf:
+
+1. Open the repository Settings.
+2. Open Pages.
+3. Under Build and deployment, select GitHub Actions as the source.
+4. Open Actions, choose Deploy Umbrella directory, and select Run workflow.
+
+After Pages is enabled, run the deployment workflow whenever you want to publish the current version. CI checks run automatically on pushes.
+
+See docs/DEPLOYMENT.md for details.
 
 ## Important limits
 
