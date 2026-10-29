@@ -199,3 +199,30 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+
+.tor-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #d9c18b;
+  border: 1px solid #615330;
+  background: #332d20;
+  padding: 7px 9px;
+  border-radius: 999px;
+  font-size: 8px;
+  letter-spacing: .65px;
+  font-weight: 750;
+}
+.tor-status-chip.is-ready {
+  color: #b8dfcf;
+  border-color: #315143;
+  background: #1a2a25;
+}
+@media (max-width: 540px) {
+  .tor-status-chip { max-width: 130px; font-size: 7px; padding: 6px 7px; }
+}

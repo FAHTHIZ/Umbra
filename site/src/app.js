@@ -13,6 +13,42 @@ let sortOrder = "recommended";
 let bookmarks = readBookmarks();
 let modalResource = null;
 let toastTimer = null;
+let torBrowserStatus = { configured: false, message: "Tor Browser is not configured." };
+
+function isDesktopApp() {
+  return Boolean(window.__TAURI__?.core?.invoke);
+}
+function invokeNative(command, args = {}) {
+  if (!isDesktopApp()) return Promise.reject(new Error("Native desktop features are unavailable in the web preview."));
+  return window.__TAURI__.core.invoke(command, args);
+}
+function normalizeOnionAddress(value) {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return null;
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : "http://" + trimmed;
+  return isV3OnionUrl(candidate) ? new URL(candidate).href : null;
+}
+function updateTorStatusChip() {
+  const chip = $("tor-status-chip");
+  if (!chip) return;
+  if (!isDesktopApp()) {
+    chip.textContent = "MANUAL TOR HANDOFF";
+    chip.title = "The web preview does not control a Tor connection.";
+    return;
+  }
+  chip.textContent = torBrowserStatus.configured ? "TOR BROWSER READY" : "TOR BROWSER NOT SET";
+  chip.classList.toggle("is-ready", torBrowserStatus.configured);
+  chip.title = torBrowserStatus.message;
+}
+async function refreshTorBrowserStatus() {
+  if (!isDesktopApp()) return;
+  try {
+    torBrowserStatus = await invokeNative("get_tor_browser_status");
+  } catch {
+    torBrowserStatus = { configured: false, message: "Could not inspect Tor Browser configuration." };
+  }
+  updateTorStatusChip();
+}
 
 function readBookmarks() {
   try {
@@ -61,7 +97,7 @@ function resourceCard(resource) {
   const tags = resource.tags.map(tag => '<span class="tag">' + escapeHtml(tag) + "</span>").join("");
   const caution = resource.caution ? '<p class="card-caution"><span aria-hidden="true">!</span> ' + escapeHtml(resource.caution) + "</p>" : "";
   const action = onion
-    ? '<button class="button button-primary button-small" type="button" data-action="copy-onion" data-id="' + escapeHtml(resource.id) + '">Copy onion address <span aria-hidden="true">↗</span></button>'
+    ? '<button class="button button-primary button-small" type="button" data-action="open-resource" data-id="' + escapeHtml(resource.id) + '">Open with Tor Browser <span aria-hidden="true">↗</span></button>'
     : '<button class="button button-primary button-small" type="button" data-action="open-resource" data-id="' + escapeHtml(resource.id) + '">Open source <span aria-hidden="true">↗</span></button>';
   return '<article class="resource-card"><div class="card-top"><span class="resource-glyph ' + (onion ? "glyph-onion" : "") + '" aria-hidden="true">' + kindGlyph(resource) + '</span><span class="kind-label ' + (onion ? "kind-onion" : "") + '">' + kindLabel(resource) + '</span>'
     + '<button class="save-button ' + (saved ? "is-saved" : "") + '" type="button" data-action="bookmark" data-id="' + escapeHtml(resource.id) + '" aria-pressed="' + String(saved) + '" aria-label="' + (saved ? "Remove bookmark for " : "Bookmark ") + escapeHtml(resource.title) + '">' + (saved ? "★" : "☆") + "</button></div>"
@@ -94,7 +130,7 @@ function homeView() {
     + '<div class="stat-card"><span class="stat-mark mark-muted">0</span><div><strong>None</strong><span>Search analytics collected</span></div></div></section>'
     + '<div class="home-section-head"><div><span class="eyebrow">START HERE</span><h2>Trusted starting points</h2><p>Primary sources and public-interest research tools to help you explore safely.</p></div><button class="text-button" data-action="navigate" data-view="discover">View directory <span aria-hidden="true">→</span></button></div>'
     + cardGrid(featured)
-    + '<section class="notice-panel"><span class="notice-icon">i</span><div><strong>This prototype is a directory, not a Tor browser.</strong><p>To open an onion address, copy it and paste it into the official Tor Browser. Umbrella does not create Tor circuits or promise anonymity.</p></div><button data-action="navigate" data-view="security" class="text-button">Read limitations →</button></section>';
+    + '<section class="notice-panel"><span class="notice-icon">i</span><div><strong>' + (isDesktopApp() ? "Umbrella hands navigation to your installed Tor Browser." : "This web preview is a directory, not a Tor browser.") + '</strong><p>' + (isDesktopApp() ? "Onion and public HTTPS addresses open in the Tor Browser you configure. If it cannot be launched, Umbrella does not fall back to an ordinary browser. Check the onion-service indicator before entering sensitive information." : "Copy an onion address and paste it into the official Tor Browser. This page does not create a Tor circuit or provide anonymity.") + '</p></div><button data-action="navigate" data-view="security" class="text-button">Privacy settings →</button></section>';
 }
 function categoryOptions() {
   const categories = [...new Set(catalogue.map(item => item.category))].sort((a, b) => categoryLabel(a).localeCompare(categoryLabel(b)));
@@ -123,15 +159,20 @@ function listingView() {
   return html + cardGrid(records);
 }
 function securityView() {
+  const torSetup = isDesktopApp()
+    ? '<article class="security-card ' + (torBrowserStatus.configured ? "security-good" : "security-warning") + '"><span class="security-icon">' + (torBrowserStatus.configured ? "✓" : "!") + '</span><span class="eyebrow">NATIVE BROWSER HANDOFF</span><h2>' + (torBrowserStatus.configured ? "Tor Browser configured" : "Connect your Tor Browser") + '</h2><p>' + escapeHtml(torBrowserStatus.message) + ' Umbrella launches that browser with the address; it does not embed web pages or create a VPN.</p><button class="button button-primary" type="button" data-action="configure-tor">Choose Tor Browser folder</button></article>'
+    : '<article class="security-card security-warning"><span class="security-icon">!</span><span class="eyebrow">WEB PREVIEW</span><h2>Manual Tor Browser handoff</h2><p>The web preview cannot launch or verify a browser installed on your computer. Copy onion addresses and open them in official Tor Browser.</p><a class="inline-link" href="https://www.torproject.org/download/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Get Tor Browser from the official site ↗</a></article>';
   return sectionHeading("PRIVACY CENTER", "Know the boundaries.", "Clear security claims are better than promises nobody can verify.", null)
-    + '<div class="security-grid"><article class="security-card security-good"><span class="security-icon">✓</span><span class="eyebrow">IMPLEMENTED IN THIS PROTOTYPE</span><h2>Local catalogue search</h2><p>Filtering runs in this page against the bundled JSON file. The query is not sent to an external search provider or saved by Umbrella.</p></article>'
+    + '<div class="security-grid">' + torSetup
+    + '<article class="security-card security-good"><span class="security-icon">✓</span><span class="eyebrow">IMPLEMENTED IN THIS PROTOTYPE</span><h2>Local catalogue search</h2><p>Filtering runs in this page against the bundled JSON file. The query is not sent to an external search provider or saved by Umbrella.</p></article>'
     + '<article class="security-card security-good"><span class="security-icon">✓</span><span class="eyebrow">IMPLEMENTED IN THIS PROTOTYPE</span><h2>No accounts or analytics</h2><p>No Umbrella login, tracking SDK, ad network, remote font, third-party script or backend search service is included.</p></article>'
-    + '<article class="security-card security-warning"><span class="security-icon">!</span><span class="eyebrow">IMPORTANT LIMITATION</span><h2>Not a Tor client</h2><p>This interface does not route traffic through Tor. It only copies onion addresses. Paste them into the official Tor Browser; do not treat this site as anonymous browsing.</p></article>'
+    + '<article class="security-card security-warning"><span class="security-icon">!</span><span class="eyebrow">IMPORTANT LIMITATION</span><h2>Tor is not a VPN</h2><p>The desktop app asks your separately installed Tor Browser to open the URL. It does not run a Tor daemon, create circuits, or verify that a page loaded successfully. The browser remains responsible for its own network protections.</p></article>'
     + '<article class="security-card security-warning"><span class="security-icon">!</span><span class="eyebrow">IMPORTANT LIMITATION</span><h2>Bookmarks are not encrypted</h2><p>Bookmark IDs are stored in localStorage. Other people or software with access to the same browser profile may be able to see them. Do not store sensitive case data here.</p></article>'
-    + '<article class="security-card"><span class="security-icon">↗</span><span class="eyebrow">TRUSTED FOUNDATIONS</span><h2>Use the official Tor Browser</h2><p>Do not assume that a generic browser, extension or proxy has Tor Browser’s anti-fingerprinting protections. Use the official project release for onion navigation.</p><a class="inline-link" href="https://www.torproject.org/download/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Official Tor Browser downloads ↗</a></article>'
-    + '<article class="security-card"><span class="security-icon">i</span><span class="eyebrow">DIRECTORY QUALITY</span><h2>Listed does not mean safe</h2><p>Provenance means a record was found in a named operator source. It does not guarantee the service is online, benign, uncompromised or appropriate for every researcher.</p><a class="inline-link" href="https://support.torproject.org/about-tor/onion-services/what-is-a-dot-onion/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Learn how onion services work ↗</a></article></div>'
-    + '<section class="security-next"><h2>What must happen before a hardened browser</h2><ol><li>Integrate and maintain a trusted Tor Browser-compatible engine.</li><li>Preserve upstream privacy and anti-fingerprinting behavior.</li><li>Threat-model downloads, case storage, operating-system compromise and browser updates.</li><li>Test onion routing and prove there is no direct-connection fallback.</li><li>Complete independent security review before claiming strong anonymity.</li></ol></section>';
+    + '<article class="security-card"><span class="security-icon">↗</span><span class="eyebrow">TRUSTED FOUNDATIONS</span><h2>Keep Tor Browser unmodified</h2><p>Umbrella does not embed a generic webview for onion pages. The native app launches your separately installed Tor Browser so its own privacy controls remain in charge.</p><a class="inline-link" href="https://www.torproject.org/download/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Official Tor Browser downloads ↗</a></article>'
+    + '<article class="security-card"><span class="security-icon">i</span><span class="eyebrow">DIRECTORY QUALITY</span><h2>Listed does not mean safe</h2><p>Provenance means a record was found in a named operator source. It does not guarantee the service is online, benign, uncompromised or appropriate for every researcher.</p><a class="inline-link" href="https://support.torproject.org/about-tor/onion-services/what-is-a-dot-onion/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Learn how onion services work ↗</a></article>'
+    + '</div><section class="security-next"><h2>What must happen before a hardened browser</h2><ol><li>Preserve and maintain the official Tor Browser privacy model.</li><li>Test native handoff on each supported operating system.</li><li>Check no-direct-fallback behavior and address validation.</li><li>Threat-model downloads, case storage, device compromise and updates.</li><li>Complete independent security review before high-risk journalistic use.</li></ol></section>';
 }
+
 function render() {
   $("breadcrumb-current").textContent = viewNames[currentView] || "Overview";
   document.querySelectorAll("[data-view].nav-item").forEach(button => {
@@ -184,6 +225,82 @@ function showDetails(resource) {
     + '<div class="modal-actions"><a class="button button-primary" href="' + escapeHtml(resource.evidenceUrl) + '" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">View provenance ↗</a><button type="button" class="button button-secondary" data-action="close-modal">Close</button></div></section></div>';
 }
 function closeModal() { $("modal-root").innerHTML = ""; modalResource = null; }
+
+async function configureTorBrowser() {
+  if (!isDesktopApp()) {
+    showToast("Install the desktop app to configure a Tor Browser handoff.");
+    return;
+  }
+  try {
+    const result = await invokeNative("configure_tor_browser");
+    torBrowserStatus = result;
+    updateTorStatusChip();
+    render();
+    if (result.configured) showToast("Tor Browser folder saved. Check the browser's own status before sensitive work.");
+    else if (!result.cancelled) showToast(result.message || "Tor Browser was not configured.");
+  } catch (error) {
+    showToast(String(error || "Could not configure Tor Browser."));
+  }
+}
+
+async function openInTorBrowser(address, title = "Onion address") {
+  const raw = String(address || "").trim();
+  const onionAddress = normalizeOnionAddress(raw);
+  const mentionsOnion = raw.toLowerCase().includes(".onion");
+  if (mentionsOnion && !onionAddress) {
+    showToast("Invalid onion address. A v3 hostname needs 56 letters a–z or digits 2–7 before .onion.");
+    return;
+  }
+  let target = onionAddress;
+  if (!target) {
+    try {
+      const parsed = new URL(raw);
+      if (parsed.protocol !== "https:" || parsed.username || parsed.password) {
+        showToast("Only public HTTPS sources and valid v3 onion addresses can be opened.");
+        return;
+      }
+      target = parsed.href;
+    } catch {
+      showToast("Enter a public HTTPS URL or a valid v3 .onion address.");
+      return;
+    }
+  }
+
+  if (isDesktopApp()) {
+    try {
+      if (!torBrowserStatus.configured) {
+        const setup = await invokeNative("configure_tor_browser");
+        torBrowserStatus = setup;
+        updateTorStatusChip();
+        render();
+        if (!setup.configured) {
+          showToast(setup.message || "Tor Browser was not configured. No connection was made.");
+          return;
+        }
+      }
+      await invokeNative("open_in_tor_browser", { address: target });
+      showToast("Address passed to Tor Browser. Check its connection indicator before continuing.");
+    } catch (error) {
+      showToast(String(error || "Tor Browser could not be started. No fallback browser was used."));
+      await refreshTorBrowserStatus();
+    }
+    return;
+  }
+
+  if (onionAddress) {
+    showOnionModal({
+      title,
+      url: target,
+      operator: "Address entered by user; not verified by Umbrella",
+      verifiedBy: "Not checked",
+      checkedAt: "Not verified",
+      caution: "Use the official Tor Browser. This web preview cannot route traffic through Tor."
+    });
+    return;
+  }
+  window.open(target, "_blank", "noopener,noreferrer");
+}
+
 async function copyOnionAddress() {
   if (!modalResource || !isV3OnionUrl(modalResource.url)) { showToast("This address did not pass the onion address check."); return; }
   try {
@@ -206,6 +323,12 @@ function toggleBookmark(id) {
 }
 
 document.addEventListener("click", event => {
+  const externalLink = event.target.closest('a[target="_blank"]');
+  if (externalLink && isDesktopApp()) {
+    event.preventDefault();
+    openInTorBrowser(externalLink.href, externalLink.textContent.trim() || "External source");
+    return;
+  }
   const button = event.target.closest("[data-action]");
   if (!button) return;
   const action = button.dataset.action;
@@ -213,7 +336,9 @@ document.addEventListener("click", event => {
   else if (action === "bookmark") toggleBookmark(button.dataset.id);
   else if (action === "open-resource") {
     const resource = catalogue.find(item => item.id === button.dataset.id);
-    if (resource && resource.kind !== "onion") window.open(resource.url, "_blank", "noopener,noreferrer");
+    if (resource) openInTorBrowser(resource.url, resource.title);
+  } else if (action === "configure-tor") {
+    configureTorBrowser();
   } else if (action === "copy-onion") {
     const resource = catalogue.find(item => item.id === button.dataset.id);
     if (resource && resource.kind === "onion") showOnionModal(resource);
@@ -238,7 +363,21 @@ $("local-search").addEventListener("input", event => {
 });
 $("local-search").addEventListener("keydown", event => {
   if (event.key === "Escape") { event.target.value = ""; currentQuery = ""; render(); }
-  if (event.key === "Enter") { currentView = "discover"; render(); $("view-root").focus(); }
+  if (event.key === "Enter") {
+    const entered = event.target.value.trim();
+    if (entered.toLowerCase().includes(".onion")) {
+      const address = normalizeOnionAddress(entered);
+      if (!address) {
+        showToast("Invalid onion address. A v3 hostname needs 56 letters a–z or digits 2–7 before .onion.");
+        return;
+      }
+      openInTorBrowser(address, "Address bar");
+      return;
+    }
+    currentView = "discover";
+    render();
+    $("view-root").focus();
+  }
 });
 $("view-root").addEventListener("change", event => {
   if (event.target.id === "category-filter") { categoryFilter = event.target.value; render(); }
@@ -247,6 +386,8 @@ $("view-root").addEventListener("change", event => {
 document.addEventListener("keydown", event => { if (event.key === "Escape" && modalResource) closeModal(); });
 
 async function start() {
+  updateTorStatusChip();
+  await refreshTorBrowserStatus();
   try {
     const response = await fetch("./data/catalog.json", { cache: "no-store", credentials: "same-origin", referrerPolicy: "no-referrer" });
     if (!response.ok) throw new Error("Catalogue request failed");
