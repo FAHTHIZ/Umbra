@@ -1,0 +1,51 @@
+name: Desktop app
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04
+            os: ubuntu-22.04
+          - platform: windows-latest
+            os: windows-latest
+          - platform: macos-latest
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl wget file libxdo-dev libssl-dev librsvg2-dev libayatana-appindicator3-dev libwebkit2gtk-4.1-dev
+      - name: Install frontend tools
+        run: npm install --no-audit --no-fund
+      - name: Run web and catalogue checks
+        run: npm run check
+      - name: Run native security tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+      - name: Build native application
+        run: npm run app:build
+      - name: Upload native bundles
+        uses: actions/upload-artifact@v4
+        with:
+          name: umbrella-${{ matrix.platform }}
+          path: src-tauri/target/release/bundle/**
+          if-no-files-found: error

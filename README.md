@@ -1,6 +1,6 @@
 # Umbrella
 
-Umbrella is a privacy-first discovery directory for public-interest research and operator-published onion-service resources.
+Umbrella is a privacy-first desktop discovery app for public-interest research and operator-published onion-service resources. The native desktop build can launch a separately installed Tor Browser; the web preview remains a directory-only experience.
 
 The current repository delivers a working, dependency-free web prototype: a local catalogue, local-only search, bookmarks, source provenance, and a safe hand-off flow for onion addresses. It is deliberately honest about what it is not: this web prototype is not Tor Browser, does not create a Tor circuit, and does not claim to provide anonymity.
 
@@ -8,9 +8,10 @@ The current repository delivers a working, dependency-free web prototype: a loca
 
 Requirements: Node.js 20 or newer.
 
-- Run npm start
-- Open http://127.0.0.1:4173
+- Run npm start for the web preview, then open http://127.0.0.1:4173
+- Run npm run app:dev for the native desktop app (requires Rust and Tauri platform prerequisites)
 - Run npm test to validate the bundled catalogue and source rules
+- Run npm run app:build to create a native package
 
 The development server binds to loopback by default and emits no request logs. To expose it on another interface, set HOST explicitly; do that only on a network you trust.
 
@@ -42,7 +43,7 @@ See docs/DEPLOYMENT.md for details.
 
 ## Important limits
 
-- The site cannot open onion services through Tor on its own. Copy the address and paste it into the official Tor Browser. Do not paste sensitive investigation details into this prototype.
+- The web preview cannot open onion services through Tor on its own. The native desktop app can launch an installed Tor Browser after you select its folder. It never falls back to an ordinary browser. This is a handoff, not an embedded browser or a claim of Tor-equivalent security.
 - Bookmarks use browser localStorage and are not encrypted. Anyone with access to the same browser profile may be able to inspect them. This is not an evidence vault.
 - Catalogue entries can become stale. An address listed by an operator is not proof the service is online, benign, or currently operated by the expected person.
 - The prototype does not scrape the dark web, crawl onion services, inspect downloaded files, store case evidence, or offer account security.

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Umbrella",
+  "version": "0.2.0",
+  "identifier": "org.umbrella.discovery",
+  "build": {
+    "frontendDist": "../site"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Umbrella — Private Discovery",
+        "width": 1280,
+        "height": 850,
+        "minWidth": 800,
+        "minHeight": 620,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' ipc: http://ipc.localhost; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "capabilities": [
+        "main-capability"
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "Utility",
+    "shortDescription": "Private discovery for onion-service research",
+    "longDescription": "A local-first discovery and research workspace that hands navigation to the user's separately installed Tor Browser."
+  }
+}

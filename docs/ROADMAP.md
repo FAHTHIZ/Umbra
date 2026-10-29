@@ -9,6 +9,8 @@
 - [x] Safe copy-only onion hand-off; no false claim of Tor integration
 - [x] Local server with restrictive headers and loopback-only default
 - [x] Automated catalogue tests and GitHub Actions workflows
+- [x] Tauri native desktop shell with package build workflow
+- [x] Native Tor Browser folder selection and URL handoff (launch intent only; not route verification)
 
 ## Milestone 1 — Reliability and usability
 
@@ -27,6 +29,11 @@
 - Strictly local analysis mode by default; no automatic cloud AI requests
 
 ## Milestone 3 — Trusted browsing integration
+
+- [x] Desktop shell hands URLs to separately installed Tor Browser without embedding page content
+- [x] No system-default browser fallback for native-app navigation
+- [x] Validate v3 onion destinations and public HTTPS sources before launch
+
 
 - Select a maintainable upstream browser foundation after reviewing its license, release process and platform support
 - Prefer official Tor Browser releases as the reference implementation; preserve the upstream privacy model

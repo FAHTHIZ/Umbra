@@ -1,0 +1,20 @@
+[package]
+name = "umbrella"
+version = "0.2.0"
+description = "Umbrella desktop discovery application"
+authors = ["Umbrella contributors"]
+edition = "2021"
+
+[lib]
+name = "umbrella_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = "2"
+
+[dependencies]
+tauri = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+url = "2"

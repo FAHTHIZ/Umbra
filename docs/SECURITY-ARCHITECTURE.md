@@ -30,3 +30,12 @@ Umbrella currently consists of a static browser interface, a versioned JSON cata
 A production browser requires a maintained browser engine with upstream privacy controls; a trusted Tor transport; a narrow interface between the directory and navigation; isolated download handling; an encrypted case store; signed updates; safe crash reporting; and an independent security assessment. These must be separate modules with explicit permissions.
 
 A generic Electron or Chromium webview routed through a proxy is not an acceptable substitute for Tor Browser's fingerprinting protections. Any browser fork must keep up with upstream security updates and preserve the Tor Browser privacy model.
+
+
+## Native desktop navigation
+
+The Tauri desktop wrapper does not render external web pages itself. It uses a narrow Rust command to pass a validated URL as one argument to a user-selected Tor Browser installation. It resolves the executable from a platform-specific expected layout, uses no shell command string, and has no system-default browser fallback.
+
+The handoff accepts v3 onion URLs over HTTP(S) and public HTTPS hostnames for ordinary web sources. It rejects embedded credentials, non-HTTPS public links, malformed onion names, IP literals and obvious local-network names. A layout check does not cryptographically prove that the selected binary is official; the user must download Tor Browser from the official Tor Project site. Umbrella reports process launch, not verified route success.
+
+Tauri's WebView is used only to display the local discovery UI, never to visit onion pages. Search stays in volatile page memory; the app config stores the selected browser folder. Bookmarks remain unencrypted localStorage and are not suitable for sensitive investigations.
