@@ -1,0 +1,14 @@
+{
+  "name": "umbrella-discovery",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Privacy-first public-interest and onion-service discovery directory prototype",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test",
+    "check": "node --check server.mjs && node --check site/src/app.js && node --check site/src/catalog.mjs && node --test"
+  },
+  "license": "MIT"
+}

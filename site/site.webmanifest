@@ -1,0 +1,10 @@
+{
+  "name": "Umbrella — Private Discovery",
+  "short_name": "Umbrella",
+  "description": "A local-first directory for public-interest research and operator-published onion services.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#111722",
+  "theme_color": "#111722",
+  "icons": [{ "src": "./assets/umbrella.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

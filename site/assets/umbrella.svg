@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Umbrella">
+  <rect width="64" height="64" rx="18" fill="#182331"/>
+  <path d="M10 30c1-12 10-20 22-20s21 8 22 20c-6-5-12-5-18 0-3-3-5-4-8-4s-6 1-9 4c-3-2-6-2-9 0Z" fill="#b8d8cd"/>
+  <path d="M32 13v34c0 6-8 7-10 2" fill="none" stroke="#b8d8cd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 32c0-6 6-10 14-10s14 4 14 10" fill="none" stroke="#6e9b8b" stroke-width="2" stroke-linecap="round"/>
+</svg>
