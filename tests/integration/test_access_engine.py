@@ -81,3 +81,29 @@ def test_local_page_inspection_runs_inside_browser(umbra_app):
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
+
+
+def test_access_dashboard_is_packaged_and_toolbar_is_registered(umbra_app):
+    driver = start(umbra_app, tor_provider="none")
+    try:
+        result = chrome_eval(driver, """
+          const { CustomizableUI } = ChromeUtils.importESModule("resource:///modules/CustomizableUI.sys.mjs");
+          const widgetRegistered = Boolean(CustomizableUI.getWidget("umbra-access-toolbar-button"));
+          const tab = gBrowser.addTab("chrome://browser/content/umbra-access/dashboard.html", {
+            triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()
+          });
+          gBrowser.selectedTab = tab;
+          await new Promise(resolve => setTimeout(resolve, 1200));
+          const doc = tab.linkedBrowser.contentDocument;
+          const csp = doc.querySelector('meta[http-equiv="Content-Security-Policy"]');
+          return {
+            widgetRegistered,
+            title: doc.title,
+            csp: csp ? csp.content : ""
+          };
+        """)
+        assert result["widgetRegistered"] is True
+        assert result["title"] == "Umbra Access Engine"
+        assert "connect-src 'none'" in result["csp"]
+    finally:
+        stop(driver)
