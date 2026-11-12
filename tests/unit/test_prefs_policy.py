@@ -32,8 +32,10 @@ def test_prefs_parse():
     assert len(umbra_prefs()) >= 5
 
 
-def test_policies_disable_updates_and_telemetry():
-    p = json.load(open(os.path.join(ROOT, "overlay/policies/policies.json")))["policies"]
-    assert p["DisableAppUpdate"] is True
-    assert p["DisableTelemetry"] is True
-    assert p["DisableFirefoxStudies"] is True
+def test_no_enterprise_policies_shipped():
+    # Any active policy disables Web Serial -> fingerprint divergence.
+    assert not os.path.exists(os.path.join(ROOT, "overlay/policies/policies.json"))
+
+
+def test_update_disable_pref_present():
+    assert "umbra.update.disabled" in umbra_prefs()

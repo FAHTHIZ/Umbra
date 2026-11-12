@@ -33,3 +33,6 @@ pref("browser.tabs.unloadOnLowMemory", true);
 // Don't eagerly restore every tab of a restored session.
 pref("browser.sessionstore.restore_on_demand", true);
 pref("browser.sessionstore.restore_pinned_tabs_on_demand", true);
+
+// Read by overlay/patches (umbra-update-disable).
+pref("umbra.update.disabled", true);
