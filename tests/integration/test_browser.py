@@ -1,4 +1,5 @@
 """Launch the built Umbra headless and verify real browser behaviour."""
+import time
 import pytest
 
 from tests.browser_driver import chrome_eval, start, stop
@@ -82,3 +83,32 @@ def test_tabs_and_navigation(drv):
     drv.refresh()
     drv.close()
     drv.switch_to.window(drv.window_handles[0])
+
+
+def test_home_search_submits_with_enter_and_button(umbra_app):
+    """Home page search reaches the selected provider (canary stands in for Tor)."""
+    from selenium.webdriver.common.keys import Keys
+    from tests.leak.socks_canary import Canary
+    c = Canary()
+    d = start(umbra_app, prefs={"network.proxy.type": 1, "network.proxy.socks": "127.0.0.1", "network.proxy.socks_port": c.port})
+    try:
+        d.set_page_load_timeout(15)
+        for how in ("enter", "button"):
+            d.get("about:tor")
+            box = d.find_element("id", "search-input")
+            try:
+                if how == "enter":
+                    box.send_keys("tor project", Keys.ENTER)
+                else:
+                    box.send_keys("tor project")
+                    d.find_element("id", "search-go").click()
+            except Exception:
+                pass  # the canary is not a TLS server, so the page itself ends on an error page
+            deadline = time.time() + 10
+            while time.time() < deadline and not any(e["host"] == "onionsearch.io" for e in c.log):
+                time.sleep(0.2)
+            assert any(e["host"] == "onionsearch.io" for e in c.log), how
+            c.log.clear()
+    finally:
+        stop(d)
+        c.stop()

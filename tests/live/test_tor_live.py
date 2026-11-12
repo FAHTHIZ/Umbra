@@ -7,6 +7,7 @@ import os
 import time
 
 import pytest
+from selenium.webdriver.common.keys import Keys
 
 from tests.browser_driver import chrome_eval, start, stop
 
@@ -55,7 +56,8 @@ def test_default_search_reaches_onionsearch(tor_drv):
     tor_drv.set_page_load_timeout(120)
     tor_drv.get("about:tor")
     box = tor_drv.find_element("id", "search-input")
-    box.send_keys("tor project\n")
+    # A real Enter key: geckodriver does not treat a typed "\n" as Enter.
+    box.send_keys("tor project", Keys.ENTER)
     # Navigation commits only once onionsearch.io answers over Tor; allow for slow circuits.
     deadline = time.time() + 90
     while time.time() < deadline and tor_drv.current_url.startswith("about:"):
