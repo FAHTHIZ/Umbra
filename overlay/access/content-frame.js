@@ -15,7 +15,8 @@
   let settings = { enabled: true, cosmetic: true };
   let scheduled = false;
   let observer = null;
-  let styleInstalled = false;
+  let styledDocument = null;
+  let observedDocument = null;
 
   addMessageListener("Umbra:Settings", message => {
     settings = {
@@ -37,7 +38,7 @@
   }
 
   function installCosmeticStyle(doc) {
-    if (styleInstalled || !settings.enabled || !settings.cosmetic) {
+    if (styledDocument === doc || !settings.enabled || !settings.cosmetic) {
       return;
     }
     const style = doc.createElement("style");
@@ -48,7 +49,7 @@
       'iframe[src*="doubleclick.net"], iframe[src*="googlesyndication.com"]' +
       ' { display: none !important; visibility: hidden !important; }';
     (doc.documentElement || doc.head || doc.body).appendChild(style);
-    styleInstalled = true;
+    styledDocument = doc;
   }
 
   function hideKnownPromotionalOverlays(doc) {
@@ -215,9 +216,13 @@
   addEventListener("DOMContentLoaded", () => {
     scheduleScan();
     const doc = content.document;
-    if (doc && doc.body && !observer) {
+    if (doc && doc.body && observedDocument !== doc) {
+      if (observer) {
+        observer.disconnect();
+      }
       observer = new content.MutationObserver(scheduleScan);
       observer.observe(doc.body, { childList: true, subtree: true });
+      observedDocument = doc;
     }
   }, true);
 
