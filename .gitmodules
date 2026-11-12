@@ -1,0 +1,3 @@
+[submodule "vendor/ghostery-adblocker"]
+	path = vendor/ghostery-adblocker
+	url = https://github.com/ghostery/adblocker.git
