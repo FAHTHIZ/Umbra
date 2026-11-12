@@ -340,6 +340,18 @@ export const UmbraAccessEngine = Object.freeze({
 
     Services.obs.addObserver(requestObserver, "http-on-modify-request");
     Services.obs.addObserver(windowReadyObserver, "browser-delayed-startup-finished");
+
+    // The first browser window may already have completed delayed startup by
+    // the time this module is loaded from browser-first-window-ready.
+    try {
+      const windows = Services.wm.getEnumerator("navigator:browser");
+      while (windows.hasMoreElements()) {
+        onWindowReady(windows.getNext());
+      }
+    } catch (error) {
+      Cu.reportError(error);
+    }
+
     try {
       Services.mm.addMessageListener("Umbra:PageReport", pageReportListener);
       Services.mm.loadFrameScript(FRAME_SCRIPT, true);
