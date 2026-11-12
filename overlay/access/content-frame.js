@@ -11,6 +11,8 @@
 
   const { paymentProviderForHost, isOnionHostname } =
     ChromeUtils.importESModule("resource:///modules/umbra/FilterRules.sys.mjs");
+  const { classifyPaymentURI, inspectMetaRefreshRedirect } =
+    ChromeUtils.importESModule("resource:///modules/umbra/AccessSignals.sys.mjs");
 
   let settings = { enabled: false, cosmetic: false };
   let scheduled = false;
@@ -126,6 +128,35 @@
     return { loginDetected, registrationDetected };
   }
 
+  function inspectPaymentURIs(doc) {
+    const types = new Set();
+    const anchors = Array.from(doc.querySelectorAll("a[href]")).slice(0, 120);
+    for (const anchor of anchors) {
+      const type = classifyPaymentURI(anchor.getAttribute("href") || "");
+      if (type) {
+        types.add(type);
+      }
+    }
+    return Array.from(types);
+  }
+
+  function inspectMetaRefresh(doc) {
+    const indicators = new Set();
+    const metas = Array.from(doc.querySelectorAll('meta[http-equiv="refresh" i]')).slice(0, 5);
+    for (const meta of metas) {
+      const value = String(meta.getAttribute("content") || "").slice(0, 4096);
+      const match = /(?:^|;)\s*url\s*=\s*(?:"([^"]+)"|'([^']+)'|([^;]+))/i.exec(value);
+      const target = match && (match[1] || match[2] || match[3]);
+      if (!target || !target.trim()) {
+        continue;
+      }
+      for (const indicator of inspectMetaRefreshRedirect(target.trim(), doc.location.href)) {
+        indicators.add(indicator);
+      }
+    }
+    return Array.from(indicators);
+  }
+
   function paymentAndCheckout(doc) {
     const providers = new Set();
     const elements = Array.from(doc.querySelectorAll("script[src], iframe[src], form[action]")).slice(0, 120);
@@ -185,7 +216,9 @@
     return {
       checkoutDetected,
       paymentProviders: Array.from(providers),
-      suspiciousIndicators: Array.from(actionWarnings)
+      paymentUriTypes: inspectPaymentURIs(doc),
+      suspiciousIndicators: Array.from(actionWarnings),
+      redirectIndicators: inspectMetaRefresh(doc)
     };
   }
 
@@ -213,7 +246,9 @@
         checkoutDetected: payment.checkoutDetected,
         cookieDialogDetected: detectCookieDialog(doc),
         paymentProviders: payment.paymentProviders,
+        paymentUriTypes: payment.paymentUriTypes,
         suspiciousIndicators: payment.suspiciousIndicators,
+        redirectIndicators: payment.redirectIndicators,
         removedOverlays,
         isOnion: isOnionHostname(doc.location.hostname)
       }
