@@ -17,6 +17,15 @@ const FRAME_SCRIPT = "chrome://browser/content/umbra-access/content-frame.js";
 const DASHBOARD_URL = "chrome://browser/content/umbra-access/dashboard.html";
 const STATE_TOPIC = "umbra-access-state-changed";
 const TOOLBAR_ID = "umbra-access-toolbar-button";
+const ALLOWED_PROVIDERS = new Set([
+  "Stripe", "PayPal", "Adyen", "Braintree", "Square", "Paddle",
+  "Lemon Squeezy", "Shopify"
+]);
+const ALLOWED_INDICATORS = new Set([
+  "insecure-payment-action",
+  "unrecognized-payment-destination",
+  "invalid-payment-destination"
+]);
 
 const DEFAULT_STATE = () => ({
   blockedAds: 0,
@@ -81,7 +90,7 @@ function broadcastSettings() {
   try {
     Services.mm.broadcastAsyncMessage("Umbra:Settings", {
       enabled: isEnabled(),
-      cosmetic: readBoolPref("umbra.access.cosmetic", true)
+      cosmetic: readBoolPref("umbra.access.cosmetic", false)
     });
   } catch (_) {
     // The network filter remains available if the frame-script manager is not ready.
@@ -176,10 +185,10 @@ const pageReportListener = {
     // is accepted from the content process.
     const report = incoming.report || {};
     const providers = Array.isArray(report.paymentProviders)
-      ? report.paymentProviders.filter(x => typeof x === "string").slice(0, 8)
+      ? report.paymentProviders.filter(x => ALLOWED_PROVIDERS.has(x)).slice(0, 8)
       : [];
     const indicators = Array.isArray(report.suspiciousIndicators)
-      ? report.suspiciousIndicators.filter(x => typeof x === "string").slice(0, 8)
+      ? report.suspiciousIndicators.filter(x => ALLOWED_INDICATORS.has(x)).slice(0, 8)
       : [];
 
     state.latestPage = {
