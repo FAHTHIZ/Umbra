@@ -78,6 +78,7 @@ def test_access_engine_is_packaged_into_browser_omni(tmp_path):
         names = set(archive.namelist())
         assert "modules/umbra/AccessEngine.sys.mjs" in names
         assert "modules/umbra/FilterRules.sys.mjs" in names
+        assert "modules/umbra/AccessSignals.sys.mjs" in names
         assert "chrome/browser/content/browser/umbra-access/content-frame.js" in names
         assert "chrome/browser/content/browser/umbra-access/dashboard.html" in names
         assert "chrome/browser/content/browser/umbra-access/dashboard.js" in names
