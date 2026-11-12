@@ -25,12 +25,44 @@ def verify_sha256(path: str, expected: str) -> None:
         raise VerificationError(f"SHA-256 mismatch for {os.path.basename(path)}: expected {expected}, got {got}")
 
 
-PINNED_KEY = os.path.join(os.path.dirname(__file__), "..", "..", "upstream", "keys", "torbrowser.asc")
+PINNED_KEY = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "upstream", "keys", "torbrowser.asc"))
+
+_MSYS = None
 
 
-def _gpg_verify(env, sig, path, fingerprint):
-    r = subprocess.run(["gpg", "--batch", "--status-fd", "1", "--verify", sig, path],
-                       env=env, capture_output=True, text=True)
+def _is_msys_gpg() -> bool:
+    """Git for Windows ships an MSYS2 gpg that wants POSIX-style paths (/d/a/x)."""
+    global _MSYS
+    if _MSYS is None:
+        _MSYS = False
+        if os.name == "nt":
+            try:
+                out = subprocess.run(["gpg", "--version"], capture_output=True, text=True).stdout
+                _MSYS = "Home: /" in out
+            except OSError:
+                pass
+    return _MSYS
+
+
+def gpg_path(p: str) -> str:
+    """Path as the gpg binary expects it (pure; MSYS form when needed)."""
+    p = os.path.abspath(p)
+    if _is_msys_gpg() and len(p) > 1 and p[1] == ":":
+        return "/" + p[0].lower() + p[2:].replace("\\", "/")
+    return p
+
+
+def _gpg(home, *args, **kw):
+    return subprocess.run(["gpg", "--homedir", gpg_path(home), "--batch", *args], capture_output=True, text=True, **kw)
+
+
+def _check(r, what):
+    if r.returncode != 0:
+        raise VerificationError(f"gpg {what} failed ({r.returncode}): {r.stderr.strip()[-600:]}")
+
+
+def _gpg_verify(home, sig, path, fingerprint):
+    r = _gpg(home, "--status-fd", "1", "--verify", gpg_path(sig), gpg_path(path))
     for line in r.stdout.splitlines():
         parts = line.split()
         if len(parts) >= 2 and parts[1] == "VALIDSIG":
@@ -53,15 +85,16 @@ def verify_signature(path: str, sig: str, fingerprint: str, wkd: str, pinned_key
     """
     fingerprint = fingerprint.replace(" ", "").upper()
     with tempfile.TemporaryDirectory() as home:
-        env = dict(os.environ, GNUPGHOME=home)
+        err = ""
         if os.path.isfile(pinned_key):
-            subprocess.run(["gpg", "--batch", "--quiet", "--import", pinned_key], env=env, check=True, capture_output=True)
-            ok, err = _gpg_verify(env, sig, path, fingerprint)
+            _check(_gpg(home, "--quiet", "--import", gpg_path(pinned_key)), "import of pinned key")
+            ok, err = _gpg_verify(home, sig, path, fingerprint)
             if ok:
                 return
-        subprocess.run(["gpg", "--batch", "--quiet", "--auto-key-locate", "nodefault,wkd",
-                        "--locate-keys", wkd], env=env, check=True, capture_output=True)
-        ok, err = _gpg_verify(env, sig, path, fingerprint)
+        r = _gpg(home, "--quiet", "--auto-key-locate", "nodefault,wkd", "--locate-keys", wkd)
+        if r.returncode != 0:
+            raise VerificationError(f"No valid signature with pinned key ({err}); WKD refresh failed: {r.stderr.strip()[-300:]}")
+        ok, err = _gpg_verify(home, sig, path, fingerprint)
         if ok:
             return
         raise VerificationError("No valid signature: " + err)
