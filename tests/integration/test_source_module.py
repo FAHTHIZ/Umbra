@@ -82,21 +82,36 @@ def test_source_profile_prefs(drv):
         assert line in text, line
 
 
-@pytest.mark.skipif(not os.path.isdir("/proc/self"), reason="uses /proc")
-def test_launch_starts_separate_instance(drv):
+def _cmdline(pid):
+    if os.path.isdir("/proc/self"):
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            return f.read().replace(b"\0", b" ").decode()
     import subprocess
+    return subprocess.run(["powershell", "-NoProfile", "-Command",
+                           f"(Get-CimInstance Win32_Process -Filter 'ProcessId={pid}').CommandLine"],
+                          capture_output=True, text=True).stdout
+
+
+def _kill(pid):
+    import subprocess
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/F", "/T", "/PID", str(pid)], capture_output=True)
+    else:
+        subprocess.run(["kill", str(pid)])
+
+
+def test_launch_starts_separate_instance(drv):
     pid, prof = chrome_eval(drv, f"""
         const S = {MOD}; const p = S.launch('http://' + 'c'.repeat(56) + '.onion/');
         return [p.pid, S.sourceProfileDir().path];""")
     try:
         time.sleep(6)
-        with open(f"/proc/{pid}/cmdline", "rb") as f:
-            args = f.read().replace(b"\0", b" ").decode()
+        args = _cmdline(pid)
         assert "--new-instance" in args and prof in args
         prefs = open(os.path.join(prof, "prefs.js")).read()
         assert 'user_pref("browser.security_level.security_slider", 1);' in prefs
     finally:
-        subprocess.run(["kill", str(pid)])
-        time.sleep(1)
+        _kill(pid)
+        time.sleep(2)
         import shutil
         shutil.rmtree(prof, ignore_errors=True)
