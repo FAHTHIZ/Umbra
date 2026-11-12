@@ -23,7 +23,6 @@ export function registerUmbraAccessEngine() {
       }
     },
     allFrames: false,
-    includeChrome: false,
     matches: ["http://*/*", "https://*/*"]
   });
 
