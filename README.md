@@ -25,6 +25,7 @@
 - **Umbra Explore.** A curated directory of operator-published onion services. Every address is v3-checksum-verified in CI, so typos and lookalikes can't slip in.
 - **Same fingerprint as Tor Browser.** Umbra changes nothing a website can observe. A test compares 500+ security preferences against upstream on every build.
 - **Verified supply chain.** Every build checks the upstream OpenPGP signature against a pinned key **and** a pinned SHA-256, then produces deterministic output.
+- **Built-in tools, one click away.** The **Umbra** toolbar button opens Privacy (a live protection dashboard), Desk (research notes kept only in memory), Assistant (a local page summary with no AI model and no network), Vault (encrypted bookmark export) and Source (reach journalists via SecureDrop in an isolated instance).
 - **No telemetry.** Umbra's own pages make zero network requests. The only background request is an anonymous daily release check over Tor, which you can turn off.
 
 ## Install (Linux x86-64 / aarch64)
@@ -77,7 +78,8 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Fingerprint parity with Tor Browser | ✅ tested |
 | Release notice for new Umbra versions (over Tor) | ✅ tested |
 | Umbra Access Engine (local page inspection, opt-in ad/tracker filtering) | 🧪 experimental, filtering off by default |
-| Umbra Privacy dashboard (Tools → Umbra Privacy) | ✅ tested |
+| Umbra Privacy dashboard | ✅ tested |
+| "Umbra" toolbar button: one menu for every module | ✅ tested |
 | Umbra Source (SecureDrop directory, isolated Safest-level instance) | 🧪 experimental, tested |
 | Umbra Vault (encrypted bookmarks/logins export, AES-256-GCM via NSS) | 🧪 experimental, tested |
 | Umbra Desk (memory-only research notes, tab overview, close-and-forget) | 🧪 experimental, tested |

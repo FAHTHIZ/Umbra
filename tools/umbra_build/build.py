@@ -213,6 +213,19 @@ def patch_assistant_omni(omni: Omni) -> None:
     add_first_window_category(omni, ASSISTANT_CATEGORY, "Umbra Assistant startup")
 
 
+MENU_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraMenu.sys.mjs UmbraMenu.init"
+)
+
+
+def patch_menu_omni(omni: Omni) -> None:
+    """'Umbra' toolbar button that lists every module."""
+    with open(os.path.join(OVERLAY, "menu", "UmbraMenu.sys.mjs"), "rb") as f:
+        omni.put("modules/umbra/UmbraMenu.sys.mjs", f.read(), "Umbra toolbar menu")
+    add_first_window_category(omni, MENU_CATEGORY, "Umbra toolbar menu startup")
+
+
 UPDATE_CATEGORY = (
     "category browser-first-window-ready "
     "resource:///modules/umbra/UmbraUpdateNotice.sys.mjs UmbraUpdateNotice.init"
@@ -251,6 +264,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     patch_vault_omni(omni)
     patch_desk_omni(omni)
     patch_assistant_omni(omni)
+    patch_menu_omni(omni)
     patch_update_omni(omni)
 
 
