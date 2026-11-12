@@ -24,7 +24,11 @@ def start(app_dir, prefs=None, env=None, tor_provider="none"):
     opts.add_argument(profile)
     for k, v in (prefs or {}).items():
         opts.set_preference(k, v)
-    environ = dict(os.environ, TOR_PROVIDER=tor_provider, MOZ_HEADLESS="1")
+    environ = dict(os.environ, MOZ_HEADLESS="1")
+    if tor_provider:
+        environ["TOR_PROVIDER"] = tor_provider
+    else:
+        environ.pop("TOR_PROVIDER", None)
     environ.update(env or {})
     service = Service(geckodriver_path(), env=environ)
     drv = webdriver.Firefox(options=opts, service=service)
