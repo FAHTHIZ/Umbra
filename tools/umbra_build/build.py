@@ -83,7 +83,7 @@ def patch_access_omni(omni: Omni) -> None:
     for name in ("content-frame.js", "dashboard.html", "dashboard.js", "dashboard.css"):
         source = os.path.join(access, name)
         with open(source, "rb") as f:
-            omni.put("chrome/browser/content/umbra-access/" + name, f.read(), "Umbra Access Engine UI")
+            omni.put("chrome/browser/content/browser/umbra-access/" + name, f.read(), "Umbra Access Engine UI")
 
 
 def patch_access_manifest(app: str) -> None:
