@@ -16,3 +16,5 @@ Only the latest Umbra release is supported. It always tracks the latest stable T
 
 - [Threat model](docs/THREAT_MODEL.md)
 - [Security architecture](docs/SECURITY_ARCHITECTURE.md)
+- [Access Engine security boundaries and acceptance tests](docs/UMBRA_ACCESS_ENGINE.md)
+- [Access Engine technology and licensing review](docs/ACCESS_ENGINE_RESEARCH.md)
