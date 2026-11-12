@@ -87,6 +87,7 @@ def test_access_dashboard_is_packaged_and_toolbar_is_registered(umbra_app):
     driver = start(umbra_app, tor_provider="none")
     try:
         result = chrome_eval(driver, """
+          const { Services } = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
           const { CustomizableUI } = ChromeUtils.importESModule("resource:///modules/CustomizableUI.sys.mjs");
           const widgetRegistered = Boolean(CustomizableUI.getWidget("umbra-access-toolbar-button"));
           const tab = gBrowser.addTab("chrome://browser/content/umbra-access/dashboard.html", {
