@@ -45,4 +45,5 @@ Umbra inherits Tor Browser's design and threat model ([Tor Browser design docume
 - Desktop Linux x86-64 is the only verified build. Windows, macOS and Android are planned (see ROADMAP).
 - No in-app updater (see risk 1).
 - Live Tor bootstrap is tested in CI, where relays are reachable, not in every development environment.
-- Umbra Desk, Source and Assistant are design documents, not code.\n- Access Engine page inspection and its starter rules are experimental; no production security audit or end-to-end onion-site compatibility test has been completed.
+- Umbra Desk, Source and Assistant are design documents, not code.
+- Access Engine page inspection and its starter rules are experimental; no production security audit or end-to-end onion-site compatibility test has been completed.
