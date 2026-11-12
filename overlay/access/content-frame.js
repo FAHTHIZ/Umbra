@@ -12,7 +12,7 @@
   const { paymentProviderForHost, isOnionHostname } =
     ChromeUtils.importESModule("resource:///modules/umbra/FilterRules.sys.mjs");
 
-  let settings = { enabled: true, cosmetic: true };
+  let settings = { enabled: false, cosmetic: false };
   let scheduled = false;
   let observer = null;
   let styledDocument = null;
