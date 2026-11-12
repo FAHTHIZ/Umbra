@@ -3,7 +3,7 @@
  * These helpers never retain a complete URL or payment address.
  */
 
-import { isOnionHostname } from "resource:///modules/umbra/FilterRules.sys.mjs";
+import { isOnionHostname } from "./FilterRules.sys.mjs";
 
 const PAYMENT_SCHEMES = new Set(["bitcoin", "ethereum", "lightning", "monero"]);
 
