@@ -3,7 +3,6 @@
 Enabled with UMBRA_LIVE_TOR=1 (CI's `live-tor` job). Skipped elsewhere, because
 many sandboxes and networks block Tor relays.
 """
-import json
 import os
 import time
 
@@ -38,10 +37,12 @@ def tor_drv(umbra_app):
 
 def test_exit_is_tor(tor_drv):
     tor_drv.set_page_load_timeout(90)
-    tor_drv.get("https://check.torproject.org/api/ip")
-    body = tor_drv.find_element("tag name", "body").text
-    data = json.loads(body[body.find("{"):body.rfind("}") + 1])
-    assert data["IsTor"] is True
+    tor_drv.get("https://check.torproject.org/")
+    # Read the API from the page's own origin (the JSON viewer's rendered text isn't reliable).
+    data = tor_drv.execute_async_script("""
+        const done = arguments[arguments.length - 1];
+        fetch('/api/ip').then(r => r.json()).then(done, e => done({error: String(e)}));""")
+    assert data.get("IsTor") is True, data
 
 
 def test_onion_service_navigation(tor_drv):
@@ -55,5 +56,8 @@ def test_default_search_reaches_onionsearch(tor_drv):
     tor_drv.get("about:tor")
     box = tor_drv.find_element("id", "search-input")
     box.send_keys("tor project\n")
-    time.sleep(8)
-    assert tor_drv.current_url.startswith("https://onionsearch.io/search?q=tor")
+    # Navigation commits only once onionsearch.io answers over Tor; allow for slow circuits.
+    deadline = time.time() + 90
+    while time.time() < deadline and tor_drv.current_url.startswith("about:"):
+        time.sleep(2)
+    assert tor_drv.current_url.startswith("https://onionsearch.io/search?q=tor"), tor_drv.current_url
