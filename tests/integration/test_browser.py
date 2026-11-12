@@ -94,7 +94,15 @@ def test_home_search_submits_with_enter_and_button(umbra_app):
     try:
         d.set_page_load_timeout(15)
         for how in ("enter", "button"):
-            d.get("about:tor")
+            # The previous submit ends on an error page (the canary is not a TLS server);
+            # webdriver may report that on the next navigation, so retry once.
+            for _ in range(3):
+                try:
+                    d.get("about:tor")
+                    if d.current_url == "about:tor":
+                        break
+                except Exception:
+                    time.sleep(0.5)
             box = d.find_element("id", "search-input")
             try:
                 if how == "enter":
