@@ -143,7 +143,7 @@ def patch_tree(app: str) -> None:
     )
     if access_entry not in manifest_text:
         with open(manifest, "a", encoding="utf-8") as f:
-            f.write("\\n" + access_entry + "\\n")
+            f.write("\n" + access_entry + "\n")
 
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
     for size in (16, 32, 48, 64, 128):
