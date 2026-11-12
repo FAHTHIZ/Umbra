@@ -10,6 +10,7 @@ export const ITEMS = [
   { id: "assistant", label: "Assistant: summarise this page", action: "assistant" },
   { id: "vault", label: "Vault: encrypted export", url: "chrome://browser/content/umbra-vault/vault.html" },
   { id: "source", label: "Source: contact journalists (SecureDrop)", url: "chrome://browser/content/umbra-source/source.html" },
+  { id: "investigate", label: "Investigate: onion-only evidence browser", url: "chrome://browser/content/umbra-investigate/investigate.html" },
   { id: "access", label: "Access Engine", url: "chrome://browser/content/umbra-access/dashboard.html" },
   { sep: true },
   { id: "newidentity", label: "New Identity (close and forget)", command: "cmd_newIdentity" },

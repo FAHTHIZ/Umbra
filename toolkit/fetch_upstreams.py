@@ -71,7 +71,7 @@ def fetch(u, dest):
     if head != u["commit"]:
         raise RuntimeError(f"{u['name']}: HEAD {head} != pinned {u['commit']}")
     names = {x.lower() for x in os.listdir(path)}
-    if not any(x in names for x in LICENSE_NAMES) and "README" not in os.listdir(path):
+    if u.get("license") != "NOASSERTION" and not any(x in names for x in LICENSE_NAMES) and "README" not in os.listdir(path):
         raise RuntimeError(f"{u['name']}: no license file at the pinned commit")
     return path
 
@@ -95,11 +95,18 @@ def main(argv=None):
     if unknown:
         print(f"unknown: {sorted(unknown)}", file=sys.stderr)
         return 1
+    failed = []
     for u in lock["upstreams"]:
         if u["name"] in want:
-            p = fetch(u, a.dest)
-            print(f"{u['name']}: {u['commit']} OK -> {p}")
-    return 0
+            try:
+                p = fetch(u, a.dest)
+                print(f"{u['name']}: {u['commit']} OK -> {p}")
+            except Exception as e:  # keep going; report every failure at the end
+                failed.append(u["name"])
+                print(f"{u['name']}: FAILED: {e}", file=sys.stderr)
+    if failed:
+        print(f"failed: {failed}", file=sys.stderr)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

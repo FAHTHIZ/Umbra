@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome: data: blob:; connect-src chrome:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Umbra Investigate</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="investigate.css">
+  <script type="module" src="investigate.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Umbra Investigate</h1>
+        <p class="sub">A manual, onion-only browser for investigations. You browse; Umbra explains what it sees and keeps hashed evidence.</p>
+      </div>
+      <span class="pill" id="mode-pill">…</span>
+    </header>
+
+    <!-- Shown in the normal Umbra window -->
+    <section class="group" id="launcher" hidden>
+      <h2>Open an Investigate window</h2>
+      <ul class="iso">
+        <li>Separate profile (<code>profile.umbra-investigate</code>): nothing shared with your normal browsing</li>
+        <li><b>Onion-only</b>: clearnet sites, redirects to them and clearnet subresources are blocked before they connect</li>
+        <li>Uses your current Tor connection. If Tor stops, Investigate loads nothing</li>
+        <li>Security level <b>Safest</b> by default; no passwords or form data are saved</li>
+        <li>Inspection is read-only: Umbra never fills in, submits, solves or bypasses anything</li>
+      </ul>
+      <div class="actions">
+        <button id="launch" class="primary">Open Investigate window</button>
+        <input id="launch-url" type="url" placeholder="Optional start address (…onion)" spellcheck="false" autocomplete="off">
+      </div>
+      <p class="status" id="launch-status"></p>
+    </section>
+
+    <!-- Everything below is shown inside the Investigate instance -->
+    <div id="investigate" hidden>
+      <section class="group" id="guard">
+        <h2>Onion-only guard</h2>
+        <div class="stats">
+          <div><b id="g-allowed">0</b><span>onion requests</span></div>
+          <div><b id="g-blocked">0</b><span>blocked</span></div>
+          <div><b id="g-blackholed">0</b><span>caught by 2nd layer</span></div>
+        </div>
+        <p class="meta" id="g-detail"></p>
+        <details><summary>Most-blocked hosts</summary><ul id="g-hosts" class="mono"></ul></details>
+      </section>
+
+      <section class="group">
+        <h2>Search onion services</h2>
+        <form id="search" class="search">
+          <input id="q" type="search" placeholder="Search…" autocomplete="off" spellcheck="false">
+          <select id="engine" aria-label="Search engine">
+            <option value="ahmia">Ahmia (.onion)</option>
+            <option value="ddg">DuckDuckGo (.onion)</option>
+            <option value="brave">Brave Search (.onion)</option>
+          </select>
+          <button type="submit" class="primary">Search</button>
+        </form>
+        <p class="meta">Results open in a new tab. Search providers see your query, not who you are; Tor provides the anonymity.</p>
+      </section>
+
+      <section class="group">
+        <h2>This page</h2>
+        <p id="target" class="target">No onion tab open yet.</p>
+        <div class="actions">
+          <button id="inspect">Inspect page</button>
+          <button id="capture" class="primary">Capture evidence</button>
+        </div>
+        <div id="report"></div>
+      </section>
+
+      <section class="group">
+        <h2>Case</h2>
+        <div class="actions">
+          <select id="case-select" aria-label="Case"></select>
+          <input id="case-name" type="text" placeholder="New case name" autocomplete="off">
+          <button id="case-new">New case</button>
+        </div>
+        <div id="case-detail"></div>
+        <div class="actions">
+          <button id="case-verify">Verify integrity</button>
+          <button id="case-export">Export hashdeep + Timesketch</button>
+          <button id="case-har">Save traffic (HAR)</button>
+          <button id="case-folder">Show folder</button>
+        </div>
+        <div class="actions">
+          <input id="note" type="text" placeholder="Add a note to the case log" autocomplete="off">
+          <button id="note-add">Add note</button>
+        </div>
+        <details>
+          <summary>Encrypt case</summary>
+          <div class="actions">
+            <input id="pass" type="password" placeholder="Passphrase (12+ characters)" autocomplete="new-password">
+            <label class="check"><input id="rm-plain" type="checkbox"> Delete plaintext after verifying</label>
+            <button id="encrypt">Encrypt</button>
+          </div>
+          <p class="meta">Umbra Vault format: PBKDF2-SHA256 (600 000 rounds) + AES-256-GCM. Decrypt here or with <code>tools/investigate/verify_case.py</code>.</p>
+        </details>
+        <p class="status" id="case-status"></p>
+      </section>
+
+      <section class="group">
+        <h2>Leads</h2>
+        <p class="meta">Paste output from TorBot, OnionSearch, darkdump or any list. Only onion addresses are kept; you open each one yourself.</p>
+        <textarea id="leads-in" rows="4" placeholder="Paste tool output…" spellcheck="false"></textarea>
+        <div class="actions">
+          <button id="leads-import">Import leads</button>
+          <input id="leads-file" type="file" accept=".txt,.csv,.json,.jsonl">
+        </div>
+        <ul id="leads" class="leads"></ul>
+      </section>
+
+      <section class="group">
+        <h2>Traffic</h2>
+        <div class="actions">
+          <label class="check"><input id="t-tab" type="checkbox" checked> This page only</label>
+          <label class="check"><input id="t-blocked" type="checkbox"> Blocked only</label>
+          <button id="t-clear">Clear log</button>
+        </div>
+        <div class="table-wrap"><table id="traffic"><thead><tr><th>Time</th><th>Method</th><th>Status</th><th>Host</th><th>Path</th></tr></thead><tbody></tbody></table></div>
+        <p class="meta">Metadata only, in memory until you save it into a case. Cookie and Authorization values are never recorded.</p>
+      </section>
+    </div>
+
+    <p class="note">Investigate is for lawful research on publicly reachable onion services. It contains no credential, brute-force, bypass or exploitation features. Routing through Tor alone does not guarantee anonymity: what you type, upload or log in to can still identify you.</p>
+  </main>
+</body>
+</html>

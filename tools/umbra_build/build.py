@@ -213,6 +213,29 @@ def patch_assistant_omni(omni: Omni) -> None:
     add_first_window_category(omni, ASSISTANT_CATEGORY, "Umbra Assistant startup")
 
 
+INVESTIGATE_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraInvestigate.sys.mjs UmbraInvestigate.init"
+)
+
+
+def patch_investigate_omni(omni: Omni) -> None:
+    """Umbra Investigate (onion-only guard, traffic log, evidence) -> chrome://browser/content/umbra-investigate/.
+
+    investigate-core.mjs is shared: the parent module and content actor import it from
+    resource:///modules/umbra/, the dashboard (CSP script-src chrome:) from the chrome copy.
+    """
+    src = os.path.join(OVERLAY, "investigate")
+    for name in sorted(os.listdir(src)):
+        with open(os.path.join(src, name), "rb") as f:
+            data = f.read()
+        if name.endswith(".sys.mjs") or name == "investigate-core.mjs":
+            omni.put("modules/umbra/" + name, data, "Umbra Investigate module")
+        if not name.endswith(".sys.mjs"):
+            omni.put("chrome/browser/content/browser/umbra-investigate/" + name, data, "Umbra Investigate page")
+    add_first_window_category(omni, INVESTIGATE_CATEGORY, "Umbra Investigate startup")
+
+
 MENU_CATEGORY = (
     "category browser-first-window-ready "
     "resource:///modules/umbra/UmbraMenu.sys.mjs UmbraMenu.init"
@@ -261,6 +284,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     patch_access_omni(omni)
     patch_privacy_omni(omni)
     patch_source_omni(omni)
+    patch_investigate_omni(omni)
     patch_vault_omni(omni)
     patch_desk_omni(omni)
     patch_assistant_omni(omni)

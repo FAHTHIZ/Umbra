@@ -53,20 +53,35 @@ class Handler(socketserver.BaseRequestHandler):
             port = int.from_bytes(s.recv(2), "big")
             self.server.log.append({"atyp": atyp, "host": host, "port": port, "user": user})
             s.sendall(b"\x05\x00\x00\x01\x7f\x00\x00\x01\x00\x00")
-            s.recv(65536)
-            body = PAGE
-            s.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n" % len(body) + body)
+            req = s.recv(65536)
+            self.server.requests.append({"host": host, "port": port, "head": req.split(b"\r\n\r\n", 1)[0].decode(errors="replace")})
+            responder = getattr(self.server, "responder", None)
+            out = responder(host, port, req) if responder else None
+            if out is None:
+                body = PAGE
+                out = b"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n" % len(body) + body
+            s.sendall(out)
         except Exception:
             pass
+
+
+def http_response(body, status="200 OK", headers=()):
+    if isinstance(body, str):
+        body = body.encode()
+    h = "".join(f"{k}: {v}\r\n" for k, v in headers)
+    return (f"HTTP/1.1 {status}\r\nContent-Type: text/html\r\nContent-Length: {len(body)}\r\n{h}Connection: close\r\n\r\n").encode() + body
 
 
 class Canary(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-    def __init__(self):
+    def __init__(self, responder=None):
+        """responder(host, port, raw_request) -> full HTTP response bytes, or None for the canary page."""
         super().__init__(("127.0.0.1", 0), Handler)
         self.log = []
+        self.requests = []
+        self.responder = responder
         self.port = self.server_address[1]
         self.thread = threading.Thread(target=self.serve_forever, daemon=True)
         self.thread.start()

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Blocked: not an onion service</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="investigate.css">
+  <script type="module" src="blocked.js"></script>
+</head>
+<body>
+  <main class="narrow">
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Stopped before connecting</h1>
+        <p class="sub">Umbra Investigate is onion-only.</p>
+      </div>
+    </header>
+    <section class="group">
+      <p class="mono break" id="url"></p>
+      <p id="reason"></p>
+      <p class="meta" id="from" hidden></p>
+      <p class="meta">No connection was made and nothing was sent. To visit ordinary websites, use your normal Umbra window.</p>
+      <div class="actions"><button id="back">Go back</button><button id="dash">Open Investigate dashboard</button></div>
+    </section>
+  </main>
+</body>
+</html>
