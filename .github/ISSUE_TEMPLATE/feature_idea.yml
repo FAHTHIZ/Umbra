@@ -1,0 +1,14 @@
+name: Feature idea
+description: Propose something new for Umbra
+labels: [idea]
+body:
+  - type: textarea
+    id: idea
+    attributes: { label: The idea, description: What should Umbra do, and for whom? }
+    validations: { required: true }
+  - type: textarea
+    id: why
+    attributes: { label: Why it matters }
+  - type: textarea
+    id: risk
+    attributes: { label: Privacy considerations, description: "Could this change what websites can observe? Does it add network requests or stored data?" }
