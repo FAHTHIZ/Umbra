@@ -6,7 +6,7 @@ import pytest
 
 from tools.umbra_build.branding import brand_ftl, brand_properties, icon_png
 from tools.umbra_build.omni import Omni
-from tools.umbra_build.build import patch_access_omni
+from tools.umbra_build.build import patch_access_manifest, patch_access_omni
 from tools.umbra_build.verify import VerificationError, verify_sha256
 
 
@@ -89,3 +89,16 @@ def test_access_filtering_is_opt_in_for_tor_fingerprint_safety():
     prefs = open(os.path.join(os.path.dirname(__file__), "..", "..", "overlay", "prefs", "umbra-prefs.js")).read()
     assert 'pref("umbra.access.enabled", false);' in prefs
     assert 'pref("umbra.access.cosmetic", false);' in prefs
+
+
+
+def test_access_startup_manifest_registration_is_idempotent(tmp_path):
+    app = tmp_path / "app"
+    manifest = app / "Browser" / "components" / "BrowserComponents.manifest"
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text("category browser-idle-startup resource:///modules/PlacesUIUtils.sys.mjs PlacesUIUtils.unblockToolbars\n")
+    patch_access_manifest(str(app))
+    patch_access_manifest(str(app))
+    text = manifest.read_text()
+    entry = "category browser-first-window-ready resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
+    assert text.count(entry) == 1
