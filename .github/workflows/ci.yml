@@ -39,8 +39,10 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: System deps (GTK runtime for headless Gecko)
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 libx11-xcb1 gnupg xz-utils
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 libx11-xcb1 gnupg xz-utils hashdeep libimage-exiftool-perl
       - run: pip install -r requirements-dev.txt
+      - name: Evidence interop tools (mitmproxy HAR reader, bundle decryption)
+        run: pip install "mitmproxy==12.3.1" "cryptography>=42"
       - name: geckodriver
         run: |
           curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-${{ matrix.geckodriver }}.tar.gz | sudo tar xz -C /usr/local/bin
@@ -115,3 +117,19 @@ jobs:
       - name: Live Tor tests (bootstrap, IsTor, onion navigation, default search)
         env: { UMBRA_LIVE_TOR: "1" }
         run: python -m pytest -q tests/live
+
+  toolkit:
+    # Container isolation for third-party investigation tools: internal network, onion-only Tor
+    # SOCKS port, network-less analysis container with pinned exiftool/hashdeep/mitmproxy.
+    needs: unit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Self-test (isolation + offline analysis + live onion-only Tor)
+        env: { UMBRA_TOOLKIT_LIVE: "1" }
+        run: bash toolkit/selftest.sh
+      - name: Build the remaining tool images from their pinned commits
+        continue-on-error: true   # upstream dependency drift must not hide the isolation result
+        run: docker compose -f toolkit/compose.yaml --profile tools build torbot darkdump darkspider onionscout onionscan

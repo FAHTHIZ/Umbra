@@ -1,0 +1,12 @@
+# Umbra investigation toolkit Tor client.
+# OnionTrafficOnly: this SOCKS port refuses every non-.onion destination, so the tools are
+# onion-only exactly like the Umbra Investigate browser instance. IsolateDestAddr gives every
+# onion service its own circuit. Only the internal toolkit network may use the port.
+SocksPort 0.0.0.0:9050 OnionTrafficOnly IsolateDestAddr IsolateSOCKSAuth
+SocksPolicy accept 172.30.90.0/24
+SocksPolicy reject *
+DataDirectory /var/lib/tor/data
+Log notice file /var/lib/tor/notices.log
+Log notice stdout
+ClientOnly 1
+AvoidDiskWrites 1

@@ -1,0 +1,151 @@
+# Umbra investigation toolkit: third-party tools isolated from the browser and from each other.
+#
+#   docker compose -f toolkit/compose.yaml up -d tor            # start the onion-only Tor client
+#   docker compose -f toolkit/compose.yaml run --rm onionsearch --engines ahmia --limit 1 "query"
+#   docker compose -f toolkit/compose.yaml run --rm analysis tools.investigate.verify_case /cases/<case> --hashdeep
+#
+# Isolation model (see toolkit/README.md):
+#  - Tool containers sit only on `toolkit`, an `internal: true` network with no route to the internet.
+#    Their single way out is the Tor container's SOCKS port, which is OnionTrafficOnly: tor refuses
+#    every destination that is not a .onion address. No tool can reach the clearnet, even by mistake.
+#  - The Tor container is the only service attached to `egress`.
+#  - The analysis container has no network at all (network_mode: none).
+#  - Every tool image is built from the exact commit pinned in toolkit/upstreams.lock.json
+#    (tests/unit/test_toolkit_compose.py keeps the two in sync). Base images are pinned by digest.
+#  - Containers run as an unprivileged user, drop all capabilities, and cannot gain privileges.
+#
+# Use the tools only against services you are authorised to assess. Nothing here logs in,
+# brute-forces, bypasses access controls or submits forms.
+
+name: umbra-toolkit
+
+x-hardening: &hardening
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  read_only: true
+  tmpfs: ["/tmp:size=256m", "/home/tool:size=64m,uid=10001"]
+  networks: [toolkit]
+  depends_on:
+    tor: { condition: service_healthy }
+  environment:
+    UMBRA_TOR_ADDR: 172.30.90.2
+  volumes: ["./out:/out"]
+  profiles: [tools]
+
+networks:
+  toolkit:
+    internal: true
+    ipam:
+      config: [{ subnet: 172.30.90.0/24 }]
+  egress: {}
+
+services:
+  tor:
+    build: { context: .., dockerfile: toolkit/docker/tor.Dockerfile }
+    image: umbra-toolkit/tor:local
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    networks:
+      egress: {}
+      toolkit: { ipv4_address: 172.30.90.2 }
+    tmpfs: ["/var/lib/tor:size=128m,mode=1777"]
+    read_only: true
+
+  torbot:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/python-tool.Dockerfile
+      args:
+        REPO: https://github.com/DedSecInside/TorBot.git
+        COMMIT: 4a6f369602592eb6d469b10bfc0cb6d4b3ea10e2
+    image: umbra-toolkit/torbot:4a6f369
+    command: ["torbot", "--host", "127.0.0.1", "--port", "9050"]
+
+  onionsearch:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/python-tool.Dockerfile
+      args:
+        REPO: https://github.com/megadose/OnionSearch.git
+        COMMIT: fc9d62c84f9cac9cd260d727bdac770ce3c4c743
+    image: umbra-toolkit/onionsearch:fc9d62c
+    entrypoint: ["umbra-forward", "onionsearch", "--proxy", "127.0.0.1:9050", "--output", "/out/onionsearch_$$SEARCH_$$DATE.csv"]
+
+  darkdump:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/python-tool.Dockerfile
+      args:
+        REPO: https://github.com/josh0xA/darkdump.git
+        COMMIT: 59912f64af8173993d827710a9e2b8b4de174365
+        INSTALL: pip install --no-cache-dir -r requirements.txt
+    image: umbra-toolkit/darkdump:59912f6
+    entrypoint: ["umbra-forward", "python3", "/src/darkdump.py"]
+
+  darkspider:
+    # UNRESOLVED upstream: the URL in the brief (N0rz3/DarkSpider) does not exist; this is the
+    # candidate PROxZIMA/DarkSpider. Confirm before relying on it.
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/python-tool.Dockerfile
+      args:
+        REPO: https://github.com/PROxZIMA/DarkSpider.git
+        COMMIT: 44835a0d4b5dece9f2be556feecbf3d8c04704b5
+        INSTALL: pip install --no-cache-dir -r requirements.txt
+    image: umbra-toolkit/darkspider:44835a0
+    entrypoint: ["umbra-forward", "python3", "/src/darkspider.py", "--port", "9050", "--folder", "/out/darkspider"]
+
+  onionscout:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/python-tool.Dockerfile
+      args:
+        REPO: https://github.com/h0ek/onionscout.git
+        COMMIT: d8e963fb9bebd07716804b93851c569fd56684fb
+    image: umbra-toolkit/onionscout:d8e963f
+    entrypoint: ["umbra-forward", "onionscout", "--tor-mode", "socks", "--socks", "127.0.0.1:9050"]
+
+  onionscan:
+    <<: *hardening
+    build:
+      context: ..
+      dockerfile: toolkit/docker/go-tool.Dockerfile
+      args:
+        REPO: https://github.com/nao1215/onionscan.git
+        COMMIT: 4e54c8001238d09817e2f6a6a689918eb89bb0b5
+        PKG: ./cmd/onionscan
+    image: umbra-toolkit/onionscan:4e54c80
+    entrypoint: ["umbra-forward", "onionscan", "scan", "--external-tor", "127.0.0.1:9050"]
+
+  zap:
+    # EXPERIMENTAL: official image pinned by digest (built by the ZAP project, not from the pinned
+    # source commit). Passive/baseline use only, through Tor's onion-only SOCKS port.
+    <<: *hardening
+    image: zaproxy/zap-stable@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af
+    read_only: false
+    tmpfs: ["/tmp:size=512m"]
+    volumes: ["./out:/zap/wrk"]
+    entrypoint: ["zap-baseline.py", "-z",
+      "-config network.connection.socksProxy.enabled=true -config network.connection.socksProxy.host=172.30.90.2 -config network.connection.socksProxy.port=9050 -config network.connection.socksProxy.dns=true"]
+
+  analysis:
+    build:
+      context: ..
+      dockerfile: toolkit/docker/analysis.Dockerfile
+      args:
+        EXIFTOOL_COMMIT: 1da714924f67763b6a8a7013dd2aa1983a16f87b
+        HASHDEEP_COMMIT: 877613493ff44807888ce1928129574be393cbb0
+        MITMPROXY_VERSION: "12.3.1"
+    image: umbra-toolkit/analysis:local
+    network_mode: none
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    tmpfs: ["/tmp:size=256m", "/home/analyst:size=64m"]
+    volumes: ["./cases:/cases"]
+    profiles: [tools]
