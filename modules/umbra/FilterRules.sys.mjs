@@ -48,7 +48,6 @@ const PAYMENT_PROVIDERS = new Map([
   ["adyen.com", "Adyen"],
   ["checkout.com", "Checkout.com"],
   ["squareup.com", "Square"],
-  [" Square", "Square"],
   ["authorize.net", "Authorize.Net"],
   ["2checkout.com", "2Checkout"],
   ["razorpay.com", "Razorpay"],
