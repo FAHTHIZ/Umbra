@@ -132,4 +132,12 @@ jobs:
         run: bash toolkit/selftest.sh
       - name: Build the remaining tool images from their pinned commits
         continue-on-error: true   # upstream dependency drift must not hide the isolation result
-        run: docker compose -f toolkit/compose.yaml --profile tools build torbot darkdump darkspider onionscout onionscan
+        run: |
+          failed=""
+          for s in torbot darkdump darkspider onionscout onionscan; do
+            if docker compose -f toolkit/compose.yaml --profile tools build "$s"; then
+              docker compose -f toolkit/compose.yaml --profile tools run --rm --no-deps "$s" --help > "/tmp/$s.help" 2>&1 \
+                && echo "OK $s (built, --help runs)" || { echo "WARN $s built but --help failed"; tail -5 "/tmp/$s.help"; }
+            else failed="$failed $s"; fi
+          done
+          [ -z "$failed" ] || { echo "image build failed:$failed"; exit 1; }
