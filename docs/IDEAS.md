@@ -36,3 +36,11 @@ Security / privacy implications: **Web-observable when filtering or cosmetic cle
 Performance implications: Positive on ad-heavy pages (fewer requests), small per-request overhead.
 Engineering decision: Implemented with privacy-preserving defaults: `umbra.access.enabled=false` and `umbra.access.cosmetic=false`. The dashboard warns that enabling either can affect fingerprintability. No paywall, authentication or payment authorization bypass is included. Run parity and leak tests in both states before release.
 Decision: Approved by owner on 2026-11-12. Continue integration and verification; do not mark production-ready until the acceptance tests in `docs/UMBRA_ACCESS_ENGINE.md` pass.
+
+## Local LLM for Umbra Assistant
+
+- **Feasibility:** Firefox ESR 153 has the ML inference engine, but Tor Browser disables it (`browser.ml.enable=false`), and models are normally fetched at runtime from Remote Settings.
+- **Architecture:** it would need a pinned model bundled in the release, loaded only from disk, with no Remote Settings.
+- **Security and privacy:** runtime downloads and per-user model state are fingerprintable. A bundled, identical model avoids that, but the parity suite must prove it.
+- **Performance:** it adds hundreds of MB of download, plus memory and CPU per run. A low-end hardware budget would need to be set.
+- **Decision:** not shipped. The Assistant ships model-free (extractive) instead. **Owner decision needed** on whether a bundled model is worth the size.

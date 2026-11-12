@@ -70,7 +70,7 @@ Running the same lock file and the same overlay twice produces byte-identical `o
 | Umbra Vault | Experimental: encrypted bookmarks/logins file (PBKDF2 + AES-GCM via NSS) | `overlay/vault`, Tools → Umbra Vault |
 | Umbra Desk | Experimental: memory-only notes, tabs by site, close-and-forget | `overlay/desk`, Tools → Umbra Desk |
 | Umbra Downloads | Upstream downloads manager (pause/resume/progress) | `about:downloads` |
-| Umbra Assistant | Research (local-only inference) | `docs/modules/ASSISTANT.md` |
+| Umbra Assistant | Experimental: model-free local page analysis (content actor, read-only) | `overlay/assistant`, Tools → Umbra Assistant |
 
 ### How chrome modules are wired
 

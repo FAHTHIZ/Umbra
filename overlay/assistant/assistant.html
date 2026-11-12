@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Umbra Assistant</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="assistant.css">
+  <script type="module" src="assistant.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Umbra Assistant</h1>
+        <p class="sub" id="page">Local page analysis. No AI model and no network: everything is computed on this device from the page text.</p>
+      </div>
+    </header>
+    <p class="status" id="status"></p>
+    <section class="group" id="s-summary" hidden>
+      <div class="toolbar"><h2>Key sentences</h2><span class="meta" id="reading"></span></div>
+      <ol id="summary"></ol>
+      <p class="meta">Sentences quoted from the page, chosen by word frequency. This is extractive, not generated: nothing here is made up.</p>
+      <button id="copy">Copy summary</button>
+    </section>
+    <section class="group" id="s-terms" hidden><h2>Key terms</h2><div id="terms" class="chips"></div></section>
+    <section class="group" id="s-outline" hidden><h2>Outline</h2><ul id="outline"></ul></section>
+    <section class="group" id="s-onions" hidden><h2>Onion addresses on this page</h2><ul id="onions"></ul>
+      <p class="meta">Found in the page text or links. Being listed here doesn't mean the address is genuine.</p></section>
+    <section class="group" id="s-links" hidden><h2 id="links-title">External links</h2><ul id="links" class="links"></ul></section>
+  </main>
+</body>
+</html>

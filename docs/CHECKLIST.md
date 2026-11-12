@@ -80,7 +80,8 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - 🧪 Umbra Source (Tools → Umbra Source): offline SecureDrop directory (24 outlets, v3-checksum-verified), opens onions in a separate `profile.umbra-source` instance at Safest, reusing the running Tor (no second tor) — `tests/unit/test_source_directory.py`, `tests/integration/test_source_module.py`. Onion reachability through the Source instance isn't tested yet (needs live Tor in CI). Windows launch isn't tested.
 - 🧪 Umbra Vault (Tools → Umbra Vault): encrypted export/import of bookmarks + logins (PBKDF2-600k + AES-256-GCM via WebCrypto/NSS, header as AAD) — `tests/umbra/vault-crypto.test.mjs`, `tests/integration/test_vault.py`. Logins only when the user enabled them (default nocertdb). age format planned.
 - 🧪 Umbra Desk (Tools → Umbra Desk): memory-only notes (never on disk; cleared on New Identity), tabs grouped by site, Close and forget = upstream New Identity — `tests/umbra/desk-logic.test.mjs`, `tests/integration/test_desk.py`
-- 📋 Umbra Assistant — see `docs/modules/`
+- 🧪 Umbra Assistant (Tools → Umbra Assistant): model-free local page analysis via a read-only content actor; ML/translations stay disabled as upstream — `tests/umbra/assistant-logic.test.mjs`, `tests/integration/test_assistant.py`
+- ❓ Local LLM for Assistant (needs owner decision: bundle size, fingerprint) — see `docs/modules/`
 
 ## Delivery
 - ✅ CI workflow (unit, integration, leak, benchmark) — `.github/workflows/ci.yml`
