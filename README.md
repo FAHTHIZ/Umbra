@@ -88,6 +88,10 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 
 The full, honest list is in [docs/CHECKLIST.md](docs/CHECKLIST.md).
 
+## Onion investigation tooling
+
+An optional, pinned [TorBot](https://github.com/DedSecInside/TorBot) submodule is available for scoped onion-service reachability checks and shallow public link mapping. It is kept separate from the browser runtime. See [docs/ONION_INVESTIGATION_TOOLING.md](docs/ONION_INVESTIGATION_TOOLING.md) for initialization, conservative usage, licensing, and evidence-handling boundaries.
+
 ## Performance
 
 Measured against unmodified Tor Browser 16.0.1 on the same machine ([details](docs/PERFORMANCE.md)):

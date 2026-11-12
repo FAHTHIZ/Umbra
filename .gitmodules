@@ -5,3 +5,7 @@
 [submodule "vendor/consent-o-matic"]
 	path = vendor/consent-o-matic
 	url = https://github.com/cavi-au/Consent-O-Matic.git
+
+[submodule "vendor/torbot"]
+	path = vendor/torbot
+	url = https://github.com/DedSecInside/TorBot.git
