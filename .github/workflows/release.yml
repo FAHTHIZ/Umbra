@@ -70,5 +70,5 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           gh release create "$TAG" dist/*.tar.xz dist/*.zip dist/SHA256SUMS \
-            --title "Umbra ${TAG#v}" --notes-file docs/RELEASE_NOTES.md --verify-tag || \
+            --title "Umbra ${TAG#v}" --notes-file docs/RELEASE_NOTES.md --verify-tag --prerelease || \
           gh release upload "$TAG" dist/*.tar.xz dist/*.zip dist/SHA256SUMS --clobber
