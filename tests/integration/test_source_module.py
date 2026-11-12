@@ -82,7 +82,7 @@ def test_source_profile_prefs(drv):
         assert line in text, line
 
 
-@pytest.mark.skipif(os.name == "nt", reason="uses ps")
+@pytest.mark.skipif(not os.path.isdir("/proc/self"), reason="uses /proc")
 def test_launch_starts_separate_instance(drv):
     import subprocess
     pid, prof = chrome_eval(drv, f"""
@@ -90,7 +90,8 @@ def test_launch_starts_separate_instance(drv):
         return [p.pid, S.sourceProfileDir().path];""")
     try:
         time.sleep(6)
-        args = subprocess.run(["ps", "-o", "args=", "-p", str(pid)], capture_output=True, text=True).stdout
+        with open(f"/proc/{pid}/cmdline", "rb") as f:
+            args = f.read().replace(b"\0", b" ").decode()
         assert "--new-instance" in args and prof in args
         prefs = open(os.path.join(prof, "prefs.js")).read()
         assert 'user_pref("browser.security_level.security_slider", 1);' in prefs
