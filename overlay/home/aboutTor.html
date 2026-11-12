@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="Content-Security-Policy" content="default-src chrome:; object-src 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src chrome:; object-src 'none'; base-uri 'none'; form-action https:" />
     <title>Umbra</title>
     <link rel="icon" type="image/png" href="chrome://branding/content/icon32.png" />
     <link rel="stylesheet" href="chrome://browser/content/abouttor/aboutTor.css" />
@@ -30,6 +30,7 @@
         </button>
       </form>
       <p id="provider-note" class="note"></p>
+      <p class="note">Search terms are sent to the provider you choose. Tor normally hides your source IP from a clearnet provider, but the provider still receives your query and connection metadata. Avoid entering source identities or sensitive investigative details. <a href="https://onionsearch.io/privacy/" rel="noreferrer">OnionSearch privacy policy</a>.</p>
 
       <nav id="shortcuts" aria-label="Umbra tools">
         <a class="tile" href="about:preferences#privacy"><b>Privacy</b><span>Security level &amp; protections</span></a>
