@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- Umbra home (replaces about:tor content). Local, no remote resources. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src chrome:; object-src 'none'" />
+    <title>Umbra</title>
+    <link rel="icon" type="image/png" href="chrome://branding/content/icon32.png" />
+    <link rel="stylesheet" href="chrome://browser/content/abouttor/aboutTor.css" />
+    <script src="chrome://browser/content/abouttor/umbraExplore.js"></script>
+    <script src="chrome://browser/content/abouttor/aboutTor.js"></script>
+  </head>
+  <body>
+    <main id="umbra-main">
+      <header id="brand">
+        <img id="umbra-logo" alt="" src="chrome://browser/content/abouttor/umbra-mark.svg" />
+        <h1>Umbra</h1>
+      </header>
+
+      <p id="status" class="status status-unknown" role="status">
+        <span class="dot"></span><span id="status-text">Checking connection…</span>
+      </p>
+
+      <form id="search-form" method="get" rel="noreferrer" action="https://onionsearch.io/search">
+        <label id="provider-label" for="provider">Search with</label>
+        <select id="provider" aria-label="Search provider"></select>
+        <input id="search-input" name="q" autocomplete="off" type="text" placeholder="Search the web and onion services" autofocus="autofocus" />
+        <button id="search-go" type="submit" aria-label="Search">
+          <img alt="" src="chrome://browser/content/abouttor/umbra-search.svg" />
+        </button>
+      </form>
+      <p id="provider-note" class="note"></p>
+
+      <nav id="shortcuts" aria-label="Umbra tools">
+        <a class="tile" href="about:preferences#privacy"><b>Privacy</b><span>Security level &amp; protections</span></a>
+        <a class="tile" href="about:preferences#connection"><b>Connection</b><span>Tor, bridges &amp; circuits</span></a>
+        <a class="tile" href="about:preferences#search"><b>Search</b><span>Providers &amp; custom engines</span></a>
+        <a class="tile" href="about:downloads"><b>Downloads</b><span>Progress, pause &amp; resume</span></a>
+      </nav>
+
+      <section id="explore" aria-labelledby="explore-h">
+        <h2 id="explore-h">Explore</h2>
+        <p class="note">Operator-published onion services. Addresses are checksum-verified at build time.</p>
+        <div id="explore-grid"></div>
+      </section>
+
+      <footer>
+        <p>Umbra is built on Tor Browser. Tor reduces what networks and sites learn about you, but no tool guarantees anonymity. <a href="https://github.com/FAHTHIZ/Umbra/blob/main/docs/THREAT_MODEL.md">Threat model</a></p>
+      </footer>
+    </main>
+  </body>
+</html>

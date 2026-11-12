@@ -1,0 +1,386 @@
+[
+  {
+    "base": {
+      "aliases": [
+        "onionsearch",
+        "os",
+        "onion"
+      ],
+      "classification": "general",
+      "name": "OnionSearch",
+      "urls": {
+        "search": {
+          "base": "https://onionsearch.io/search",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "b763eb1b-2c98-5f7c-bc3e-2e1b31b9fb18",
+    "identifier": "onionsearch",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "duckduckgo",
+        "ddg"
+      ],
+      "classification": "general",
+      "name": "DuckDuckGo",
+      "urls": {
+        "search": {
+          "base": "https://duckduckgo.com/",
+          "params": [],
+          "searchTermParamName": "q"
+        },
+        "suggestions": {
+          "base": "https://duckduckgo.com/ac/",
+          "params": [
+            {
+              "name": "type",
+              "value": "list"
+            }
+          ],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "e649778d-d0fc-58c1-8c8a-fb8d4a87cf21",
+    "identifier": "ddg",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "ddgnoai"
+      ],
+      "classification": "general",
+      "name": "DuckDuckGo (no AI)",
+      "urls": {
+        "search": {
+          "base": "https://noai.duckduckgo.com/",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "e8d360e7-38c8-5c99-9a5e-9cbde4882b53",
+    "identifier": "ddg-noai",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "ddgonion"
+      ],
+      "classification": "general",
+      "name": "DuckDuckGo (.onion)",
+      "urls": {
+        "search": {
+          "base": "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "cc8c42f5-5527-5d89-83e2-fb97b76f8da7",
+    "identifier": "ddg-onion",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "brave",
+        "bs"
+      ],
+      "classification": "general",
+      "name": "Brave Search",
+      "urls": {
+        "search": {
+          "base": "https://search.brave.com/search",
+          "params": [],
+          "searchTermParamName": "q"
+        },
+        "suggestions": {
+          "base": "https://search.brave.com/api/suggest",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "54eeb2fd-71be-526e-adbb-9625c4968582",
+    "identifier": "brave",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "braveonion"
+      ],
+      "classification": "general",
+      "name": "Brave Search (.onion)",
+      "urls": {
+        "search": {
+          "base": "https://search.brave4u7jddbv7cyviptqjc7jusxh72uik7zt6adtckl5f4nwy2v72qd.onion/search",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "0986152d-3688-5877-bc90-e27d4f4b8835",
+    "identifier": "brave-onion",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "startpage",
+        "sp"
+      ],
+      "classification": "general",
+      "name": "Startpage",
+      "urls": {
+        "search": {
+          "base": "https://www.startpage.com/sp/search",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "07d047c6-7901-52ef-bb37-e83035c51fac",
+    "identifier": "startpage",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "startpage-onion"
+      ],
+      "classification": "general",
+      "name": "Startpage (.onion)",
+      "urls": {
+        "search": {
+          "base": "http://startpagel6srwcjlue4zgq3zevrujfaow726kjytqbbjyrswwmjzcqd.onion/sp/search",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "985043db-5d27-59e6-b47e-4286153fac41",
+    "identifier": "startpage-onion",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "ecosia",
+        "eco"
+      ],
+      "classification": "general",
+      "name": "Ecosia",
+      "urls": {
+        "search": {
+          "base": "https://www.ecosia.org/search",
+          "params": [],
+          "searchTermParamName": "q"
+        },
+        "suggestions": {
+          "base": "https://ac.ecosia.org/autocomplete",
+          "params": [
+            {
+              "name": "type",
+              "value": "list"
+            }
+          ],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "85ff6d0d-8876-5bb5-aceb-23319563be10",
+    "identifier": "ecosia",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "google",
+        "g"
+      ],
+      "classification": "general",
+      "name": "Google",
+      "urls": {
+        "search": {
+          "base": "https://www.google.com/search",
+          "params": [],
+          "searchTermParamName": "q"
+        },
+        "suggestions": {
+          "base": "https://www.google.com/complete/search",
+          "params": [
+            {
+              "name": "client",
+              "value": "firefox"
+            }
+          ],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "11a652f4-c479-5cd5-b2f0-aadfd619e75e",
+    "identifier": "google",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "mojeek"
+      ],
+      "classification": "general",
+      "name": "Mojeek",
+      "urls": {
+        "search": {
+          "base": "https://www.mojeek.com/search",
+          "params": [],
+          "searchTermParamName": "q"
+        }
+      }
+    },
+    "id": "4e3f1044-61b2-528c-8330-175c10b2dcf8",
+    "identifier": "mojeek",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "base": {
+      "aliases": [
+        "wikipedia",
+        "w"
+      ],
+      "classification": "unknown",
+      "name": "Wikipedia (en)",
+      "urls": {
+        "search": {
+          "base": "https://en.wikipedia.org/wiki/Special:Search",
+          "params": [],
+          "searchTermParamName": "search"
+        }
+      }
+    },
+    "id": "eb1133a1-ff15-5086-807e-e92ee7eb2c19",
+    "identifier": "wikipedia",
+    "recordType": "engine",
+    "variants": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        }
+      }
+    ]
+  },
+  {
+    "recordType": "defaultEngines",
+    "globalDefault": "onionsearch",
+    "globalDefaultPrivate": "onionsearch"
+  },
+  {
+    "recordType": "engineOrders",
+    "orders": [
+      {
+        "environment": {
+          "allRegionsAndLocales": true
+        },
+        "order": [
+          "onionsearch",
+          "ddg",
+          "ddg-noai",
+          "ddg-onion",
+          "brave",
+          "brave-onion",
+          "startpage",
+          "startpage-onion",
+          "ecosia",
+          "google",
+          "mojeek",
+          "wikipedia"
+        ]
+      }
+    ]
+  }
+]
