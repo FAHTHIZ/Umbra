@@ -28,11 +28,11 @@ Feasibility: Needs a separate profile and process tree. Mixing it with Tor brows
 Security implications: A high risk of user confusion. It needs a strong visual distinction and must never share storage with Tor browsing.
 Decision: Waiting for the owner's decision.
 
-## Umbra Access Engine (local ad/tracker blocking + page inspection)  (status: proposed, code landed in `overlay/access/`, not wired into builds)
+## Umbra Access Engine (status: approved, integration in progress)
 Requested by: owner (commits 85e43f0, bce5c0e, 2087cf7) · Date: 2026-11-12
-Feasibility: High. Parent-process module + frame script; no network, no persistence (good invariants).
-Architectural consequences: Needs registration (resource:///modules/umbra/, chrome://browser/content/umbra-access/), a toolbar button and a dashboard page; the build must copy `overlay/access/` into browser/omni.ja and register an observer at startup.
-Security / privacy implications: **Web-observable.** Blocking third-party requests is detectable by sites (e.g. a script checks whether `googletagmanager` loaded), which separates Umbra users from the Tor Browser crowd. Tor Browser deliberately ships no ad blocker for this reason ([Tor Browser design](https://2019.www.torproject.org/projects/torbrowser/design/#philosophy)). Frame scripts in content also add attack surface.
+Feasibility: High. Native parent-process module, content frame script and chrome dashboard. The build pipeline now packages the modules and registers the first-window startup category. Unit tests cover packaging; browser-level verification remains outstanding.
+Architectural consequences: `overlay/access/` is packaged into browser omni.ja at `modules/umbra/` and `chrome/browser/content/umbra-access/`; BrowserComponents.manifest registers `UmbraAccessEngine.init`. A toolbar button opens the local dashboard.
+Security / privacy implications: **Web-observable when filtering or cosmetic cleanup is enabled.** Blocking third-party requests and DOM changes can make users more distinguishable. Therefore page inspection is on by default, while network filtering and cosmetic cleanup default off. The frame script runs in the content process and only reports bounded classifications; no URL, onion hostname, page text or form values are sent to browser chrome.
 Performance implications: Positive on ad-heavy pages (fewer requests), small per-request overhead.
-Engineering recommendation: Ship it **off by default** (`umbra.access.enabled=false`), with a clear dashboard note: "Turning this on makes you more distinguishable from other Tor users." The page-inspection part (login/checkout/phishing indicators, no blocking) has no web-visible effect and can default on. Add parity and leak tests for both states before release.
-Decision: awaiting owner.
+Engineering decision: Implemented with privacy-preserving defaults: `umbra.access.enabled=false` and `umbra.access.cosmetic=false`. The dashboard warns that enabling either can affect fingerprintability. No paywall, authentication or payment authorization bypass is included. Run parity and leak tests in both states before release.
+Decision: Approved by owner on 2026-11-12. Continue integration and verification; do not mark production-ready until the acceptance tests in `docs/UMBRA_ACCESS_ENGINE.md` pass.
