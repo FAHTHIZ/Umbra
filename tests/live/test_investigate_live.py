@@ -32,9 +32,22 @@ def test_investigate_mode_over_real_tor(umbra_app):
             time.sleep(3)
         assert stage == "Bootstrapped", f"Tor did not bootstrap in Investigate mode (stage={stage})"
         assert chrome_eval(d, f"return {INV}.guardStatus().installed;") is True
-        d.set_page_load_timeout(120)
-        d.get("https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/")
-        assert "duckduckgogg42" in d.current_url
+        d.set_page_load_timeout(150)
+        onion = "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/"
+        loaded, errors = False, []
+        for _ in range(3):  # first onion circuits are often slow; retry rather than weaken anything
+            try:
+                d.get(onion)
+                loaded = "duckduckgogg42" in d.current_url
+            except Exception as e:
+                errors.append(str(e).splitlines()[0][:160])
+            if loaded:
+                break
+        if not loaded:
+            log = chrome_eval(d, f"return {INV}.getLog();")
+            blocked = [(r["host"], r.get("layer"), r.get("type")) for r in log if r.get("blocked")]
+            onion_reqs = [(r["url"][:80], r.get("status")) for r in log if r["host"].endswith(".onion")]
+            pytest.fail(f"onion did not load: {errors}; blocked={blocked}; onion requests={onion_reqs}")
         try:
             d.get("https://check.torproject.org/")
         except Exception:
