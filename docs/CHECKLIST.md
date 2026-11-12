@@ -47,7 +47,15 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - 📋 Arti (follows upstream)
 - 📋 Separate non-Tor "ordinary" profile (requires product decision; see IDEAS.md)
 
-## Access Engine\n- 🧪 Local page inspection (login, registration, paywall, checkout, cookie-dialog metadata) — `overlay/access/content-frame.js`\n- 🧪 Local payment-provider and suspicious-destination indicators — no credentials or card values read\n- 🧪 Ad/tracker host filtering and cosmetic cleanup — opt-in to preserve Tor fingerprint parity\n- 🧪 Browser packaging and startup registration — `tests/unit/test_build_tools.py`; fresh-browser launch verification pending\n- 📋 Full ABP/uBlock ruleset compatibility and signed local rule updates\n- 📋 Controlled HTTPS + v3 onion end-to-end tests with no external onion metadata leakage\n\n## Security & privacy
+## Access Engine
+- 🧪 Local page inspection (login, registration, paywall, checkout, cookie-dialog metadata) — `overlay/access/content-frame.js`
+- 🧪 Local payment-provider and suspicious-destination indicators — no credentials or card values read
+- 🧪 Ad/tracker host filtering and cosmetic cleanup — opt-in to preserve Tor fingerprint parity
+- 🧪 Browser packaging and startup registration — `tests/unit/test_build_tools.py`; fresh-browser launch verification pending
+- 📋 Full ABP/uBlock ruleset compatibility and signed local rule updates
+- 📋 Controlled HTTPS + v3 onion end-to-end tests with no external onion metadata leakage
+
+## Security & privacy
 - ✅ Fingerprint parity with upstream across 500+ security prefs — `tests/integration/test_parity.py`
 - ✅ Prefs-layer denylist — `tests/unit/test_prefs_policy.py`
 - ✅ WebRTC unavailable — `test_webrtc_unavailable_to_content`
