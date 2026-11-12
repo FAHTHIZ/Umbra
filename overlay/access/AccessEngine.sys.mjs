@@ -64,7 +64,7 @@ function notifyStateChanged() {
 }
 
 function isEnabled() {
-  return readBoolPref("umbra.access.enabled", true);
+  return readBoolPref("umbra.access.enabled", false);
 }
 
 function categoryEnabled(category) {
