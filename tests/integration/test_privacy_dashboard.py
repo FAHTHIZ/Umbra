@@ -47,3 +47,17 @@ def test_dashboard_csp_blocks_network(drv):
     drv.get(URL)
     csp = drv.execute_script("return document.querySelector('meta[http-equiv=Content-Security-Policy]').content")
     assert "connect-src 'none'" in csp and "default-src 'none'" in csp
+
+
+def test_circuit_section_and_actions(drv):
+    drv.get(URL)
+    time.sleep(1)
+    # Tor isn't running in tests: no circuit is known, and the page says so instead of inventing one.
+    c = drv.execute_script("return window.UmbraPrivacy.renderCircuit()")
+    assert c["hops"] == []
+    assert "No circuit yet" in drv.find_element("id", "circuit-note").text
+    assert drv.find_element("id", "new-identity").is_displayed()
+    has = chrome_eval(drv, "const {TorDomainIsolator: I} = ChromeUtils.importESModule("
+                           "'moz-src:///toolkit/components/tor-launcher/TorDomainIsolator.sys.mjs');"
+                           "return [typeof I.getCircuits, typeof I.newCircuitForBrowser];")
+    assert has == ["function", "function"]

@@ -159,3 +159,22 @@ export function evaluate(s) {
     ],
   };
 }
+
+/**
+ * Describe a Tor circuit (NodeData[] from TorDomainIsolator, guard → exit) for display.
+ * For onion sites the last hop is a relay, and the connection stays inside Tor.
+ */
+export function describeCircuit(nodes, domain) {
+  const onion = typeof domain === "string" && domain.endsWith(".onion");
+  if (!Array.isArray(nodes) || !nodes.length) {
+    return { domain, onion, hops: [], text: "No circuit yet. Load a page in a tab to see its circuit." };
+  }
+  const hops = nodes.map((n, i) => {
+    let role = "Relay";
+    if (i === 0) role = n.bridgeType !== null && n.bridgeType !== undefined ? `Bridge${n.bridgeType ? " (" + n.bridgeType + ")" : ""}` : "Guard";
+    else if (i === nodes.length - 1 && !onion) role = "Exit";
+    return { role, region: n.regionCode || "unknown", ip: (n.ipAddrs || [])[0] || "" };
+  });
+  if (onion) hops.push({ role: "Onion service", region: "—", ip: "" });
+  return { domain, onion, hops, text: hops.map(h => `${h.role} ${h.region}`).join(" → ") };
+}

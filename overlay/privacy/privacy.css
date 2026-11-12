@@ -25,3 +25,8 @@ button { font: inherit; font-size: 13.5px; padding: 6px 12px; border-radius: 8px
 button:hover { border-color: var(--accent); }
 .note { color: var(--mute); font-size: 14px; margin-top: 28px; }
 .meta { font-size: 12.5px; }
+
+.circuit { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.circuit li { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; font-size: 13px; }
+.circuit li b { display: block; font-size: 12px; color: var(--mute); font-weight: 500; }
+.circuit li + li::before { content: "→"; margin: 0 8px 0 -4px; color: var(--mute); }

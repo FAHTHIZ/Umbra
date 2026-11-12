@@ -70,3 +70,15 @@ test("turning off release notices asks for review", () => {
   assert.equal(row(evaluate(withPrefs({ "umbra.update.notify": false })), "Release notices").status, "warn");
   assert.equal(row(evaluate(SAFE), "Release notices").status, "ok");
 });
+
+import { describeCircuit } from "../../overlay/privacy/privacy-checks.mjs";
+
+test("describeCircuit: clearnet, bridge, onion, empty", () => {
+  const n = (r, b = null) => ({ fingerprint: "F", ipAddrs: ["192.0.2.1"], bridgeType: b, regionCode: r });
+  assert.equal(describeCircuit([n("DE"), n("NL"), n("US")], "example.com").text, "Guard DE → Relay NL → Exit US");
+  assert.equal(describeCircuit([n("DE", "obfs4"), n("NL"), n("US")], "example.com").hops[0].role, "Bridge (obfs4)");
+  assert.equal(describeCircuit([n("DE", ""), n("NL")], "x.org").hops[0].role, "Bridge");
+  const o = describeCircuit([n("DE"), n("NL"), n("SE")], "abc.onion");
+  assert.equal(o.text, "Guard DE → Relay NL → Relay SE → Onion service —");
+  assert.equal(describeCircuit([], "a.com").hops.length, 0);
+});
