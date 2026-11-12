@@ -1,0 +1,61 @@
+{
+ "machine": {
+  "cpu_count": 2,
+  "platform": "Linux-6.1.155-x86_64-with-glibc2.43",
+  "mem_gb": 7.8
+ },
+ "date": "2026-11-12",
+ "runs": 10,
+ "umbra": {
+  "startup_ms": {
+   "median": 816.9,
+   "min": 765.4,
+   "max": 873.9,
+   "n": 10
+  },
+  "warm_ms": {
+   "median": 515.4,
+   "min": 514.8,
+   "max": 615.1,
+   "n": 10
+  },
+  "rss_mb": {
+   "median": 730.7,
+   "min": 729.6,
+   "max": 732.8,
+   "n": 3
+  },
+  "home_load_ms": {
+   "median": 44,
+   "min": 22,
+   "max": 64,
+   "n": 3
+  }
+ },
+ "upstream_tor_browser": {
+  "startup_ms": {
+   "median": 817.1,
+   "min": 815.4,
+   "max": 917.5,
+   "n": 10
+  },
+  "warm_ms": {
+   "median": 565.0,
+   "min": 515.2,
+   "max": 615.3,
+   "n": 10
+  },
+  "rss_mb": {
+   "median": 737.0,
+   "min": 735.6,
+   "max": 738.2,
+   "n": 3
+  },
+  "home_load_ms": {
+   "median": 99,
+   "min": 86,
+   "max": 120,
+   "n": 3
+  }
+ }
+}

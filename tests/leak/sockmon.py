@@ -37,6 +37,10 @@ def _is_local(ip):
 
 
 class SockMon:
+    """Note: watches *every* process running from app_dir, so stray instances
+    left by an earlier crashed run are watched too (which only makes the leak
+    tests stricter)."""
+
     def __init__(self, app_dir, interval=0.02):
         self.app = os.path.realpath(app_dir)
         self.interval = interval
