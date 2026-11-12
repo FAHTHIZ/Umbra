@@ -75,6 +75,9 @@ def test_local_page_inspection_runs_inside_browser(umbra_app):
         assert report["paywallDetected"] is True
         assert report["checkoutDetected"] is True
         assert report["cookieDialogDetected"] is True
+        assert "url" not in report
+        assert "hostname" not in report
+        assert isinstance(report["isOnion"], bool)
     finally:
         if driver is not None:
             stop(driver)
