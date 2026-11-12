@@ -13,7 +13,7 @@ Umbra Access Engine is an in-browser capability integrated into the existing Tor
 
 | File | Responsibility |
 |---|---|
-| `overlay/access/FilterRules.sys.mjs` | Small local starter set of ad/tracker host rules, onion-host recognition and payment-provider identification |
+| `overlay/access/FilterRules.sys.mjs` | Small local starter set of ad/tracker host rules, onion-host recognition and payment-provider identification |\n| `overlay/access/AccessSignals.sys.mjs` | Pure local helpers for payment URI scheme classification and meta-refresh redirect signals |
 | `overlay/access/AccessEngine.sys.mjs` | Parent-process request observer, toolbar entry point, in-memory counters, settings and sanitized page-report receiver |
 | `overlay/access/content-frame.js` | Bounded top-frame DOM inspection and conservative cosmetic cleanup |
 | `overlay/access/dashboard.html` | Local browser-chrome dashboard |
@@ -32,7 +32,7 @@ Umbra Access Engine is an in-browser capability integrated into the existing Tor
 - OnionSearch receives only a query explicitly typed and submitted by the user. The current page address and contents are never appended.
 - Cookie dialogs are detected, never automatically accepted or rejected.
 - Login, registration, paywall and checkout detection is heuristic and can be wrong.
-- Payment-provider recognition identifies known hostnames; it does not authenticate merchants, authorize payments or prove that a destination is safe.
+- Payment-provider recognition identifies known hostnames; it does not authenticate merchants, authorize payments or prove that a destination is safe.\n- Crypto-payment link inspection records only a recognized URI scheme (`bitcoin`, `ethereum`, `lightning`, `monero`); it never retains or reports the address.\n- Redirect inspection currently analyzes HTML `meta refresh` targets for cross-origin changes, HTTP downgrade, credential-bearing URLs, IP-literal destinations and non-web schemes. It does not cover every HTTP 3xx or JavaScript-driven redirect.
 - Suspicious checkout indicators are warnings, not fraud verdicts.
 - No authentication or payment control is bypassed.
 
@@ -49,7 +49,7 @@ Blocking third-party resources and modifying the DOM are observable by websites.
 ## Current limitations
 
 - The built-in domain list is a small starter set, not EasyList/EasyPrivacy and not a complete content-blocking engine.
-- The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates.
+- The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates. Ghostery Adblocker is the selected candidate for a later pinned MPL-2.0 integration, but is not bundled in this build.
 - Cosmetic cleanup recognizes only a narrow set of obvious promotional overlay patterns.
 - The reader-view and alternative-source workflow is not a paywall bypass. It only uses content already publicly available or sources the user explicitly searches for.
 - The toolbar and dashboard are packaged by the overlay build. Browser smoke tests now cover local page inspection, toolbar registration and dashboard loading; their CI execution and broader UI verification remain outstanding.
