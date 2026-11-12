@@ -71,7 +71,7 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 
 ## Platform modules
 - ✅ Umbra Search, ✅ Umbra Explore (v1)
-- 🟡 Umbra Privacy (upstream panes linked); 📋 dedicated dashboard
+- ✅ Umbra Privacy dashboard (Tools → Umbra Privacy; live, read-only, local) — `tests/umbra/privacy-checks.test.mjs`, `tests/integration/test_privacy_dashboard.py`
 - 🟡 Umbra Vault (bookmarks/passwords); 📋 encrypted export
 - 🟡 Umbra Downloads
 - 🧪 Umbra Access Engine (owner-led): packaged, starts at first window, toolbar button, local dashboard; network filtering **off by default** — `tests/integration/test_access_engine*.py`, `tests/umbra/*.test.mjs`. Local page inspection runs in every page (chrome-side, not visible to content); see `docs/UMBRA_ACCESS_ENGINE.md`

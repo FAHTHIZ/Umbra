@@ -1,0 +1,27 @@
+:root { color-scheme: light dark; --bg:#0d0f14; --card:#151922; --line:#262c3a; --fg:#e8eaf0; --mute:#9aa3b5; --ok:#3fcf8e; --warn:#f5b041; --bad:#ff6b6b; --accent:#8b7cff; }
+@media (prefers-color-scheme: light) { :root { --bg:#f6f7fb; --card:#fff; --line:#e3e6ee; --fg:#141824; --mute:#5b6478; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font: 15px/1.5 system-ui, sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 40px 24px 64px; }
+header { display:flex; gap:16px; align-items:center; margin-bottom: 28px; }
+header > div { flex:1; }
+h1 { margin:0; font-size: 26px; letter-spacing: -0.01em; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); margin: 0 0 12px; }
+.sub { margin: 2px 0 0; color: var(--mute); }
+.pill { padding: 6px 12px; border-radius: 999px; font-weight: 600; font-size: 13px; border:1px solid var(--line); white-space: nowrap; }
+.pill.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.pill.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
+.pill.bad { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+.group { background: var(--card); border:1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
+.row { display:grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 10px 0; border-top: 1px solid var(--line); }
+.row:first-of-type { border-top: 0; }
+.row .label { font-weight: 600; }
+.row .detail { grid-column: 1 / -1; color: var(--mute); font-size: 13.5px; }
+.row .value { text-align:right; font-variant-numeric: tabular-nums; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:8px; vertical-align: middle; }
+.dot.ok { background: var(--ok); } .dot.warn { background: var(--warn); } .dot.bad { background: var(--bad); } .dot.info { background: var(--accent); }
+.actions { margin-top: 10px; display:flex; flex-wrap: wrap; gap: 8px; }
+button { font: inherit; font-size: 13.5px; padding: 6px 12px; border-radius: 8px; border:1px solid var(--line); background: transparent; color: var(--fg); cursor: pointer; }
+button:hover { border-color: var(--accent); }
+.note { color: var(--mute); font-size: 14px; margin-top: 28px; }
+.meta { font-size: 12.5px; }

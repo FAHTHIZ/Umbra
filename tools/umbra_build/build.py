@@ -107,6 +107,36 @@ def patch_access_omni(omni: Omni) -> None:
     omni.edit_text("components/components.manifest", add_category, "Umbra Access Engine startup")
 
 
+PRIVACY_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraPrivacy.sys.mjs UmbraPrivacy.init"
+)
+
+
+def add_first_window_category(omni: Omni, entry: str, why: str) -> None:
+    """Append one browser-first-window-ready line to components.manifest (idempotent)."""
+    def edit(text: str) -> str:
+        if entry in text:
+            return text
+        if "category browser-first-window-ready" not in text:
+            raise PatchError("components.manifest has no browser-first-window-ready entries; upstream changed")
+        return text.rstrip("\n") + "\n" + entry + "\n"
+    omni.edit_text("components/components.manifest", edit, why)
+
+
+def patch_privacy_omni(omni: Omni) -> None:
+    """Umbra Privacy dashboard -> chrome://browser/content/umbra-privacy/, Tools menu hook."""
+    src = os.path.join(OVERLAY, "privacy")
+    for name in sorted(os.listdir(src)):
+        with open(os.path.join(src, name), "rb") as f:
+            data = f.read()
+        if name.endswith(".sys.mjs"):
+            omni.put("modules/umbra/" + name, data, "Umbra Privacy module")
+        else:
+            omni.put("chrome/browser/content/browser/umbra-privacy/" + name, data, "Umbra Privacy dashboard")
+    add_first_window_category(omni, PRIVACY_CATEGORY, "Umbra Privacy startup")
+
+
 def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     home = os.path.join(OVERLAY, "home")
     for f in sorted(os.listdir(home)):
@@ -126,6 +156,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     prefs = prefs.replace("@UMBRA_VERSION@", UMBRA_VERSION).replace("@UPSTREAM_VERSION@", upstream_version)
     omni.put("defaults/preferences/umbra-prefs.js", prefs, "Umbra prefs layer")
     patch_access_omni(omni)
+    patch_privacy_omni(omni)
 
 
 class PatchError(RuntimeError):

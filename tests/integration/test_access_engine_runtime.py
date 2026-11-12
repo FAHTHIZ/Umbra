@@ -22,7 +22,8 @@ def test_registered_at_first_window(drv):
     r = json.loads(chrome_eval(drv, """
       const out=[]; for (const c of Services.catMan.enumerateCategory('browser-first-window-ready')) out.push(c.entry+' '+c.value);
       return JSON.stringify(out.filter(x=>x.includes('umbra')));"""))
-    assert r == ["resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"]
+    assert r.count("resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init") == 1
+    assert r.count("resource:///modules/umbra/UmbraPrivacy.sys.mjs UmbraPrivacy.init") == 1
 
 
 def test_off_by_default_and_local_only(drv):
