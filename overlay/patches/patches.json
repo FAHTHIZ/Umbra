@@ -1,0 +1,13 @@
+{
+  "comment": "Minimal source patches applied to upstream omni.ja JavaScript. Each 'find' must match EXACTLY once or the build fails, so upstream changes are never silently mis-patched. Keep this list tiny and reviewed.",
+  "patches": [
+    {
+      "id": "umbra-update-disable",
+      "archive": "Browser/omni.ja",
+      "file": "modules/UpdateServiceStub.sys.mjs",
+      "why": "Tor Browser's MAR updater would replace Umbra with stock Tor Browser. Umbra ships rebuilt releases instead (docs/RELEASE.md). Enterprise policies cannot be used: activating any policy disables Web Serial and changes the web-visible fingerprint versus upstream.",
+      "find": "  get updateDisabled() {\n    return (\n",
+      "replace": "  get updateDisabled() {\n    return (\n      Services.prefs.getBoolPref(\"umbra.update.disabled\", false) ||\n"
+    }
+  ]
+}

@@ -93,11 +93,29 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     omni.put("defaults/preferences/umbra-prefs.js", prefs, "Umbra prefs layer")
 
 
+class PatchError(RuntimeError):
+    pass
+
+
+def apply_source_patches(omni: Omni, archive: str) -> None:
+    spec = json.load(open(os.path.join(OVERLAY, "patches", "patches.json")))
+    for p in spec["patches"]:
+        if p["archive"] != archive:
+            continue
+        src = omni.text(p["file"])
+        n = src.count(p["find"])
+        if n != 1:
+            raise PatchError(f"patch {p['id']}: anchor found {n} times in {p['file']} (expected 1); upstream changed?")
+        omni.put(p["file"], src.replace(p["find"], p["replace"]), "patch " + p["id"])
+
+
 def patch_tree(app: str) -> None:
-    """Files outside omni.ja: policies, window icons, launchers."""
-    dist = os.path.join(app, "Browser", "distribution")
-    os.makedirs(dist, exist_ok=True)
-    shutil.copy(os.path.join(OVERLAY, "policies", "policies.json"), os.path.join(dist, "policies.json"))
+    """Files outside omni.ja: window icons, launchers, notices.
+
+    NOTE: Umbra deliberately ships NO enterprise policies.json. Activating any
+    policy flips dom.webserial.enabled and makes Umbra fingerprintable vs
+    upstream Tor Browser (caught by tests/integration/test_parity.py).
+    """
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
     for size in (16, 32, 48, 64, 128):
         with open(os.path.join(icons, f"default{size}.png"), "wb") as f:
@@ -155,6 +173,7 @@ def build(platform: str = "linux-x86_64", cache: str = None, out_dir: str = None
             patcher(o)
         else:
             patch_browser_omni(o, lock["version"])
+        apply_source_patches(o, rel)
         o.save()
         report["changes"][rel] = o.changed
     patch_tree(app)
