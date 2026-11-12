@@ -70,6 +70,7 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 |---|---|
 | Browser (tabs, history, bookmarks, downloads, media, fullscreen, passwords, extensions) | Provided by the Tor Browser engine |
 | Umbra home page, branding, provider switcher | ✅ tested |
+| Umbra Access Engine (local page inspection; opt-in ad/tracker + cosmetic filtering) | 🧪 packaged; browser-level and onion tests pending |
 | OnionSearch default + 12 providers + custom engines | ✅ tested |
 | Umbra Explore (curated onions, checksum-verified) | ✅ tested |
 | Tor routing, remote DNS, fail-closed, per-site circuits | ✅ leak-tested |
