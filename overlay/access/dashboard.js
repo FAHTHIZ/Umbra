@@ -59,6 +59,10 @@ function render() {
     addFinding(findings, "Payment provider identified: " + provider, "Identified from local script, iframe or form destination metadata.");
     found = true;
   }
+  for (const scheme of page.paymentUriTypes || []) {
+    addFinding(findings, "Payment URI detected: " + scheme + ":", "Only the URI scheme is retained; the payment address itself is not collected.");
+    found = true;
+  }
   for (const indicator of page.suspiciousIndicators || []) {
     const descriptions = {
       "insecure-payment-action": "A card-related form appears to submit over ordinary HTTP.",
@@ -66,6 +70,18 @@ function render() {
       "invalid-payment-destination": "A card-related form has an invalid destination."
     };
     addFinding(findings, "Checkout warning", descriptions[indicator] || "Indicator: " + indicator, true);
+    found = true;
+  }
+  for (const indicator of page.redirectIndicators || []) {
+    const descriptions = {
+      "redirect-non-web-scheme": "A meta-refresh target uses a non-web scheme.",
+      "redirect-credentials-in-url": "A meta-refresh target embeds a username or password in its URL.",
+      "redirect-downgrade": "An HTTPS page contains a meta-refresh target that downgrades to ordinary HTTP.",
+      "redirect-to-ip-literal": "A meta-refresh target points directly to an IP address.",
+      "cross-origin-meta-refresh": "A meta-refresh target changes the page origin. This may be legitimate.",
+      "invalid-meta-refresh-target": "A meta-refresh target could not be parsed."
+    };
+    addFinding(findings, "Redirect indicator", descriptions[indicator] || "Unclassified redirect indicator.", true);
     found = true;
   }
   if (!found) addFinding(findings, "No supported indicators detected", "This does not prove that the page is safe or that no tracker is present.");
