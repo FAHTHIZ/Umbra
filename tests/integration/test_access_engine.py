@@ -41,9 +41,14 @@ def test_local_page_inspection_runs_inside_browser(umbra_app):
     server, thread, url = _start_fixture_server()
     driver = None
     try:
-        driver = start(umbra_app, tor_provider="none")
+        # Test-only: reach the loopback fixture directly. Tor Browser hijacks
+        # localhost into the SOCKS proxy, which isn't running in this test.
+        driver = start(umbra_app, tor_provider="none", prefs={
+            "network.proxy.type": 0,
+            "network.proxy.allow_hijacking_localhost": False,
+            "dom.security.https_only_mode": False,
+        })
         report = chrome_eval(driver, """
-          const { Services } = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
           const { UmbraAccessEngine } = ChromeUtils.importESModule("resource:///modules/umbra/AccessEngine.sys.mjs");
           return await new Promise(resolve => {
             let finished = false;
@@ -64,7 +69,7 @@ def test_local_page_inspection_runs_inside_browser(umbra_app):
             };
             const timer = setTimeout(() => finish(null), 10000);
             Services.obs.addObserver(observer, "umbra-access-state-changed");
-            gBrowser.selectedBrowser.loadURI(arguments[0], {
+            gBrowser.selectedBrowser.loadURI(Services.io.newURI(arguments[0]), {
               triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()
             });
           });
@@ -90,9 +95,8 @@ def test_access_dashboard_is_packaged_and_toolbar_is_registered(umbra_app):
     driver = start(umbra_app, tor_provider="none")
     try:
         result = chrome_eval(driver, """
-          const { Services } = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
-          const { CustomizableUI } = ChromeUtils.importESModule("resource:///modules/CustomizableUI.sys.mjs");
-          const widgetRegistered = Boolean(CustomizableUI.getWidget("umbra-access-toolbar-button"));
+          const { CustomizableUI } = ChromeUtils.importESModule("moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs");
+          const widgetRegistered = CustomizableUI.getWidget("umbra-access-toolbar-button")?.provider === CustomizableUI.PROVIDER_API;
           const tab = gBrowser.addTab("chrome://browser/content/umbra-access/dashboard.html", {
             triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal()
           });
