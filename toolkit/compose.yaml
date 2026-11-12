@@ -98,9 +98,10 @@ services:
         # Gooey (the optional wxPython GUI) is skipped; DarkSpider falls back to argparse without it.
         INSTALL: grep -vi '^gooey' requirements.txt > /tmp/req.txt && pip install --no-cache-dir -r /tmp/req.txt
     image: umbra-toolkit/darkspider:44835a0
-    tty: true           # DarkSpider switches to its (omitted) GUI when stdout is not a terminal
     working_dir: /src   # DarkSpider loads res/keywords.yar relative to its source tree; output goes to /out
-    entrypoint: ["umbra-forward", "python3", "/src/darkspider.py", "--port", "9050", "--folder", "/out/darkspider"]
+    # DarkSpider switches to its GUI (omitted here) when stdout is not a terminal, so run it under a pty.
+    entrypoint: ["umbra-forward", "python3", "-c",
+      "import os, pty, sys; st = pty.spawn(['python3', '/src/darkspider.py', '--port', '9050', '--folder', '/out/darkspider'] + sys.argv[1:]); sys.exit(os.waitstatus_to_exitcode(st))"]
 
   onionscout:
     <<: *hardening
