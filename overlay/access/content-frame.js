@@ -23,9 +23,9 @@
       enabled: Boolean(message.data && message.data.enabled),
       cosmetic: Boolean(message.data && message.data.cosmetic)
     };
-    if (settings.enabled && settings.cosmetic) {
-      scheduleScan();
-    }
+    // Re-scan on both enable and disable so previously hidden elements/styles
+    // are restored immediately when the user turns cosmetic cleanup off.
+    scheduleScan();
   });
 
   function isSensitiveElement(element) {
@@ -35,6 +35,20 @@
     return Boolean(element.querySelector(
       'input[type="password"], input[autocomplete^="cc-"], input[name*="cardnumber" i], form[action*="checkout" i]'
     ));
+  }
+
+  function restoreCosmetics(doc) {
+    const style = doc.getElementById("umbra-access-cosmetic-style");
+    if (style) {
+      style.remove();
+    }
+    for (const element of doc.querySelectorAll("[data-umbra-hidden='promotion']")) {
+      element.hidden = false;
+      element.removeAttribute("data-umbra-hidden");
+    }
+    if (styledDocument === doc) {
+      styledDocument = null;
+    }
   }
 
   function installCosmeticStyle(doc) {
@@ -184,6 +198,8 @@
 
     if (settings.enabled && settings.cosmetic) {
       installCosmeticStyle(doc);
+    } else {
+      restoreCosmetics(doc);
     }
     const removedOverlays = hideKnownPromotionalOverlays(doc);
     const auth = detectAuthentication(doc);
