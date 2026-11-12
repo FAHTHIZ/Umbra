@@ -2,6 +2,8 @@
 
 Status: **experimental native integration, packaged by the build pipeline; not yet production-certified**
 
+See [ACCESS_ENGINE_RESEARCH.md](ACCESS_ENGINE_RESEARCH.md) for upstream project, compatibility and licensing decisions.
+
 Umbra Access Engine is an in-browser capability integrated into the existing Tor Browser-based build. It has two distinct modes:
 
 - **Local page inspection:** enabled by default. It reads bounded DOM structure and metadata to identify login/registration interfaces, likely paywalls, checkout UI, cookie dialogs, known payment-provider hosts and suspicious payment-form destinations. It does not read input values, passwords, card numbers, cookies, storage or authentication tokens.
