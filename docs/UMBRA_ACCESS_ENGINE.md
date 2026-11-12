@@ -52,7 +52,7 @@ Blocking third-party resources and modifying the DOM are observable by websites.
 - The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates.
 - Cosmetic cleanup recognizes only a narrow set of obvious promotional overlay patterns.
 - The reader-view and alternative-source workflow is not a paywall bypass. It only uses content already publicly available or sources the user explicitly searches for.
-- The toolbar and dashboard are packaged by the overlay build. A successful source-level package test does not prove the resulting browser launches or that every UI action works.
+- The toolbar and dashboard are packaged by the overlay build. Browser smoke tests now cover local page inspection, toolbar registration and dashboard loading; their CI execution and broader UI verification remain outstanding.
 - No live onion-site compatibility run has yet been recorded specifically for the Access Engine.
 - No security audit has certified this build for high-risk whistleblower use.
 
