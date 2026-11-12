@@ -80,7 +80,8 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Privacy dashboard (Tools → Umbra Privacy) | ✅ tested |
 | Umbra Source (SecureDrop directory, isolated Safest-level instance) | 🧪 experimental, tested |
 | Umbra Vault (encrypted bookmarks/logins export, AES-256-GCM via NSS) | 🧪 experimental, tested |
-| Desk, Assistant | 📋 planned |
+| Umbra Desk (memory-only research notes, tab overview, close-and-forget) | 🧪 experimental, tested |
+| Assistant | 📋 research |
 | Linux aarch64 | ✅ CI-tested on native arm64 |
 | Windows x86-64 (portable zip) | 🧪 experimental, CI-tested |
 | macOS / Android | 📋 planned |

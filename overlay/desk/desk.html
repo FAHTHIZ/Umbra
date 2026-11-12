@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Umbra Desk</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="desk.css">
+  <script type="module" src="desk.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Umbra Desk</h1>
+        <p class="sub">A research workspace that leaves nothing behind. Notes stay in memory only. They're never saved to disk and are cleared on restart or New Identity.</p>
+      </div>
+    </header>
+
+    <section class="group">
+      <div class="toolbar">
+        <h2>Notes</h2>
+        <span class="meta" id="note-count"></span>
+      </div>
+      <textarea id="notes" spellcheck="false" placeholder="Write here. Copy anything you want to keep: it's gone when Umbra closes."></textarea>
+      <div class="row">
+        <button id="copy-notes">Copy notes</button>
+        <button id="clear-notes">Clear notes</button>
+      </div>
+    </section>
+
+    <section class="group">
+      <div class="toolbar">
+        <h2 id="tabs-title">Open tabs</h2>
+        <div class="row">
+          <button id="refresh">Refresh</button>
+          <button id="links-to-notes">Add links to notes</button>
+        </div>
+      </div>
+      <div id="tabs"></div>
+    </section>
+
+    <section class="group warnbox">
+      <h2>Done researching?</h2>
+      <p>Close and forget runs Tor Browser's <b>New Identity</b>. It closes every tab, clears cookies, history and these notes, and uses new Tor circuits.</p>
+      <button id="forget" class="danger">Close and forget</button>
+    </section>
+  </main>
+</body>
+</html>
