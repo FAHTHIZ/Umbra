@@ -26,6 +26,10 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#repository-layout). Most contrib
 | Change a preference | `overlay/prefs/umbra-prefs.js` | `pytest tests/unit/test_prefs_policy.py tests/integration/test_parity.py` |
 | Patch upstream JS | `overlay/patches/patches.json` (anchored find/replace) | rebuild; the build fails if the anchor drifts |
 
+## Adding a module
+
+See [docs/MODULE_GUIDE.md](docs/MODULE_GUIDE.md) for the file layout, startup hook, ESR 153 gotchas and the required tests.
+
 ## The rules
 
 1. **Fingerprint parity.** Don't change anything a website can observe: prefs in the denylisted namespaces, fonts, enabled web APIs, window sizing. `tests/integration/test_parity.py` must stay green. If you think an exception is justified, open an entry in [docs/IDEAS.md](docs/IDEAS.md) first.
