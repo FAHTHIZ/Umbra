@@ -38,10 +38,11 @@ Umbra inherits Tor Browser's design and threat model ([Tor Browser design docume
 2. **Default search provider trust.** OnionSearch.io is a third-party clearnet service. When we reviewed it, its homepage loaded JavaScript and CSS from third-party CDNs (jsDelivr, cdnjs) and contained commented-out code that would redirect searches through an ad network. Because traffic goes over Tor, those parties see a Tor exit, not the user's IP. Still, users should treat search results as untrusted, and Umbra keeps one-click switching to onion-hosted providers (DuckDuckGo, Brave, Startpage onions).
 3. **Fingerprint uniformity.** Any web-observable change splits Umbra users off from the Tor Browser crowd. This is enforced by the parity test (see FOUNDATION_DECISION). The one thing that does differ is the **window icon and UI text**, which websites can't see.
 4. **Telemetry: none.** Umbra adds no network requests of its own. The home page is local and runs under `default-src chrome:` CSP. The build tool is the only component that touches the network, and only at build time.
+5. **Access Engine fingerprint trade-off.** Local page inspection is read-only and does not send page data or onion addresses to a third party. Network blocking and cosmetic DOM changes are observable by websites. Both are disabled by default; enabling them may make a user more distinguishable from the wider Tor Browser population. The dashboard warns before users opt in. The starter filter list is not comprehensive and the feature is experimental.
 
 ## Known limitations (v0.1)
 
 - Desktop Linux x86-64 is the only verified build. Windows, macOS and Android are planned (see ROADMAP).
 - No in-app updater (see risk 1).
 - Live Tor bootstrap is tested in CI, where relays are reachable, not in every development environment.
-- Umbra Desk, Source and Assistant are design documents, not code.
+- Umbra Desk, Source and Assistant are design documents, not code.\n- Access Engine page inspection and its starter rules are experimental; no production security audit or end-to-end onion-site compatibility test has been completed.
