@@ -1,71 +1,74 @@
 # Umbra Access Engine
 
-Status: **initial native integration foundation — not production security certification**
+Status: **experimental native integration, packaged by the build pipeline; not yet production-certified**
 
-Umbra Access Engine is designed as an in-browser Gecko capability. Page inspection runs in the content process; request classification and report publication run in privileged browser code. The engine does not use a remote page-analysis service.
+Umbra Access Engine is an in-browser capability integrated into the existing Tor Browser-based build. It has two distinct modes:
 
-## Current components
+- **Local page inspection:** enabled by default. It reads bounded DOM structure and metadata to identify login/registration interfaces, likely paywalls, checkout UI, cookie dialogs, known payment-provider hosts and suspicious payment-form destinations. It does not read input values, passwords, card numbers, cookies, storage or authentication tokens.
+- **Network/cosmetic filtering:** available but disabled by default. Enabling it changes what a website can observe and can make the user more distinguishable from the Tor Browser crowd. The dashboard explains this trade-off.
+
+## Implementation
 
 | File | Responsibility |
 |---|---|
-| `modules/umbra/FilterRules.sys.mjs` | Pure local rule primitives, onion-host helpers and provider identification |
-| `modules/umbra/AccessEngine.sys.mjs` | Parent-process HTTP request observer and sanitized report publisher |
-| `modules/umbra/UmbraAccessChild.sys.mjs` | Bounded DOM metadata inspection in the content process |
-| `modules/umbra/UmbraAccessParent.sys.mjs` | Receives and sanitizes child reports |
-| `modules/umbra/UmbraAccessStartup.sys.mjs` | Registers the JSWindowActor and starts the request observer |
-| `tests/umbra/filter-rules.test.mjs` | Node unit tests for pure rule primitives |
-
-## Required browser integration
-
-This repository currently does not contain a complete Gecko browser source tree or build configuration. The modules therefore need to be included in the browser package at the resource path used below:
-
-1. Package the files under `modules/umbra/` as `resource:///modules/umbra/` (in a Firefox-derived source tree this normally means the browser modules resource mapping).
-2. Import `registerUmbraAccessEngine` from `resource:///modules/umbra/UmbraAccessStartup.sys.mjs` in the privileged browser startup path.
-3. Call `registerUmbraAccessEngine()` once after profile and observer services are available.
-4. Add the dashboard observer for `umbra-access-page-report` and `umbra-access-request-blocked`. Do not expose full URLs or page contents in that UI.
-5. Verify that browser shutdown calls `unregisterUmbraAccessEngine()`.
-
-Do not copy the old standalone frame script into the browser in parallel with the JSWindowActor. There must be one content inspection path, not two.
+| `overlay/access/FilterRules.sys.mjs` | Small local starter set of ad/tracker host rules, onion-host recognition and payment-provider identification |
+| `overlay/access/AccessEngine.sys.mjs` | Parent-process request observer, toolbar entry point, in-memory counters, settings and sanitized page-report receiver |
+| `overlay/access/content-frame.js` | Bounded top-frame DOM inspection and conservative cosmetic cleanup |
+| `overlay/access/dashboard.html` | Local browser-chrome dashboard |
+| `overlay/access/dashboard.js` | Dashboard controls and report rendering |
+| `overlay/access/dashboard.css` | Local dashboard styling |
+| `tools/umbra_build/build.py` | Packages modules and chrome resources into browser omni.ja and registers the startup category |
+| `tests/unit/test_build_tools.py` | Verifies Access Engine files are included in the built omni archive and privacy-preserving defaults |
+| `tests/umbra/filter-rules.test.mjs` | Tests local rule matching and provider recognition |
 
 ## Privacy boundaries
 
-- No filter-list downloads are implemented in this foundation.
-- No onion URL, page URL, referrer, search query, DOM text, form value, cookie, token or credential is sent to an external service.
-- Page reports contain bounded booleans, provider labels, indicator codes, overlay counts and an onion boolean only.
-- The child actor only runs on top-level HTTP(S) documents. Onion services use HTTP(S) URLs with an onion hostname and are included by the HTTP match patterns.
-- Onion hostnames are never included in the report payload.
-- Unknown request metadata is allowed rather than risking accidental breakage.
-- No telemetry is implemented.
+- Page inspection and request classification are local. No page-analysis request, cloud crawler, remote filter-list fetch or telemetry is implemented.
+- The report schema contains only booleans, bounded provider labels, bounded indicator codes, overlay counts and an onion boolean. It excludes full URLs, onion hostnames, referrers, page text and form values.
+- The current page's URL may be held transiently in browser memory when the user opens the dashboard, solely to support an explicit reader-view action and a temporary per-site exception. It is not persisted or sent to OnionSearch.
+- Onion addresses are inspected locally. Onion hostnames are not included in reports or sent to external filtering services.
+- OnionSearch receives only a query explicitly typed and submitted by the user. The current page address and contents are never appended.
+- Cookie dialogs are detected, never automatically accepted or rejected.
+- Login, registration, paywall and checkout detection is heuristic and can be wrong.
+- Payment-provider recognition identifies known hostnames; it does not authenticate merchants, authorize payments or prove that a destination is safe.
+- Suspicious checkout indicators are warnings, not fraud verdicts.
+- No authentication or payment control is bypassed.
+
+## Tor fingerprint trade-off
+
+Blocking third-party resources and modifying the DOM are observable by websites. This is a meaningful fingerprinting trade-off. Therefore:
+
+- Page inspection runs by default because it only observes DOM metadata and sends a bounded report to local browser chrome.
+- Network filtering defaults to **off**.
+- Cosmetic DOM changes default to **off**.
+- Users must explicitly enable network or cosmetic filtering after reading the dashboard warning.
+- The upstream Tor Browser security preferences and sandbox settings must remain unchanged.
 
 ## Current limitations
 
-- The built-in ad/tracker domain sets are deliberately small starter rules. They are not equivalent to EasyList or EasyPrivacy and will miss many ads and trackers.
-- No third-party filter list is downloaded or parsed yet.
-- Cookie dialogs are detected but never automatically accepted or rejected. Consent must remain an explicit user decision.
-- Login, registration, paywall and checkout detection is heuristic. It can produce false positives and false negatives.
-- Payment provider identification is based on known script, iframe and form destination hostnames. It does not validate the merchant, transaction or recipient.
-- Suspicious payment indicators are warnings, not fraud verdicts.
-- Public alternative-source discovery is not implemented. It must be a separate, user-initiated search feature with onion destinations excluded from all external requests.
-- Cosmetic cleanup currently handles a small set of obvious promotional overlay patterns. It does not defeat authentication or subscription controls.
-- The browser startup hook, package mapping, UI, real browser integration tests and Tor runtime tests must be completed in the consuming browser tree.
+- The built-in domain list is a small starter set, not EasyList/EasyPrivacy and not a complete content-blocking engine.
+- The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates.
+- Cosmetic cleanup recognizes only a narrow set of obvious promotional overlay patterns.
+- The reader-view and alternative-source workflow is not a paywall bypass. It only uses content already publicly available or sources the user explicitly searches for.
+- The toolbar and dashboard are packaged by the overlay build. A successful source-level package test does not prove the resulting browser launches or that every UI action works.
+- No live onion-site compatibility run has yet been recorded specifically for the Access Engine.
+- No security audit has certified this build for high-risk whistleblower use.
 
-## Security review items before production
+## Verification required before production
 
-- Review the request observer against the exact Gecko version and network stack used by Umbra.
-- Verify that blocking channels does not bypass or modify Tor proxy routing.
-- Confirm all DNS and socket traffic remains under the browser's configured Tor proxy.
-- Verify fail-closed behavior when Tor is unavailable; never fall back to direct networking.
-- Verify process isolation, site isolation, sandbox settings and anti-fingerprinting defaults.
-- Add browser-level tests for normal HTTPS, valid v3 onion navigation, redirects, subresources, downloads, WebSockets and service workers.
-- Add a canary SOCKS proxy test that proves every network connection uses the configured proxy.
-- Audit all IPC payloads to ensure onion URLs and browsing identifiers cannot be transmitted.
-- Vendor any external rule lists with license, source, version, checksum and update metadata.
-- Complete a security review before describing Umbra as suitable for high-risk whistleblower use.
+1. Run the Python unit suite and Node rule tests.
+2. Build a fresh Umbra release and verify the Access Engine files and BrowserComponents startup registration inside the artifact.
+3. Launch the built browser and verify the toolbar, dashboard, settings, counters, temporary exceptions and reader-view actions.
+4. Test ordinary HTTPS and valid v3 onion services using controlled fixtures.
+5. Verify that no onion URL, host, referrer, query or page content leaves the local browser process.
+6. Re-run the existing SOCKS canary, remote-DNS, direct-socket and fail-closed leak tests with the engine enabled and disabled.
+7. Re-run the Tor Browser fingerprint parity suite. The default configuration must remain parity-compatible.
+8. Add performance tests on large, mutation-heavy pages and verify that scans are bounded and do not cause navigation delays.
+9. Complete an independent security review before recommending Umbra to sources or journalists facing targeted adversaries.
 
-## Run the pure unit tests
-
-Requires Node.js 20 or newer:
+## Run tests
 
 ```sh
+python -m pytest tests/unit
 node --test tests/umbra/*.test.mjs
 ```
