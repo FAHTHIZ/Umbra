@@ -26,6 +26,15 @@ const ALLOWED_INDICATORS = new Set([
   "unrecognized-payment-destination",
   "invalid-payment-destination"
 ]);
+const ALLOWED_REDIRECT_INDICATORS = new Set([
+  "redirect-non-web-scheme",
+  "redirect-credentials-in-url",
+  "redirect-downgrade",
+  "redirect-to-ip-literal",
+  "cross-origin-meta-refresh",
+  "invalid-meta-refresh-target"
+]);
+const ALLOWED_PAYMENT_URI_TYPES = new Set(["bitcoin", "ethereum", "lightning", "monero"]);
 
 const DEFAULT_STATE = () => ({
   blockedAds: 0,
@@ -40,7 +49,9 @@ const DEFAULT_STATE = () => ({
     checkoutDetected: false,
     cookieDialogDetected: false,
     paymentProviders: [],
+    paymentUriTypes: [],
     suspiciousIndicators: [],
+    redirectIndicators: [],
     isOnion: false
   }
 });
@@ -190,6 +201,12 @@ const pageReportListener = {
     const indicators = Array.isArray(report.suspiciousIndicators)
       ? report.suspiciousIndicators.filter(x => ALLOWED_INDICATORS.has(x)).slice(0, 8)
       : [];
+    const paymentUriTypes = Array.isArray(report.paymentUriTypes)
+      ? report.paymentUriTypes.filter(x => ALLOWED_PAYMENT_URI_TYPES.has(x)).slice(0, 4)
+      : [];
+    const redirectIndicators = Array.isArray(report.redirectIndicators)
+      ? report.redirectIndicators.filter(x => ALLOWED_REDIRECT_INDICATORS.has(x)).slice(0, 8)
+      : [];
 
     state.latestPage = {
       loginDetected: Boolean(report.loginDetected),
@@ -198,7 +215,9 @@ const pageReportListener = {
       checkoutDetected: Boolean(report.checkoutDetected),
       cookieDialogDetected: Boolean(report.cookieDialogDetected),
       paymentProviders: providers,
+      paymentUriTypes,
       suspiciousIndicators: indicators,
+      redirectIndicators,
       isOnion: Boolean(report.isOnion)
     };
     state.removedOverlays += Math.max(0, Math.min(50, Number(report.removedOverlays) || 0));
