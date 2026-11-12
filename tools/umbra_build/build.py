@@ -76,7 +76,7 @@ def patch_toolkit_omni(omni: Omni) -> None:
 def patch_access_omni(omni: Omni) -> None:
     """Package the native Access Engine into the browser's existing chrome resources."""
     access = os.path.join(OVERLAY, "access")
-    for name in ("AccessEngine.sys.mjs", "FilterRules.sys.mjs"):
+    for name in ("AccessEngine.sys.mjs", "FilterRules.sys.mjs", "AccessSignals.sys.mjs"):
         source = os.path.join(access, name)
         with open(source, "rb") as f:
             omni.put("modules/umbra/" + name, f.read(), "Umbra Access Engine module")
