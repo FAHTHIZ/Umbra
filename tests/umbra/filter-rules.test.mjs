@@ -19,7 +19,8 @@ test("onion host classification is suffix-safe", () => {
 test("v3 onion host validation checks the 56-character base32 label", () => {
   assert.equal(isValidV3OnionHostname("a".repeat(56) + ".onion"), true);
   assert.equal(isValidV3OnionHostname("a".repeat(55) + ".onion"), false);
-  assert.equal(isValidV3OnionHostname("z".repeat(56) + ".onion"), false);
+  // "1", "8", "9" and "0" are outside the RFC 4648 base32 alphabet (a-z, 2-7); "z" is valid.
+  assert.equal(isValidV3OnionHostname("1".repeat(56) + ".onion"), false);
 });
 
 test("domain matching does not match lookalike suffixes", () => {
