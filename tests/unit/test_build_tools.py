@@ -6,7 +6,7 @@ import pytest
 
 from tools.umbra_build.branding import brand_ftl, brand_properties, icon_png
 from tools.umbra_build.omni import Omni
-from tools.umbra_build.build import patch_access_manifest, patch_access_omni
+from tools.umbra_build.build import ACCESS_CATEGORY, PatchError, patch_access_omni
 from tools.umbra_build.verify import VerificationError, verify_sha256
 
 
@@ -67,9 +67,7 @@ def test_icon_sizes():
 
 
 def test_access_engine_is_packaged_into_browser_omni(tmp_path):
-    src = tmp_path / "browser-omni.ja"
-    with zipfile.ZipFile(src, "w"):
-        pass
+    src = _fake_browser_omni(tmp_path)
     omni = Omni(str(src))
     patch_access_omni(omni)
     out = tmp_path / "patched-omni.ja"
@@ -99,13 +97,30 @@ def test_access_filtering_is_opt_in_for_tor_fingerprint_safety():
 
 
 
-def test_access_startup_manifest_registration_is_idempotent(tmp_path):
-    app = tmp_path / "app"
-    manifest = app / "Browser" / "components" / "BrowserComponents.manifest"
-    manifest.parent.mkdir(parents=True)
-    manifest.write_text("category browser-idle-startup resource:///modules/PlacesUIUtils.sys.mjs PlacesUIUtils.unblockToolbars\n")
-    patch_access_manifest(str(app))
-    patch_access_manifest(str(app))
-    text = manifest.read_text()
-    entry = "category browser-first-window-ready resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
-    assert text.count(entry) == 1
+FIRST_WINDOW = "category browser-first-window-ready resource:///modules/PageActions.sys.mjs PageActions.init\n"
+
+
+def _fake_browser_omni(tmp_path, manifest=FIRST_WINDOW):
+    src = tmp_path / "browser-omni.ja"
+    with zipfile.ZipFile(src, "w") as z:
+        z.writestr("components/components.manifest", manifest)
+    return src
+
+
+def test_access_startup_registration_is_idempotent(tmp_path):
+    """TB 16 keeps component categories in browser/omni.ja components/components.manifest."""
+    omni = Omni(str(_fake_browser_omni(tmp_path)))
+    patch_access_omni(omni)
+    patch_access_omni(omni)
+    out = tmp_path / "out.ja"
+    omni.save(str(out))
+    text = zipfile.ZipFile(out).read("components/components.manifest").decode()
+    assert text.count(ACCESS_CATEGORY) == 1
+    assert text.startswith(FIRST_WINDOW)
+
+
+def test_access_startup_registration_fails_loudly_on_upstream_drift(tmp_path):
+    import pytest
+    omni = Omni(str(_fake_browser_omni(tmp_path, manifest="# empty\n")))
+    with pytest.raises(PatchError):
+        patch_access_omni(omni)
