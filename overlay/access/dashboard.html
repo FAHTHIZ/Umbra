@@ -60,7 +60,7 @@
       <h2>Current page inspection</h2>
       <p id="page-kind" class="muted">No page context available.</p>
       <div id="findings" class="findings" aria-live="polite"></div>
-      <p class="muted">Detection is heuristic. A detected provider is not a payment endorsement; a warning is not proof of fraud. Umbra never reads form values, card numbers, passwords or authentication tokens.</p>
+      <p class="muted">Detection is heuristic. A detected provider is not a payment endorsement; a warning is not proof of fraud. Umbra never reads form values, card numbers, passwords or authentication tokens. For crypto-payment links it records only the URI scheme, never the address. Redirect inspection currently covers HTML meta-refresh markers, not every server or script redirect.</p>
       <div class="actions">
         <button id="exception" type="button" disabled>Temporary site exception</button>
         <button id="reader" type="button" disabled>Open reader view</button>
