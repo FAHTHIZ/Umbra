@@ -86,10 +86,12 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
   - ✅ tested (canary Tor): onion-only guard in two layers (request observer + proxy blackhole), explanation page incl. redirect origin, subresource/redirect/meta-refresh/JS-redirect blocking, no direct sockets, no UDP/53, remote names only, fail-closed
   - ✅ tested: read-only inspection (login, CAPTCHA, payment, access restrictions, crypto addresses; never reads values, no requests, nothing submitted), traffic log with secret-header redaction
   - ✅ tested: cases with write-once 0600 artifacts, SHA-256 hash chain, tamper detection (JS and Python), hashdeep audit with the real hashdeep, HAR read by mitmproxy, exiftool analysis, Timesketch JSONL format, encrypted bundles decrypted in Python
-  - ⚠️ untested: live onion browsing over real Tor, Windows/macOS launch, import into a live Timesketch server
+  - ✅ tested over real Tor (live-tor CI job, non-gating): bootstrap with the guard on, onion load, clearnet blocked — `tests/live/test_investigate_live.py`
+  - ⚠️ untested: Windows/macOS launch of the separate instance, import into a live Timesketch server
   - 📋 planned: full-page screenshots, original response bytes, RFC 3161 timestamps, mobile
 - 🧪 Investigation toolkit (`toolkit/`): 22 upstreams pinned at exact commits with licenses (`toolkit/upstreams.lock.json`, `tests/unit/test_upstreams_lock.py`); tool containers on an `internal` network whose only exit is an `OnionTrafficOnly` Tor SOCKS port; network-less analysis container (pinned exiftool, hashdeep, mitmproxy) — `toolkit/selftest.sh` (CI job `toolkit`), `tests/unit/test_toolkit_compose.py`
-  - ⚠️ tool images other than OnionSearch are built in CI (non-gating) but not functionally tested; ZAP container is experimental; DarkSpider upstream unresolved
+  - ✅ live in CI: the toolkit's Tor refuses clearnet and reaches an onion service
+  - 🧪 TorBot, darkdump, onionscout and onionscan images build from their pinned commits and `--help` runs (CI); not yet run against an onion service. ZAP container experimental. DarkSpider upstream unresolved
 - ❓ Local LLM for Assistant (needs owner decision: bundle size, fingerprint) — see `docs/modules/`
 
 ## Delivery

@@ -70,11 +70,11 @@ verified before and after.
 
 | Service | Upstream | Status |
 |---|---|---|
-| tor | Tor Project Debian repository (key pinned by fingerprint) | Tested in CI (`selftest.sh`) |
+| tor | Tor Project Debian repository (key pinned by fingerprint) | Tested in CI (`selftest.sh`): bootstraps on the live network, refuses clearnet ("Connection not allowed by ruleset"), reaches an onion service |
 | analysis | exiftool and hashdeep built from pinned commits, mitmproxy 12.3.1 | Tested in CI (`selftest.sh`) |
 | onionsearch | megadose/OnionSearch | Image built and isolation tested in CI. Search output depends on third-party onion engines |
-| torbot, darkdump, onionscout | pinned commits | Image build attempted in CI (non-gating). Not functionally tested |
-| onionscan | nao1215/onionscan (Go) | Image build attempted in CI (non-gating). Not functionally tested |
+| torbot, darkdump, onionscout | pinned commits | Built from the pinned commit in CI and `--help` runs in the hardened container. Not yet run against an onion service in CI |
+| onionscan | nao1215/onionscan (Go) | Built from the pinned commit in CI and `--help` runs. Not yet run against an onion service in CI |
 | darkspider | **Unresolved**: the URL in the brief does not exist. PROxZIMA/DarkSpider is a candidate | Build attempted, unconfirmed upstream |
 | zap | Official `zaproxy/zap-stable` image pinned by digest (not built from the pinned source commit) | **Experimental**, not tested. Baseline (passive) scan only |
 

@@ -129,7 +129,7 @@ the manifest.
 | hashdeep audit, mitmproxy HAR read, exiftool analysis of real captures | ✅ tested with the real tools |
 | Timesketch JSONL | ✅ format tested. Not imported into a live Timesketch server |
 | Encrypted bundles (browser → Python decryption) | ✅ tested |
-| Live onion browsing over real Tor | ⚠️ not yet in CI. All tests use a canary SOCKS server in place of Tor |
+| Live onion browsing over real Tor | ✅ tested in the `live-tor` CI job (`tests/live/test_investigate_live.py`): Tor bootstraps with the guard on, an onion service loads, a clearnet page is blocked. Non-gating, because Tor reachability varies |
 | Windows and macOS launch | ⚠️ untested |
 | Mobile | 📋 planned |
 | Full-page screenshots, original response bytes, RFC 3161 timestamps | 📋 planned |
