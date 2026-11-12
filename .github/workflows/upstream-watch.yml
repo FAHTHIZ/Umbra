@@ -1,0 +1,32 @@
+name: Upstream watch
+on:
+  schedule: [{ cron: "17 */6 * * *" }]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - id: chk
+        run: |
+          set +e
+          python -m tools.umbra_build upstream-check | tee check.json
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+      - name: Open tracking issue for new Tor Browser release
+        if: steps.chk.outputs.code == '10'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          V=$(python -c "import json;print(json.load(open('check.json'))['latest'])")
+          if ! gh issue list --state open --search "Tor Browser $V in:title" --json number --jq '.[0].number' | grep -q .; then
+            gh issue create --title "Upstream: rebase on Tor Browser $V (security)" --label security \
+              --body "A new Tor Browser release is available. Run \`python tools/bump_upstream.py $V\`, verify the signature, run the full test suite, then tag a release. Users stay on the old engine until this ships. Treat it as urgent." || \
+            gh issue create --title "Upstream: rebase on Tor Browser $V (security)" \
+              --body "A new Tor Browser release is available. Run \`python tools/bump_upstream.py $V\`."
+          fi

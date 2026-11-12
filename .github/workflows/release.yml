@@ -1,0 +1,29 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 gnupg xz-utils
+      - run: pip install -r requirements-dev.txt
+      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+      - run: python -m pytest -q tests/unit
+      - run: python -m tools.umbra_build build
+      - run: python -m pytest -q tests/integration tests/leak
+      - name: Publish GitHub Release
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          gh release create "$TAG" dist/*.tar.xz dist/SHA256SUMS \
+            --title "Umbra ${TAG#v}" --notes-file docs/RELEASE_NOTES.md --verify-tag || \
+          gh release upload "$TAG" dist/*.tar.xz dist/SHA256SUMS --clobber

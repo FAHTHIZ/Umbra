@@ -1,0 +1,72 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q tests/unit
+
+  build-and-test:
+    runs-on: ubuntu-24.04
+    needs: unit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: System deps (GTK runtime for headless Gecko)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 libx11-xcb1 gnupg xz-utils
+      - run: pip install -r requirements-dev.txt
+      - name: geckodriver
+        run: |
+          curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+      - uses: actions/cache@v4
+        with:
+          path: .cache/*.tar.xz*
+          key: upstream-${{ hashFiles('upstream/tor-browser.lock.json') }}
+      - name: Build (verifies upstream signature + sha256)
+        run: python -m tools.umbra_build build
+      - name: Integration tests
+        run: python -m pytest -q tests/integration
+      - name: Network leak tests
+        run: python -m pytest -q tests/leak
+      - name: Benchmark vs upstream
+        run: python bench/benchmark.py --runs 5 --out bench/results/ci.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: umbra-linux-x86_64
+          path: |
+            dist/*.tar.xz
+            dist/SHA256SUMS
+            bench/results/ci.json
+
+  live-tor:
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+    continue-on-error: true   # Tor network reachability varies; never gate merges on it
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 gnupg xz-utils
+      - run: pip install -r requirements-dev.txt
+      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+      - uses: actions/cache@v4
+        with:
+          path: .cache/*.tar.xz*
+          key: upstream-${{ hashFiles('upstream/tor-browser.lock.json') }}
+      - run: python -m tools.umbra_build build --no-package
+      - name: Live Tor tests (bootstrap, IsTor, onion navigation, default search)
+        env: { UMBRA_LIVE_TOR: "1" }
+        run: python -m pytest -q tests/live
