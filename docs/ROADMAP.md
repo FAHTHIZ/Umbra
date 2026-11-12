@@ -19,6 +19,11 @@ Verified Linux build, OnionSearch default plus 12 providers, Umbra home and Expl
 - 🧪 Umbra Desk (done in 0.1): memory-only research notes, tab overview, close-and-forget. 📋 Surface native tab groups.
 - 🧪 Umbra Assistant (done in 0.1): model-free local page analysis. ❓ Bundled local model (owner decision).
 
+## v0.5 — Investigation (isolated)
+- 🧪 Umbra Investigate (in 0.1): onion-only instance, read-only inspection, hash-chained evidence, hashdeep/HAR/Timesketch exports, encrypted bundles. 📋 Live-Tor CI coverage, full-page screenshots, original response bytes, RFC 3161 timestamping.
+- 🧪 Investigation toolkit (in 0.1): pinned upstream tools in onion-only containers. 📋 Functional tests per tool, resolve DarkSpider upstream, build ZAP from the pinned source.
+- 📋 Mobile-first Investigate experience (owner direction pending).
+
 ## v1.0 — Source track
 - Fork of `tor-browser-build` with Umbra branding compiled in. Own MAR signing keys, in-app updates, reproducible builds verified by independent rebuilders.
 - **Android**: Fenix-based Tor Browser for Android with the Umbra overlay applied at source level.

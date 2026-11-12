@@ -1,5 +1,7 @@
 # Onion investigation tooling
 
+> The browser side of investigation is **Umbra Investigate** ([modules/INVESTIGATE.md](modules/INVESTIGATE.md)). All pinned upstream tools and their isolated, onion-only containers are described in [../toolkit/README.md](../toolkit/README.md). TorBot output can be imported as leads on the Investigate dashboard, or attached to a case with `python3 -m tools.investigate.attach`.
+
 Umbra includes **TorBot** as an optional, separately maintained investigation utility. It is pinned as a Git submodule so it can be reviewed and updated independently of the browser.
 
 - Upstream: https://github.com/DedSecInside/TorBot

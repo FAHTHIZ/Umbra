@@ -15,6 +15,8 @@ The first public build of Umbra for **Linux x86-64 and aarch64**, with an experi
 - **Umbra Vault** (experimental): encrypted export and import of bookmarks (and logins, if enabled) using the browser's built-in crypto
 - **Umbra Desk** (experimental): research notes that are kept only in memory, open tabs grouped by site, and Close and forget (New Identity)
 - **Umbra Assistant** (experimental): local page analysis (key sentences, outline, onion addresses, links). It uses no AI model and no network.
+- **Umbra Investigate** (experimental): a separate, onion-only Umbra instance for manual investigation. It blocks clearnet pages, redirects and subresources and explains why. It inspects pages read-only (it never logs in, solves CAPTCHAs, pays or submits anything). It keeps local, hash-chained evidence cases that hashdeep, mitmproxy, exiftool and Timesketch can read, and can encrypt them.
+- **Investigation toolkit** (experimental): upstream tools such as TorBot, OnionSearch, onionscan, onionscout and darkdump, pinned to exact commits and run in containers that can only reach onion services
 - Verified, deterministic builds (OpenPGP plus SHA-256 pinned upstream)
 
 ## Known limitations

@@ -25,7 +25,7 @@
 - **Umbra Explore.** A curated directory of operator-published onion services. Every address is v3-checksum-verified in CI, so typos and lookalikes can't slip in.
 - **Same fingerprint as Tor Browser.** Umbra changes nothing a website can observe. A test compares 500+ security preferences against upstream on every build.
 - **Verified supply chain.** Every build checks the upstream OpenPGP signature against a pinned key **and** a pinned SHA-256, then produces deterministic output.
-- **Built-in tools, one click away.** The **Umbra** toolbar button opens Privacy (a live protection dashboard), Desk (research notes kept only in memory), Assistant (a local page summary with no AI model and no network), Vault (encrypted bookmark export) and Source (reach journalists via SecureDrop in an isolated instance).
+- **Built-in tools, one click away.** The **Umbra** toolbar button opens Privacy (a live protection dashboard), Desk (research notes kept only in memory), Assistant (a local page summary with no AI model and no network), Vault (encrypted bookmark export), Source (reach journalists via SecureDrop in an isolated instance) and Investigate (an onion-only instance with evidence capture).
 - **No telemetry.** Umbra's own pages make zero network requests. The only background request is an anonymous daily release check over Tor, which you can turn off.
 
 ## Install (Linux x86-64 / aarch64)
@@ -81,6 +81,8 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Privacy dashboard | ✅ tested |
 | "Umbra" toolbar button: one menu for every module | ✅ tested |
 | Umbra Source (SecureDrop directory, isolated Safest-level instance) | 🧪 experimental, tested |
+| Umbra Investigate (onion-only instance, read-only inspection, hash-chained evidence, hashdeep/HAR/Timesketch exports) | 🧪 experimental, integration- and leak-tested (canary Tor) |
+| Investigation toolkit (pinned tools in isolated, onion-only containers) | 🧪 experimental, isolation tested in CI |
 | Umbra Vault (encrypted bookmarks/logins export, AES-256-GCM via NSS) | 🧪 experimental, tested |
 | Umbra Desk (memory-only research notes, tab overview, close-and-forget) | 🧪 experimental, tested |
 | Umbra Assistant (local extractive summary, outline, onion/link extraction; no AI model) | 🧪 experimental, tested |
@@ -90,9 +92,20 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 
 The full, honest list is in [docs/CHECKLIST.md](docs/CHECKLIST.md).
 
-## Onion investigation tooling
+## Onion investigation
 
-An optional, pinned [TorBot](https://github.com/DedSecInside/TorBot) submodule is available for scoped onion-service reachability checks and shallow public link mapping. It is kept separate from the browser runtime. See [docs/ONION_INVESTIGATION_TOOLING.md](docs/ONION_INVESTIGATION_TOOLING.md) for initialization, conservative usage, licensing, and evidence-handling boundaries.
+**Umbra Investigate** is a separate browser instance that only opens onion services. It blocks
+clearnet navigation, redirects and subresources in two independent layers and explains each
+block. It inspects pages read-only (login, CAPTCHA, payment and access restrictions are
+explained, never submitted). It captures DOM, screenshot, headers and traffic into a
+SHA-256 hash-chained case that hashdeep, mitmproxy, exiftool and Timesketch can read. See
+[docs/modules/INVESTIGATE.md](docs/modules/INVESTIGATE.md).
+
+The upstream investigation tools (TorBot, OnionSearch, onionscan, onionscout, darkdump and
+others) are pinned to exact commits in [toolkit/upstreams.lock.json](toolkit/upstreams.lock.json)
+and run in containers that can only reach `.onion` addresses: an internal network plus a Tor SOCKS
+port with `OnionTrafficOnly`. See [toolkit/README.md](toolkit/README.md). TorBot is also a Git
+submodule under `vendor/torbot` ([docs/ONION_INVESTIGATION_TOOLING.md](docs/ONION_INVESTIGATION_TOOLING.md)).
 
 ## Performance
 
@@ -108,8 +121,9 @@ Measured against unmodified Tor Browser 16.0.1 on the same machine ([details](do
 
 ```
 upstream/      pinned Tor Browser release (version, sha256, signing key)
-tools/         umbra_build pipeline, upstream bump, Explore generator
+tools/         umbra_build pipeline, upstream bump, Explore generator, investigate (offline case tools)
 overlay/       everything Umbra adds: search, home, explore, prefs, patches, access engine
+toolkit/       pinned investigation upstreams + isolated container toolkit
 tests/         unit · integration · leak · live
 bench/         benchmark harness + recorded results
 docs/          architecture, threat model, security, roadmap, checklist, ideas

@@ -1,6 +1,6 @@
 # Writing an Umbra module
 
-Privacy, Source, Vault, Desk, Assistant and the toolbar menu all follow one pattern. Copy it, and your module gets packaged, started and tested the same way.
+Privacy, Source, Investigate, Vault, Desk, Assistant and the toolbar menu all follow one pattern. Copy it, and your module gets packaged, started and tested the same way.
 
 ## 1. Files
 
@@ -24,7 +24,7 @@ def patch_<name>_omni(omni):
     add_first_window_category(omni, NAME_CATEGORY, "Umbra <Name> startup")
 ```
 
-Then call it from `patch_browser_omni`. `init()` must be idempotent. It should return early when `umbra.source.mode` is true (the isolated Source instance stays minimal) and add the Tools menu item on `browser-delayed-startup-finished`. Add an entry to `ITEMS` in `overlay/menu/UmbraMenu.sys.mjs`.
+Then call it from `patch_browser_omni`. `init()` must be idempotent. It should return early when `umbra.source.mode` or `umbra.investigate.mode` is true (the isolated instances stay minimal), unless the module is meant for that instance and add the Tools menu item on `browser-delayed-startup-finished`. Add an entry to `ITEMS` in `overlay/menu/UmbraMenu.sys.mjs`.
 
 ## 3. ESR 153 gotchas
 

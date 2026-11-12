@@ -5,7 +5,7 @@ Living document. Update it in the same commit as any architectural change.
 ```
                         ┌──────────────────────────── Umbra ─────────────────────────────┐
                         │  Umbra Home / Search / Explore  (overlay/home, overlay/search)   │
-                        │  Privacy · Source · Vault · Desk  (chrome pages, Tools menu)    │
+                        │  Privacy · Source · Investigate · Vault · Desk (chrome pages)    │
                         │  Access Engine · release notice   (resource:///modules/umbra/)  │
                         │  Branding · prefs layer · audited patches (overlay/*)           │
                         ├─────────────────────────────────────────────────────────────────┤
@@ -30,6 +30,9 @@ Living document. Update it in the same commit as any architectural change.
 | `overlay/access/` | Native Access Engine: local request rules, content-frame inspection, dashboard and payment/login indicators |
 | `overlay/privacy/` | Umbra Privacy dashboard (read-only live view of protections) |
 | `overlay/source/` | Umbra Source: bundled SecureDrop directory + isolated `profile.umbra-source` launcher |
+| `overlay/investigate/` | Umbra Investigate: onion-only guard (request observer + proxy blackhole), read-only inspection actor, case store, dashboard, explanation page, `profile.umbra-investigate` launcher |
+| `tools/investigate/` | Offline case tools: verify (incl. hashdeep audit, bundle decryption), attach external output, exiftool/mitmproxy analysis |
+| `toolkit/` | Pinned investigation upstreams (`upstreams.lock.json`) and the isolated, onion-only container toolkit |
 | `overlay/vault/` | Umbra Vault: encrypted export/import (WebCrypto/NSS only) |
 | `overlay/desk/` | Umbra Desk: memory-only notes, tab overview, New Identity |
 | `overlay/update/` | Release notice (tag-only GitHub check over Tor; no downloads) |
@@ -56,6 +59,7 @@ Running the same lock file and the same overlay twice produces byte-identical `o
 
 - **Protected mode (default, the only mode in v0.1):** all traffic goes through the bundled tor's SOCKS port with remote DNS. Tor Browser uses per-first-party SOCKS credentials, so separate sites get separate circuits. If tor is down, nothing goes out: there is no direct fallback. All three properties are verified in `tests/leak`.
 - **Search provider ≠ anonymity network.** The search provider only receives the query. Every provider, including OnionSearch, Google and the rest, is reached *through Tor*. Onion-hosted providers (DuckDuckGo, Brave, Startpage onions) also keep the connection inside the Tor network.
+- **Onion-only mode (Umbra Investigate):** a separate instance and profile in which every non-`.onion` channel is cancelled by a request observer, and anything that slips past is sent to a refusing blackhole proxy (`127.0.0.1:9`) by a proxy filter. Tor bootstrap and bridges stay in the main instance's tor process, so no clearnet exception exists in Gecko. Leak-tested in `tests/leak/test_investigate_leaks.py`.
 - **Ordinary (non-Tor) browsing** is deliberately *not* in the same process or profile. If it's added later, it must be a separate profile with separate storage and a visually distinct UI. See the roadmap.
 
 ## Module map (Umbra platform)
@@ -67,6 +71,8 @@ Running the same lock file and the same overlay twice produces byte-identical `o
 | Umbra Access Engine | Experimental; packaged in browser overlay, filtering opt-in | `overlay/access`, browser chrome dashboard |
 | Umbra Privacy | Implemented: live read-only dashboard + upstream panes for changes | `overlay/privacy`, Tools → Umbra Privacy |
 | Umbra Source | Experimental: SecureDrop directory, separate Safest-level instance sharing the running tor | `overlay/source`, Tools → Umbra Source |
+| Umbra Investigate | Experimental: separate onion-only instance (two guard layers, explanation page), read-only inspection, hash-chained evidence cases, hashdeep/HAR/Timesketch exports, encrypted bundles | `overlay/investigate`, Umbra menu / Tools → Umbra Investigate, [modules/INVESTIGATE.md](modules/INVESTIGATE.md) |
+| Investigation toolkit | Experimental: upstream tools in containers on an internal network whose only exit is an `OnionTrafficOnly` Tor SOCKS port; network-less analysis container | `toolkit/`, [../toolkit/README.md](../toolkit/README.md) |
 | Umbra Vault | Experimental: encrypted bookmarks/logins file (PBKDF2 + AES-GCM via NSS) | `overlay/vault`, Tools → Umbra Vault |
 | Umbra Desk | Experimental: memory-only notes, tabs by site, close-and-forget | `overlay/desk`, Tools → Umbra Desk |
 | Umbra Downloads | Upstream downloads manager (pause/resume/progress) | `about:downloads` |
@@ -74,7 +80,7 @@ Running the same lock file and the same overlay twice produces byte-identical `o
 
 ### How chrome modules are wired
 
-Each module is packaged by `patch_<name>_omni()` in `tools/umbra_build/build.py`. `*.sys.mjs` files go to `browser/omni.ja:modules/umbra/` (`resource:///modules/umbra/`), and pages go to `chrome/browser/content/browser/umbra-<name>/` (`chrome://browser/content/umbra-<name>/`). A `browser-first-window-ready` category line is appended to the in-omni `components/components.manifest`. Pages use a strict CSP (`default-src 'none'`, no network `connect-src`) and never load remote content. Modules check `umbra.source.mode` so the isolated Source instance stays minimal.
+Each module is packaged by `patch_<name>_omni()` in `tools/umbra_build/build.py`. `*.sys.mjs` files go to `browser/omni.ja:modules/umbra/` (`resource:///modules/umbra/`), and pages go to `chrome/browser/content/browser/umbra-<name>/` (`chrome://browser/content/umbra-<name>/`). A `browser-first-window-ready` category line is appended to the in-omni `components/components.manifest`. Pages use a strict CSP (`default-src 'none'`, no network `connect-src`) and never load remote content. Modules check `umbra.source.mode` so the isolated Source instance stays minimal. Investigate installs its guard only when `umbra.investigate.mode` is set, which happens only in its own profile.
 
 ## Change process for new ideas
 
