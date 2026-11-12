@@ -12,6 +12,10 @@
     "linux-aarch64": {
       "file": "tor-browser-linux-aarch64-16.0.1.tar.xz",
       "sha256": "4eea79c87a6741a4777bef7376e374565a941ab3f758bc32bf22425b54170031"
+    },
+    "windows-x86_64": {
+      "file": "tor-browser-windows-x86_64-portable-16.0.1.exe",
+      "sha256": "fbef840ba111409213dec2291e3594a43b82525545cdef0490a5750f24f5f232"
     }
   }
 }

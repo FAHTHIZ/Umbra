@@ -200,9 +200,22 @@ def patch_tree(app: str) -> None:
     # Register the Access Engine through Gecko's startup category manager.
 
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
-    for size in (16, 32, 48, 64, 128):
-        with open(os.path.join(icons, f"default{size}.png"), "wb") as f:
-            f.write(icon_png(size))
+    if os.path.isfile(os.path.join(app, "Browser", "firefox.exe")):
+        # Windows: Gecko loads per-window .ico files from this folder if present
+        # (the .exe resource icon stays upstream's; changing it would break the
+        # Authenticode signature). Plus a launcher next to Browser/.
+        import io
+        from PIL import Image
+        os.makedirs(icons, exist_ok=True)
+        img = Image.open(io.BytesIO(icon_png(256)))
+        for name in ("main-window.ico", "default.ico"):
+            img.save(os.path.join(icons, name), format="ICO", sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+        with open(os.path.join(app, "Start Umbra.cmd"), "w", newline="\r\n") as f:
+            f.write('@echo off\nstart "" "%~dp0Browser\\firefox.exe" %*\n')
+    else:
+        for size in (16, 32, 48, 64, 128):
+            with open(os.path.join(icons, f"default{size}.png"), "wb") as f:
+                f.write(icon_png(size))
     for desktop in (os.path.join(app, "start-tor-browser.desktop"), os.path.join(app, "Browser", "start-tor-browser.desktop")):
         if os.path.exists(desktop):
             t = open(desktop).read()
@@ -234,6 +247,38 @@ def deterministic_tar(src_dir: str, out: str) -> None:
                 tar.add(os.path.join(dirpath, fn), arcname=os.path.join(rel, fn), filter=norm)
 
 
+def extract_upstream(archive: str, stage: str, app: str) -> None:
+    """Linux: tar.xz with a tor-browser/ root. Windows: NSIS portable .exe (7z can read it)."""
+    if archive.endswith(".exe"):
+        seven = (shutil.which("7z") or shutil.which("7za") or shutil.which("7zz")
+                 or next((p for p in (r"C:\Program Files\7-Zip\7z.exe",) if os.path.isfile(p)), None))
+        if not seven:
+            raise RuntimeError("Windows builds need 7-Zip (7z) to unpack the upstream NSIS installer")
+        subprocess.run([seven, "x", "-y", "-bso0", "-bsp0", f"-o{app}", archive, "-x!$PLUGINSDIR"], check=True)
+        return
+    with tarfile.open(archive) as t:
+        t.extractall(stage, filter="data")
+    os.rename(os.path.join(stage, "tor-browser"), app)
+
+
+def deterministic_zip(src_dir: str, out: str, root: str = "Umbra") -> None:
+    """Byte-reproducible zip: sorted entries, fixed timestamps, no extra attrs."""
+    import zipfile
+    entries = []
+    for dp, dns, fns in os.walk(src_dir):
+        dns.sort()
+        for fn in sorted(fns):
+            full = os.path.join(dp, fn)
+            entries.append((os.path.relpath(full, src_dir).replace(os.sep, "/"), full))
+    with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        for rel, full in sorted(entries):
+            zi = zipfile.ZipInfo(f"{root}/{rel}", date_time=(2000, 1, 1, 0, 0, 0))
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.external_attr = 0o644 << 16
+            with open(full, "rb") as f:
+                z.writestr(zi, f.read())
+
+
 def build(platform: str = "linux-x86_64", cache: str = None, out_dir: str = None, package: bool = True) -> dict:
     cache = cache or os.path.join(ROOT, ".cache")
     out_dir = out_dir or os.path.join(ROOT, "dist")
@@ -242,10 +287,8 @@ def build(platform: str = "linux-x86_64", cache: str = None, out_dir: str = None
     stage = os.path.join(out_dir, f"umbra-{UMBRA_VERSION}-{platform}")
     shutil.rmtree(stage, ignore_errors=True)
     os.makedirs(stage)
-    with tarfile.open(tarball) as t:
-        t.extractall(stage, filter="data")
     app = os.path.join(stage, "umbra")
-    os.rename(os.path.join(stage, "tor-browser"), app)
+    extract_upstream(tarball, stage, app)
 
     report = {"umbra_version": UMBRA_VERSION, "platform": platform, "upstream": {
         "version": lock["version"], "file": os.path.basename(tarball), "sha256": sha256_file(tarball),
@@ -264,8 +307,12 @@ def build(platform: str = "linux-x86_64", cache: str = None, out_dir: str = None
     with open(os.path.join(app, "Browser", "UMBRA_BUILD.json"), "w") as f:
         json.dump(report, f, indent=1, sort_keys=True)
     if package:
-        pkg = os.path.join(out_dir, f"umbra-{UMBRA_VERSION}-{platform}.tar.xz")
-        deterministic_tar(app, pkg)
+        if platform.startswith("windows"):
+            pkg = os.path.join(out_dir, f"umbra-{UMBRA_VERSION}-{platform}.zip")
+            deterministic_zip(app, pkg)
+        else:
+            pkg = os.path.join(out_dir, f"umbra-{UMBRA_VERSION}-{platform}.tar.xz")
+            deterministic_tar(app, pkg)
         report["package"] = {"file": os.path.basename(pkg), "sha256": sha256_file(pkg)}
         sums = os.path.join(out_dir, "SHA256SUMS")
         lines = open(sums).read().splitlines() if os.path.exists(sums) else []

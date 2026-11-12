@@ -6,6 +6,7 @@ Umbra currently uses the **overlay track**. The build downloads the official, si
 
 - Python 3.10+
 - `gpg` (signature verification) and `xz`
+- Windows target: 7-Zip (`7z`) to unpack the upstream NSIS portable installer. It runs on Linux or Windows hosts.
 - About 1 GB of free disk space
 - For tests: GTK 3 runtime libraries and [geckodriver 0.36+](https://github.com/mozilla/geckodriver/releases)
 
@@ -15,6 +16,8 @@ Umbra currently uses the **overlay track**. The build downloads the official, si
 python -m tools.umbra_build fetch        # download + verify upstream into .cache/
 python -m tools.umbra_build build        # fetch, verify, overlay, package -> dist/
 python -m tools.umbra_build build --no-package   # skip tar.xz (faster dev loop)
+python -m tools.umbra_build build --platform linux-aarch64
+python -m tools.umbra_build build --platform windows-x86_64   # -> umbra-<ver>-windows-x86_64.zip
 ```
 
 Output: `dist/umbra-<ver>-linux-x86_64/` (runnable), `dist/umbra-<ver>-linux-x86_64.tar.xz` and `dist/SHA256SUMS`.
@@ -22,7 +25,7 @@ Output: `dist/umbra-<ver>-linux-x86_64/` (runnable), `dist/umbra-<ver>-linux-x86
 ## Verification chain
 
 1. `upstream/tor-browser.lock.json` pins the version, URL, **SHA-256** and the **signing key fingerprint**.
-2. The tarball must match the SHA-256 **and** have a valid OpenPGP signature from the pinned key, which is fetched by WKD and checked by fingerprint. Either failure aborts the build.
+2. The archive must match the SHA-256 **and** have a valid OpenPGP signature whose primary key equals the pinned fingerprint. The key comes from `upstream/keys/torbrowser.asc`, with a WKD refresh if Tor rotates the signing subkey. The fingerprint, not the key file, is the trust anchor. Either failure aborts the build.
 3. `omni.ja` is rewritten deterministically (sorted entries, fixed timestamps), so the same inputs produce byte-identical outputs.
 
 ## What the overlay changes

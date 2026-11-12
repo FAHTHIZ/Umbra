@@ -134,3 +134,18 @@ def test_lock_pins_every_platform():
     for plat, art in lock["artifacts"].items():
         assert re.fullmatch(r"[0-9a-f]{64}", art["sha256"]), plat
         assert lock["version"] in art["file"] and plat in art["file"], plat
+
+
+def test_pinned_signing_key_matches_lock():
+    import json
+    import shutil
+    import subprocess
+    import pytest
+    if not shutil.which("gpg"):
+        pytest.skip("gpg not installed")
+    root = os.path.join(os.path.dirname(__file__), "..", "..")
+    lock = json.load(open(os.path.join(root, "upstream", "tor-browser.lock.json")))
+    out = subprocess.run(["gpg", "--batch", "--with-colons", "--show-keys", os.path.join(root, "upstream", "keys", "torbrowser.asc")],
+                         capture_output=True, text=True, check=True).stdout
+    fprs = [l.split(":")[9] for l in out.splitlines() if l.startswith("fpr:")]
+    assert fprs[0] == lock["signing_key_fingerprint"]

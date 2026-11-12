@@ -16,7 +16,7 @@
 
 <p align="center"><img src="docs/assets/umbra-home.png" width="760" alt="Umbra home page with search provider switcher and Explore directory"></p>
 
-> **Honest status.** Umbra 0.1 is a real, working browser for **Linux (x86-64 and aarch64)**. Windows, macOS and Android are on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
+> **Honest status.** Umbra 0.1 is a real, working browser for **Linux (x86-64 and aarch64)**. A Windows portable build is experimental. macOS and Android are on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
 
 ## Why Umbra
 
@@ -79,7 +79,9 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Access Engine (local page inspection, opt-in ad/tracker filtering) | 🧪 experimental, filtering off by default |
 | Umbra Privacy dashboard (Tools → Umbra Privacy) | ✅ tested |
 | Vault export, Desk, Source, Assistant | 📋 planned |
-| Windows / macOS / Android | 📋 planned |
+| Linux aarch64 | ✅ CI-tested on native arm64 |
+| Windows x86-64 (portable zip) | 🧪 experimental, CI-tested |
+| macOS / Android | 📋 planned |
 
 The full, honest list is in [docs/CHECKLIST.md](docs/CHECKLIST.md).
 

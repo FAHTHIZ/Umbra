@@ -16,6 +16,8 @@ def _platform():
     import platform
     if os.environ.get("UMBRA_PLATFORM"):
         return os.environ["UMBRA_PLATFORM"]
+    if sys.platform == "win32":
+        return "windows-x86_64"
     return "linux-aarch64" if platform.machine() in ("aarch64", "arm64") else "linux-x86_64"
 
 
@@ -34,12 +36,17 @@ def _upstream_app():
     dst = os.path.join(ROOT, ".cache", "upstream-extracted")
     app = os.path.join(dst, "tor-browser")
     if not os.path.isdir(app):
-        tb = sorted(glob.glob(os.path.join(ROOT, ".cache", f"tor-browser-{_platform()}-*.tar.xz")))
+        tb = sorted(glob.glob(os.path.join(ROOT, ".cache", f"tor-browser-{_platform()}-*.tar.xz")) +
+                    glob.glob(os.path.join(ROOT, ".cache", f"tor-browser-{_platform()}-portable-*.exe")))
         if not tb:
             return None
         os.makedirs(dst, exist_ok=True)
-        with tarfile.open(tb[-1]) as t:
-            t.extractall(dst, filter="data")
+        if tb[-1].endswith(".exe"):
+            seven = shutil.which("7z") or shutil.which("7za") or r"C:\Program Files\7-Zip\7z.exe"
+            subprocess.run([seven, "x", "-y", "-bso0", f"-o{app}", tb[-1], "-x!$PLUGINSDIR"], check=True)
+        else:
+            with tarfile.open(tb[-1]) as t:
+                t.extractall(dst, filter="data")
     return app
 
 

@@ -16,7 +16,8 @@ def start(app_dir, prefs=None, env=None, tor_provider="none"):
     """Launch the browser in app_dir. tor_provider='none' means Tor is not
     launched by the browser and the SOCKS proxy prefs are used as-is."""
     opts = Options()
-    opts.binary_location = os.path.join(app_dir, "Browser", "firefox.real")
+    exe = os.path.join(app_dir, "Browser", "firefox.exe")
+    opts.binary_location = exe if os.path.isfile(exe) else os.path.join(app_dir, "Browser", "firefox.real")
     opts.add_argument("--headless")
     opts.add_argument("-remote-allow-system-access")
     profile = tempfile.mkdtemp(prefix="umbra-test-")

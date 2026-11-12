@@ -20,6 +20,15 @@ Umbra opens the Tor connection screen. Click **Connect**. If Tor is blocked on y
 
 Umbra 0.x has **no automatic updater**. Upstream's updater is disabled because it would replace Umbra with stock Tor Browser. Instead, Umbra shows a **release notice bar** when a new version is published. Once a day, after Tor connects, it makes one anonymous request over Tor for the latest version number, and it never downloads anything itself. Turn it off with `umbra.update.notify = false` in `about:config`. To update, download the new release and replace the folder. Your profile lives at `umbra/Browser/TorBrowser/Data`; copy it across if you enabled history or bookmarks.
 
-## Windows, macOS, Android
+## Windows x86-64 (experimental)
+
+1. Download `umbra-<version>-windows-x86_64.zip` and `SHA256SUMS` from [Releases](https://github.com/FAHTHIZ/Umbra/releases).
+2. Verify it in PowerShell: `Get-FileHash umbra-*-windows-x86_64.zip` and compare the result with `SHA256SUMS`.
+3. Extract it anywhere you can write to, such as your Desktop or a USB stick. It's portable.
+4. Run `Umbra\Start Umbra.cmd` (or `Umbra\Browser\firefox.exe`).
+
+Notes: the executables keep Tor Project's original Authenticode signatures, so the taskbar and .exe icon still show Tor Browser's icon. Umbra only changes the signed program's data files (`omni.ja`) and adds window icons.
+
+## macOS, Android
 
 Not available yet. See the [roadmap](ROADMAP.md). Please don't use unofficial builds that claim to be Umbra.

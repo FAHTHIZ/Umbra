@@ -64,6 +64,36 @@ jobs:
             dist/SHA256SUMS
             bench/results/ci.json
 
+  windows:
+    needs: unit
+    runs-on: windows-2025
+    env: { UMBRA_PLATFORM: windows-x86_64 }
+    defaults: { run: { shell: bash } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-dev.txt
+      - name: geckodriver
+        run: |
+          curl -sSfL -o gd.zip https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-win64.zip
+          mkdir -p "$HOME/bin" && python -c "import zipfile;zipfile.ZipFile('gd.zip').extractall(r'$HOME/bin')"
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+      - name: gpg (Git for Windows ships one)
+        run: gpg --version | head -1
+      - uses: actions/cache@v4
+        with:
+          path: .cache/*.exe*
+          key: upstream-windows-x86_64-${{ hashFiles('upstream/tor-browser.lock.json') }}
+      - name: Build (verifies upstream signature + sha256)
+        run: python -m tools.umbra_build build --platform windows-x86_64
+      - name: Integration tests (incl. fingerprint parity vs upstream Tor Browser for Windows)
+        run: python -m pytest -q tests/integration
+      - uses: actions/upload-artifact@v4
+        with:
+          name: umbra-windows-x86_64
+          path: dist/*.zip
+
   live-tor:
     runs-on: ubuntu-24.04
     needs: build-and-test
