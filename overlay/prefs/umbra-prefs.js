@@ -17,6 +17,15 @@ pref("browser.urlbar.suggest.searches", false);
 pref("browser.search.separatePrivateDefault", false);
 pref("browser.urlbar.showSearchSuggestionsFirst", false);
 
+// --- Access Engine ----------------------------------------------------------
+// Local page inspection is enabled by the browser overlay. Network filtering
+// and cosmetic DOM changes are opt-in because websites can detect their effects
+// and they may make the user more distinguishable from the Tor Browser crowd.
+pref("umbra.access.enabled", false);
+pref("umbra.access.blockAds", true);
+pref("umbra.access.blockTrackers", true);
+pref("umbra.access.cosmetic", false);
+
 // --- Updates ----------------------------------------------------------------
 // Tor Browser's MAR updater would replace Umbra with stock Tor Browser.
 // Umbra ships rebuilt releases (see docs/RELEASE.md); in-app update is disabled
