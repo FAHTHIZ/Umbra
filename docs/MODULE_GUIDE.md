@@ -39,7 +39,7 @@ Then call it from `patch_browser_omni`. `init()` must be idempotent. It should r
 
 - Pages use a strict CSP: `default-src 'none'`, with `connect-src 'none'` (or `chrome:` for bundled JSON). No remote fonts, images or scripts.
 - **No network requests** unless the module's purpose demands one. Any request must go through Tor, and must be documented in `docs/THREAT_MODEL.md` and covered by a leak test.
-- **Nothing web-observable.** If a change could alter what a site sees, the parity test (`tests/integration/test_fingerprint_parity.py`) must stay green.
+- **Nothing web-observable.** If a change could alter what a site sees, the parity test (`tests/integration/test_parity.py`) must stay green.
 - No custom cryptography. Use WebCrypto/NSS or an audited, vendored library.
 - Don't change upstream security prefs. If a module needs one changed, it goes through an IDEAS.md entry and an owner decision.
 
