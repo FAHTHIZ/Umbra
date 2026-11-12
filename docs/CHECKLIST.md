@@ -91,7 +91,7 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
   - 📋 planned: full-page screenshots, original response bytes, RFC 3161 timestamps, mobile
 - 🧪 Investigation toolkit (`toolkit/`): 22 upstreams pinned at exact commits with licenses (`toolkit/upstreams.lock.json`, `tests/unit/test_upstreams_lock.py`); tool containers on an `internal` network whose only exit is an `OnionTrafficOnly` Tor SOCKS port; network-less analysis container (pinned exiftool, hashdeep, mitmproxy) — `toolkit/selftest.sh` (CI job `toolkit`), `tests/unit/test_toolkit_compose.py`
   - ✅ live in CI: the toolkit's Tor refuses clearnet and reaches an onion service
-  - 🧪 TorBot, darkdump, onionscout and onionscan images build from their pinned commits and `--help` runs (CI); not yet run against an onion service. ZAP container experimental. DarkSpider upstream unresolved
+  - 🧪 TorBot, darkdump, DarkSpider (candidate PROxZIMA/DarkSpider), onionscout and onionscan images build from their pinned commits and `--help` runs (CI); not yet run against an onion service. ZAP container experimental. The DarkSpider upstream identity is still unconfirmed: the URL in the brief returns 404
 - ❓ Local LLM for Assistant (needs owner decision: bundle size, fingerprint) — see `docs/modules/`
 
 ## Delivery

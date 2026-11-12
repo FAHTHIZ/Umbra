@@ -75,7 +75,7 @@ verified before and after.
 | onionsearch | megadose/OnionSearch | Image built and isolation tested in CI. Search output depends on third-party onion engines |
 | torbot, darkdump, onionscout | pinned commits | Built from the pinned commit in CI and `--help` runs in the hardened container. Not yet run against an onion service in CI |
 | onionscan | nao1215/onionscan (Go) | Built from the pinned commit in CI and `--help` runs. Not yet run against an onion service in CI |
-| darkspider | **Unresolved**: the URL in the brief does not exist. PROxZIMA/DarkSpider is a candidate | Build attempted, unconfirmed upstream |
+| darkspider | **Unresolved**: the URL in the brief does not exist. PROxZIMA/DarkSpider is a candidate | Image builds from the pinned commit 44835a0d and `--help` runs under a pty (CI). Upstream identity still unconfirmed |
 | zap | Official `zaproxy/zap-stable` image pinned by digest (not built from the pinned source commit) | **Experimental**, not tested. Baseline (passive) scan only |
 
 Tools that are not containerised (AIL, Timesketch server, Plaso, Autopsy, The Sleuth Kit, OWASP
