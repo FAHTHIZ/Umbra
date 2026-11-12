@@ -1,0 +1,233 @@
+{
+  "comment": "Pinned third-party investigation tools. Exact commits; fetch with toolkit/fetch_upstreams.py (verifies the checked-out SHA). Integration levels are explained in docs/modules/INVESTIGATE.md. 'reviewed' is the UTC date the upstream and its license were checked.",
+  "reviewed": "2026-11-12",
+  "forks": [],
+  "fork_policy": "No forks: Umbra changes none of these projects' code. They are used unmodified (pinned), run in isolated containers, or exchanged through files. A fork is created only when a real patch is needed.",
+  "upstreams": [
+    {
+      "name": "tor",
+      "url": "https://gitlab.torproject.org/tpo/core/tor.git",
+      "commit": "5e28464e3eabb7392283159f14492c53363fac95",
+      "ref": "main",
+      "license": "BSD-3-Clause",
+      "category": "onion-networking",
+      "integration": "integrated-via-tor-browser",
+      "how": "Umbra runs the tor binary shipped inside the signed Tor Browser bundle (upstream/tor-browser.lock.json); the toolkit tor container uses Debian's packaged tor. This pin is a source reference for audits, not a separate build.",
+      "note": "Requested URL github.com/torproject/tor is a retired mirror (README says the project moved to gitlab.torproject.org/tpo/core/tor); pinned the canonical repository."
+    },
+    {
+      "name": "tor-browser",
+      "url": "https://gitlab.torproject.org/tpo/applications/tor-browser.git",
+      "commit": "5290963f9768e965b551135fef14f75ada70ca5b",
+      "ref": "tor-browser-153.7.0esr-16.0-1-build2",
+      "license": "MPL-2.0",
+      "category": "browser-foundation",
+      "integration": "integrated-foundation",
+      "how": "Umbra is built from the signed Tor Browser 16.0.1 release. This commit equals SourceStamp in the shipped platform.ini (checked by tests/unit/test_upstreams_lock.py against a built bundle)."
+    },
+    {
+      "name": "torbot",
+      "url": "https://github.com/DedSecInside/TorBot.git",
+      "commit": "4a6f369602592eb6d469b10bfc0cb6d4b3ea10e2",
+      "ref": "dev",
+      "license": "GPL-3.0-only",
+      "category": "onion-discovery",
+      "integration": "submodule+standalone-container+leads-import",
+      "how": "Git submodule vendor/torbot (added by the project owner). Runs only in the isolated toolkit container through tor; its output can be imported as manual leads in Umbra Investigate."
+    },
+    {
+      "name": "onionscan",
+      "url": "https://github.com/nao1215/onionscan.git",
+      "commit": "4e54c8001238d09817e2f6a6a689918eb89bb0b5",
+      "ref": "main",
+      "license": "MIT",
+      "category": "onion-assessment",
+      "integration": "standalone-container",
+      "how": "Scanner for onion services you operate or are authorised to assess. Isolated container through tor; JSON output can be attached to a case with tools/investigate/attach.py."
+    },
+    {
+      "name": "onionscout",
+      "url": "https://github.com/h0ek/onionscout.git",
+      "commit": "d8e963fb9bebd07716804b93851c569fd56684fb",
+      "ref": "main",
+      "license": "MIT",
+      "category": "onion-assessment",
+      "integration": "standalone-container",
+      "how": "Same model as onionscan: authorised targets only, isolated container, output attachable to a case."
+    },
+    {
+      "name": "onionsearch",
+      "url": "https://github.com/megadose/OnionSearch.git",
+      "commit": "fc9d62c84f9cac9cd260d727bdac770ce3c4c743",
+      "ref": "master",
+      "license": "GPL-3.0-only",
+      "category": "onion-discovery",
+      "integration": "standalone-container+leads-import",
+      "how": "Metasearch over onion search engines, isolated container through tor. Its CSV output is imported by Umbra Investigate as a list of onion leads that the user opens manually."
+    },
+    {
+      "name": "ahmia-site",
+      "url": "https://github.com/ahmia/ahmia-site.git",
+      "commit": "db1a091d29a3b2103b031058782d29d9868b230b",
+      "ref": "master",
+      "license": "BSD-3-Clause",
+      "category": "onion-search",
+      "integration": "integrated-search-endpoint",
+      "how": "Umbra Investigate offers Ahmia's onion service (juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion, as published on ahmia.fi) as a search engine. Umbra does not self-host Ahmia.",
+      "note": "Requested URL github.com/ahmia/ahmia returns 404; the Ahmia project is split into ahmia-site, ahmia-crawler and ahmia-index (all pinned)."
+    },
+    {
+      "name": "ahmia-crawler",
+      "url": "https://github.com/ahmia/ahmia-crawler.git",
+      "commit": "9fcee8fcfe0df6a0f3c5c3b09570ac3d21c6cd85",
+      "ref": "master",
+      "license": "BSD-3-Clause",
+      "category": "onion-discovery",
+      "integration": "standalone-reference",
+      "how": "Pinned for self-hosting Ahmia; not run by Umbra."
+    },
+    {
+      "name": "ahmia-index",
+      "url": "https://github.com/ahmia/ahmia-index.git",
+      "commit": "9b99b6da0c35cbf81d5820a2fd05697ce3aca5c5",
+      "ref": "master",
+      "license": "BSD-3-Clause",
+      "category": "onion-search",
+      "integration": "standalone-reference",
+      "how": "Pinned for self-hosting Ahmia; not run by Umbra."
+    },
+    {
+      "name": "ail-framework",
+      "url": "https://github.com/ail-project/ail-framework.git",
+      "commit": "d4dcb310324dc5a9e6f0c9dcf81ce5c18b747513",
+      "ref": "master",
+      "license": "AGPL-3.0-only",
+      "category": "onion-discovery",
+      "integration": "standalone-external",
+      "how": "Large server platform (Redis/Kvrocks, crawlers, web UI). Run it separately on its own host; Umbra's Timesketch/JSONL and HAR exports can be handed to it manually. Not bundled or containerised by Umbra."
+    },
+    {
+      "name": "darkdump",
+      "url": "https://github.com/josh0xA/darkdump.git",
+      "commit": "59912f64af8173993d827710a9e2b8b4de174365",
+      "ref": "main",
+      "license": "MIT",
+      "category": "onion-discovery",
+      "integration": "standalone-container+leads-import",
+      "how": "Isolated container through tor; onion URLs in its output can be imported as manual leads."
+    },
+    {
+      "name": "darkspider",
+      "url": "https://github.com/PROxZIMA/DarkSpider.git",
+      "commit": "44835a0d4b5dece9f2be556feecbf3d8c04704b5",
+      "ref": "master",
+      "license": "GPL-3.0-only",
+      "category": "onion-discovery",
+      "integration": "unresolved-candidate",
+      "how": "Not wired into compose until the owner confirms this is the intended project.",
+      "note": "Requested URL github.com/N0rz3/DarkSpider returns 404 (N0rz3 has no such repository). PROxZIMA/DarkSpider is the best-known project with that name; pinned as a candidate only."
+    },
+    {
+      "name": "mitmproxy",
+      "url": "https://github.com/mitmproxy/mitmproxy.git",
+      "commit": "af5d15709bd09d1eb80bf88064540787f6c3e27e",
+      "ref": "main",
+      "license": "MIT",
+      "category": "traffic-inspection",
+      "integration": "integrated-har-interop",
+      "how": "Umbra Investigate exports HAR 1.2; CI loads it with mitmproxy's own reader (mitmproxy.io.read_flows_from_paths) in tests/investigate. Live interception inside the investigate instance is deliberately not done (it would require trusting a MITM CA and breaks Tor Browser's certificate model)."
+    },
+    {
+      "name": "zaproxy",
+      "url": "https://github.com/zaproxy/zaproxy.git",
+      "commit": "7f738e46b3607d136d00b3a6ee47e5c8f7ab53f6",
+      "ref": "main",
+      "license": "Apache-2.0",
+      "category": "security-analysis",
+      "integration": "standalone-container",
+      "how": "Isolated container on the tor-only network, passive analysis of an imported HAR by default (HAR import is a ZAP feature). Active scanning is only for systems you are authorised to test."
+    },
+    {
+      "name": "owasp-ptk-site",
+      "url": "https://github.com/OWASP/www-project-penetration-testing-kit.git",
+      "commit": "67d8661ac184d926e9b9f10cc02eca0bc3c11f63",
+      "ref": "main",
+      "license": "NOASSERTION",
+      "category": "security-analysis",
+      "integration": "standalone-reference",
+      "how": "This is the OWASP project website (no license file). The extension source it links to is pinned separately as owasp-ptk.",
+      "note": "No license file in the website repository; nothing from it is copied."
+    },
+    {
+      "name": "owasp-ptk",
+      "url": "https://github.com/DenisPodgurskii/pentestkit.git",
+      "commit": "1dd2581de0f4c282f53f45b967bbd004e7d11551",
+      "ref": "master",
+      "license": "AGPL-3.0-only",
+      "category": "security-analysis",
+      "integration": "standalone-external",
+      "how": "A browser extension. Not bundled: adding extensions changes Umbra's fingerprint relative to Tor Browser. Use it in a separate, non-Umbra testing profile against systems you are authorised to test."
+    },
+    {
+      "name": "timesketch",
+      "url": "https://github.com/google/timesketch.git",
+      "commit": "9f84e0c315071b43a1d2237f2ab3b633349e8ff2",
+      "ref": "master",
+      "license": "Apache-2.0",
+      "category": "evidence-timeline",
+      "integration": "integrated-export-format",
+      "how": "Umbra writes Timesketch JSONL (message, datetime, timestamp_desc + attributes). The schema is tested in CI; importing into a live Timesketch server is not tested in CI."
+    },
+    {
+      "name": "plaso",
+      "url": "https://github.com/log2timeline/plaso.git",
+      "commit": "f75784eea92ce1f946e822a675836da45d91309c",
+      "ref": "main",
+      "license": "Apache-2.0",
+      "category": "evidence-timeline",
+      "integration": "standalone-external",
+      "how": "Run separately on case folders or disk images. Umbra's case log is already a timeline, so Plaso is not needed for Umbra's own evidence."
+    },
+    {
+      "name": "autopsy",
+      "url": "https://github.com/sleuthkit/autopsy.git",
+      "commit": "cb3dacdcad67abe7cf863c74f10dcdb8e25a5c21",
+      "ref": "develop",
+      "license": "Apache-2.0",
+      "category": "forensics",
+      "integration": "standalone-external",
+      "how": "Desktop forensics suite. Add an Umbra case folder as a 'Logical Files' data source; hashes in manifest.json/hashdeep.txt can be compared there."
+    },
+    {
+      "name": "sleuthkit",
+      "url": "https://github.com/sleuthkit/sleuthkit.git",
+      "commit": "08167c8d6d5fc1bd4ee6d822e2fe042cabcdee6d",
+      "ref": "develop-4.1x",
+      "license": "IPL-1.0 AND CPL-1.0 AND GPL-2.0-or-later (per licenses/README.md)",
+      "category": "forensics",
+      "integration": "standalone-external",
+      "how": "Disk-image forensics library and tools; not relevant to browser-captured artifacts, kept standalone."
+    },
+    {
+      "name": "exiftool",
+      "url": "https://github.com/exiftool/exiftool.git",
+      "commit": "1da714924f67763b6a8a7013dd2aa1983a16f87b",
+      "ref": "master",
+      "license": "GPL-1.0-or-later OR Artistic-1.0-Perl",
+      "category": "evidence-metadata",
+      "integration": "integrated-offline-analysis",
+      "how": "tools/investigate/analyze_case.py runs exiftool (offline, in the network-less analysis container or locally) on captured artifacts and adds its JSON output to the case with hashes. Tested in CI.",
+      "note": "README: 'same terms as Perl itself (either the Perl Artistic License or GPL)'. GitHub detects the LICENSE file as GPL-3.0."
+    },
+    {
+      "name": "hashdeep",
+      "url": "https://github.com/jessek/hashdeep.git",
+      "commit": "877613493ff44807888ce1928129574be393cbb0",
+      "ref": "master",
+      "license": "LicenseRef-PublicDomain AND GPL-2.0-or-later (Tiger code)",
+      "category": "evidence-integrity",
+      "integration": "integrated-manifest-format",
+      "how": "Every case gets hashdeep.txt (HASHDEEP-1.0, size+sha256). CI audits it with the real hashdeep binary (hashdeep -a -k)."
+    }
+  ]
+}
