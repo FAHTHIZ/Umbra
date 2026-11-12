@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
       - run: pip install -r requirements-dev.txt
       - run: python -m pytest -q tests/unit
@@ -23,7 +23,7 @@ jobs:
     needs: unit
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
       - name: System deps (GTK runtime for headless Gecko)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 libx11-xcb1 gnupg xz-utils
@@ -57,7 +57,7 @@ jobs:
     continue-on-error: true   # Tor network reachability varies; never gate merges on it
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with: { python-version: "3.12" }
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 gnupg xz-utils
       - run: pip install -r requirements-dev.txt
