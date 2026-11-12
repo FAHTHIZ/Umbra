@@ -62,6 +62,7 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - ✅ No Umbra telemetry / no remote loads on Umbra pages (strict CSP)
 - 🟡 Sandboxing, Fission, FPI, RFP, letterboxing, HTTPS-Only, security levels, signed extensions
 - ✅ Threat model, security architecture, known limitations docs
+- ✅ Contributor docs: README, CONTRIBUTING, CoC, INSTALL, BUILDING, TESTING, RELEASE, issue/PR templates
 
 ## Performance
 - ✅ Benchmark harness Umbra vs upstream on identical hardware — `bench/benchmark.py`, results in `bench/results/`
@@ -73,6 +74,7 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - 🟡 Umbra Privacy (upstream panes linked); 📋 dedicated dashboard
 - 🟡 Umbra Vault (bookmarks/passwords); 📋 encrypted export
 - 🟡 Umbra Downloads
+- 🧪 Umbra Access Engine (owner-led): packaged, starts at first window, toolbar button, local dashboard; network filtering **off by default** — `tests/integration/test_access_engine*.py`, `tests/umbra/*.test.mjs`. Local page inspection runs in every page (chrome-side, not visible to content); see `docs/UMBRA_ACCESS_ENGINE.md`
 - 📋 Umbra Desk, Umbra Source, Umbra Assistant — see `docs/modules/`
 
 ## Delivery

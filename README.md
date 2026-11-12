@@ -75,6 +75,7 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Explore (curated onions, checksum-verified) | ✅ tested |
 | Tor routing, remote DNS, fail-closed, per-site circuits | ✅ leak-tested |
 | Fingerprint parity with Tor Browser | ✅ tested |
+| Umbra Access Engine (local page inspection, opt-in ad/tracker filtering) | 🧪 experimental, filtering off by default |
 | Umbra Privacy dashboard, Vault export, Desk, Source, Assistant | 📋 planned |
 | Windows / macOS / Android | 📋 planned |
 
