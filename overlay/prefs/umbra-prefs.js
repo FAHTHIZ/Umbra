@@ -45,3 +45,6 @@ pref("browser.sessionstore.restore_pinned_tabs_on_demand", true);
 
 // Read by overlay/patches (umbra-update-disable).
 pref("umbra.update.disabled", true);
+// Release notice instead: one anonymous request over Tor per day, after
+// bootstrap, reading only the latest tag. Never downloads. See docs/RELEASE.md.
+pref("umbra.update.notify", true);

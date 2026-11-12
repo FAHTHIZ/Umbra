@@ -81,4 +81,5 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - ✅ CI workflow (unit, integration, leak, benchmark) — `.github/workflows/ci.yml`
 - ✅ Release workflow (tag → build → GitHub Release with SHA256SUMS)
 - ✅ Daily upstream-watch workflow
+- ✅ Release notice bar: daily anonymous check over Tor, tag only, fixed link, never downloads — `tests/umbra/update-version.test.mjs`, `tests/integration/test_update_notice.py`, `tests/leak::test_update_check_goes_through_tor`
 - 📋 In-app Umbra updater (needs source track for MAR signing)

@@ -81,3 +81,25 @@ def test_circuit_isolation_per_first_party(umbra_app):
     assert set(users) == {"page-a.example", "page-b.example"}, canary.log
     assert all(u and None not in u for u in users.values()), "no isolation credentials sent"
     assert users["page-a.example"].isdisjoint(users["page-b.example"]), f"sites share a circuit: {users}"
+
+
+def test_update_check_goes_through_tor(umbra_app):
+    """The release-notice request must use the SOCKS proxy with remote DNS."""
+    from tests.browser_driver import chrome_eval
+    canary = Canary()
+    mon = SockMon(umbra_app).start()
+    d = start(umbra_app, prefs={"network.proxy.socks_port": canary.port, "network.proxy.socks": "127.0.0.1",
+                                "network.proxy.type": 1,
+                                "umbra.update.url": "http://updates-canary.example/releases/latest"})
+    try:
+        chrome_eval(d, "const {UmbraUpdateNotice:U}=ChromeUtils.importESModule("
+                       "'resource:///modules/umbra/UmbraUpdateNotice.sys.mjs'); await U.checkNow();")
+        time.sleep(1)
+    finally:
+        stop(d)
+        mon.stop()
+        canary.stop()
+    assert not mon.leaks(), f"update check bypassed proxy: {mon.leaks()}"
+    hits = [e for e in canary.log if e["host"] == "updates-canary.example"]
+    assert hits, "update check never reached the SOCKS proxy"
+    assert all(e["atyp"] == 3 for e in hits), "update check resolved DNS locally"

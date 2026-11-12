@@ -25,7 +25,7 @@
 - **Umbra Explore.** A curated directory of operator-published onion services. Every address is v3-checksum-verified in CI, so typos and lookalikes can't slip in.
 - **Same fingerprint as Tor Browser.** Umbra changes nothing a website can observe. A test compares 500+ security preferences against upstream on every build.
 - **Verified supply chain.** Every build checks the upstream OpenPGP signature against a pinned key **and** a pinned SHA-256, then produces deterministic output.
-- **No telemetry.** Umbra's own pages make zero network requests.
+- **No telemetry.** Umbra's own pages make zero network requests. The only background request is an anonymous daily release check over Tor, which you can turn off.
 
 ## Install (Linux x86-64)
 
@@ -75,6 +75,7 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Explore (curated onions, checksum-verified) | ✅ tested |
 | Tor routing, remote DNS, fail-closed, per-site circuits | ✅ leak-tested |
 | Fingerprint parity with Tor Browser | ✅ tested |
+| Release notice for new Umbra versions (over Tor) | ✅ tested |
 | Umbra Access Engine (local page inspection, opt-in ad/tracker filtering) | 🧪 experimental, filtering off by default |
 | Umbra Privacy dashboard (Tools → Umbra Privacy) | ✅ tested |
 | Vault export, Desk, Source, Assistant | 📋 planned |

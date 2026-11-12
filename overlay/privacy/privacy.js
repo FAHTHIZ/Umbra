@@ -39,7 +39,7 @@ async function snapshot() {
       "network.proxy.allow_hijacking_localhost", "privacy.resistFingerprinting",
       "privacy.resistFingerprinting.letterboxing", "privacy.firstparty.isolate", "media.peerconnection.enabled",
       "dom.security.https_only_mode", "browser.privatebrowsing.autoStart", "browser.search.suggest.enabled",
-      "umbra.access.enabled", "extensions.torbutton.use_nontor_proxy", "umbra.version", "umbra.upstream.torbrowser",
+      "umbra.access.enabled", "umbra.update.notify", "extensions.torbutton.use_nontor_proxy", "umbra.version", "umbra.upstream.torbrowser",
     ].map(n => [n, pref(n, null)])),
   };
 }

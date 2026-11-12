@@ -100,6 +100,15 @@ export function evaluate(s) {
     value: "None",
     detail: "Umbra's own pages make no network requests. There are no analytics, crash pings or usage reports.",
   });
+  const notify = p["umbra.update.notify"] !== false;
+  rows.data.push({
+    label: "Release notices",
+    status: notify ? "ok" : "warn",
+    value: notify ? "On" : "Off",
+    detail: notify
+      ? "Once a day, over Tor, Umbra asks GitHub for the latest version number. It sends no identifiers and never downloads anything."
+      : "Off. You won't be told about security releases. Check github.com/FAHTHIZ/Umbra/releases yourself.",
+  });
   rows.data.push({
     label: "Access Engine filtering",
     status: p["umbra.access.enabled"] ? "info" : "ok",

@@ -137,6 +137,20 @@ def patch_privacy_omni(omni: Omni) -> None:
     add_first_window_category(omni, PRIVACY_CATEGORY, "Umbra Privacy startup")
 
 
+UPDATE_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraUpdateNotice.sys.mjs UmbraUpdateNotice.init"
+)
+
+
+def patch_update_omni(omni: Omni) -> None:
+    """Release notice (Umbra disables the upstream MAR updater)."""
+    src = os.path.join(OVERLAY, "update")
+    omni.put("modules/umbra/UmbraUpdateNotice.sys.mjs", open(os.path.join(src, "UmbraUpdateNotice.sys.mjs"), "rb").read(), "Umbra update notice")
+    omni.put("modules/umbra/update-version.mjs", open(os.path.join(src, "version.mjs"), "rb").read(), "Umbra update notice")
+    add_first_window_category(omni, UPDATE_CATEGORY, "Umbra update notice startup")
+
+
 def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     home = os.path.join(OVERLAY, "home")
     for f in sorted(os.listdir(home)):
@@ -157,6 +171,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     omni.put("defaults/preferences/umbra-prefs.js", prefs, "Umbra prefs layer")
     patch_access_omni(omni)
     patch_privacy_omni(omni)
+    patch_update_omni(omni)
 
 
 class PatchError(RuntimeError):

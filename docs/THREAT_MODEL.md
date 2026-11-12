@@ -47,3 +47,11 @@ Umbra inherits Tor Browser's design and threat model ([Tor Browser design docume
 - Live Tor bootstrap is tested in CI, where relays are reachable, not in every development environment.
 - Umbra Desk, Source and Assistant are design documents, not code.
 - Access Engine page inspection and its starter rules are experimental; no production security audit or end-to-end onion-site compatibility test has been completed.
+
+
+## Release notice request
+
+Umbra makes **one** background request of its own: the daily release check (`umbra.update.notify`, on by default). It replaces upstream Tor Browser's update ping, which Umbra disables.
+- What GitHub (and the Tor exit) learn: that some Tor user runs Umbra and checked for updates. No version, profile or device identifiers are sent, and cookies are omitted.
+- Integrity: the response is only used to compare `tag_name`. The link in the notice is built from a fixed URL, so a malicious response can't redirect users. Nothing is downloaded automatically.
+- Users who don't want any background request can set `umbra.update.notify = false`. The Privacy dashboard then shows a review warning, because missed security updates are the larger risk.

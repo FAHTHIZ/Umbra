@@ -65,3 +65,8 @@ test("Access Engine filtering on is informational, with fingerprint caveat", () 
   assert.equal(r.status, "info");
   assert.match(r.detail, /tell you apart/);
 });
+
+test("turning off release notices asks for review", () => {
+  assert.equal(row(evaluate(withPrefs({ "umbra.update.notify": false })), "Release notices").status, "warn");
+  assert.equal(row(evaluate(SAFE), "Release notices").status, "ok");
+});
