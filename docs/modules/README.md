@@ -8,6 +8,6 @@
 | Umbra Vault | 🟡 upstream · 📋 encrypted export | [VAULT.md](VAULT.md) |
 | Umbra Downloads | 🟡 upstream | — |
 | Umbra Desk | 📋 | [DESK.md](DESK.md) |
-| Umbra Source | 📋 isolated | [SOURCE.md](SOURCE.md) |
+| Umbra Source | 🧪 experimental | [SOURCE.md](SOURCE.md) |
 | Umbra Assistant | 📋 local-only | [ASSISTANT.md](ASSISTANT.md) |
 | Umbra Access Engine | 🧪 owner-led | [../UMBRA_ACCESS_ENGINE.md](../UMBRA_ACCESS_ENGINE.md) |

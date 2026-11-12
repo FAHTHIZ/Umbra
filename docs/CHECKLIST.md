@@ -77,7 +77,8 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - 🟡 Umbra Vault (bookmarks/passwords); 📋 encrypted export
 - 🟡 Umbra Downloads
 - 🧪 Umbra Access Engine (owner-led): packaged, starts at first window, toolbar button, local dashboard; network filtering **off by default** — `tests/integration/test_access_engine*.py`, `tests/umbra/*.test.mjs`. Local page inspection runs in every page (chrome-side, not visible to content); see `docs/UMBRA_ACCESS_ENGINE.md`
-- 📋 Umbra Desk, Umbra Source, Umbra Assistant — see `docs/modules/`
+- 🧪 Umbra Source (Tools → Umbra Source): offline SecureDrop directory (24 outlets, v3-checksum-verified), opens onions in a separate `profile.umbra-source` instance at Safest, reusing the running Tor (no second tor) — `tests/unit/test_source_directory.py`, `tests/integration/test_source_module.py`. Onion reachability through the Source instance isn't tested yet (needs live Tor in CI). Windows launch isn't tested.
+- 📋 Umbra Desk, Umbra Assistant — see `docs/modules/`
 
 ## Delivery
 - ✅ CI workflow (unit, integration, leak, benchmark) — `.github/workflows/ci.yml`

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome:; connect-src chrome:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Umbra Source</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="source.css">
+  <script type="module" src="source.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Umbra Source</h1>
+        <p class="sub">Contact news organisations securely through SecureDrop, from an isolated Umbra window.</p>
+      </div>
+    </header>
+
+    <section class="group warnbox">
+      <h2>Before you share anything</h2>
+      <ul>
+        <li><b>High-risk?</b> Use <b>Tails</b> on a device that isn't your work computer, on a network that isn't your workplace or home. Umbra on your everyday computer is weaker.</li>
+        <li>Don't use a device or network your employer controls. Don't search for the outlet from your normal browser.</li>
+        <li>Remove metadata from documents. Photos and PDFs can reveal your device, your location and you.</li>
+        <li>SecureDrop gives you a codename. Write it down on paper. It's the only way to read replies.</li>
+      </ul>
+      <p class="meta">Umbra doesn't submit anything itself. It opens the organisation's own SecureDrop onion page.</p>
+    </section>
+
+    <section class="group">
+      <h2>How Source mode is isolated</h2>
+      <ul class="iso">
+        <li>A separate Umbra profile: no shared history, cookies, storage, permissions or downloads with your normal browsing</li>
+        <li>Security level <b>Safest</b>: JavaScript is off (SecureDrop works without it)</li>
+        <li>Uses your current Tor connection with its own circuits. If Tor stops, Source mode loads nothing.</li>
+        <li>No Umbra background requests (release check and Access Engine are off)</li>
+        <li>Opens only <code>.onion</code> addresses from the directory below</li>
+      </ul>
+    </section>
+
+    <section class="group">
+      <div class="toolbar">
+        <h2 id="count">SecureDrop directory</h2>
+        <input id="filter" type="search" placeholder="Filter by name, country, language or topic" aria-label="Filter">
+      </div>
+      <div id="list" class="list"></div>
+      <p class="meta" id="attribution"></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,688 @@
+{
+ "source": "https://securedrop.org/api/v1/directory/",
+ "attribution": "SecureDrop directory by Freedom of the Press Foundation (securedrop.org)",
+ "generated": "2026-11-12",
+ "count": 24,
+ "entries": [
+  {
+   "title": "Aftenposten AS",
+   "slug": "aftenposten-as",
+   "onion": "tiykfvhb562gheutfnedysnhrxpxoztyszkqyroloyepwzxmxien77id.onion",
+   "onion_name": "aftenposten.securedrop.tor.onion",
+   "description": "A Norwegian newspaper",
+   "languages": [
+    "English",
+    "Norwegian"
+   ],
+   "countries": [
+    "Norway"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "entertainment",
+    "environment",
+    "government",
+    "health",
+    "human rights",
+    "inequality"
+   ],
+   "landing_page_url": "https://www.aftenposten.no/securedrop",
+   "directory_url": "https://securedrop.org/directory/aftenposten-as/"
+  },
+  {
+   "title": "Aftonbladet",
+   "slug": "aftonbladet",
+   "onion": "xm33ge4kupk5o66eqxcd2r4fqcplpqb2sbdduf5z2nw4g2jrxe57luid.onion",
+   "onion_name": "aftonbladet.securedrop.tor.onion",
+   "description": "Aftonbladet is a Swedish evening newspaper. It's the largest online paper in the Nordic region.",
+   "languages": [
+    "English",
+    "Swedish"
+   ],
+   "countries": [
+    "Sweden"
+   ],
+   "topics": [
+    "business",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "government",
+    "inequality",
+    "law enforcement",
+    "national security"
+   ],
+   "landing_page_url": "https://www.aftonbladet.se/securedrop/",
+   "directory_url": "https://securedrop.org/directory/aftonbladet/"
+  },
+  {
+   "title": "Bloomberg Industry Group",
+   "slug": "bloomberg-industry-group",
+   "onion": "3qqupamfznjrai6p4td7epa6pvidpumas2xjsihat73z23f37l2y52id.onion",
+   "onion_name": "bloombergindustrygroup.securedrop.tor.onion",
+   "description": "A platform with a news outlet focused on government, regulatory, legal and business news.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "environment",
+    "government",
+    "health",
+    "regulatory",
+    "social justice",
+    "technology"
+   ],
+   "landing_page_url": "https://news.bloomberglaw.com/tips",
+   "directory_url": "https://securedrop.org/directory/bloomberg-industry-group/"
+  },
+  {
+   "title": "Bloomberg News",
+   "slug": "bloomberg-news",
+   "onion": "ogdwaroarq4p6rnfn2hl4crvldyruyc2g24435qtxmd3twhevg7dsqid.onion",
+   "onion_name": "bloomberg.securedrop.tor.onion",
+   "description": "Bloomberg News is an international news agency headquartered in New York.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "government",
+    "technology"
+   ],
+   "landing_page_url": "https://www.bloomberg.com/tips/",
+   "directory_url": "https://securedrop.org/directory/bloomberg-news/"
+  },
+  {
+   "title": "CBC",
+   "slug": "cbc",
+   "onion": "gppg43zz5d2yfuom3yfmxnnokn3zj4mekt55onlng3zs653ty4fio6qd.onion",
+   "onion_name": "cbcrc.securedrop.tor.onion",
+   "description": "Canada's Public Broadcaster",
+   "languages": [
+    "English",
+    "French"
+   ],
+   "countries": [
+    "Canada"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "environment",
+    "government",
+    "health",
+    "human rights",
+    "law enforcement",
+    "local",
+    "national security",
+    "regional",
+    "science",
+    "social justice",
+    "technology"
+   ],
+   "landing_page_url": "https://www.cbc.ca/securedrop",
+   "directory_url": "https://securedrop.org/directory/cbc/"
+  },
+  {
+   "title": "Dagbladet",
+   "slug": "dagbladet",
+   "onion": "ydbpz5knb6ji3bdtahhm3wo7sed6lsy5vqnwfpnhpez4bquvoexbz7qd.onion",
+   "onion_name": "dagbladet.securedrop.tor.onion",
+   "description": "Dagbladet is a Norwegian daily newspaper.",
+   "languages": [
+    "Danish",
+    "English",
+    "Norwegian",
+    "Swedish"
+   ],
+   "countries": [
+    "Norway"
+   ],
+   "topics": [
+    "corruption",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "entertainment",
+    "health",
+    "inequality",
+    "law enforcement",
+    "national security",
+    "science"
+   ],
+   "landing_page_url": "https://www.dagbladet.no/securedrop/",
+   "directory_url": "https://securedrop.org/directory/dagbladet/"
+  },
+  {
+   "title": "Der Spiegel",
+   "slug": "der-spiegel",
+   "onion": "q6vdlj2ukulrqk37piqgxucpcwtxzdjhvjzqrfbevuhrzimsgjltmpqd.onion",
+   "onion_name": "spiegel.securedrop.tor.onion",
+   "description": "The SPIEGEL Group is a German media company that publishes print magazines, online news and TV",
+   "languages": [
+    "All languages",
+    "English",
+    "German"
+   ],
+   "countries": [
+    "Germany"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "environment",
+    "government",
+    "health",
+    "national security",
+    "science"
+   ],
+   "landing_page_url": "https://www.spiegel.de/extra/so-nehmen-informanten-sicheren-kontakt-zum-spiegel-auf-a-1030502.html",
+   "directory_url": "https://securedrop.org/directory/der-spiegel/"
+  },
+  {
+   "title": "Financial Times",
+   "slug": "financial-times",
+   "onion": "nqu6crmtnzs2hs5abo2uqni53yqsnnwqnerdxuzyz5yxairxlzjzt6yd.onion",
+   "onion_name": "ft.securedrop.tor.onion",
+   "description": "A UK daily business newspaper",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "Asia",
+    "Europe",
+    "UK",
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "cybersecurity",
+    "environment",
+    "government",
+    "health",
+    "human rights",
+    "law enforcement",
+    "national security",
+    "social justice",
+    "technology",
+    "terrorism",
+    "war"
+   ],
+   "landing_page_url": "https://www.ft.com/news-tips/",
+   "directory_url": "https://securedrop.org/directory/financial-times/"
+  },
+  {
+   "title": "Forbes",
+   "slug": "forbes",
+   "onion": "6zonlfhh7aqtfwoyvdlad3nxn6ljecx2k6tyyy3spt43nn54q6lvncid.onion",
+   "onion_name": "forbes.securedrop.tor.onion",
+   "description": "Forbes is an American business magazine.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "cybersecurity",
+    "entertainment",
+    "government",
+    "health",
+    "law enforcement",
+    "multimedia",
+    "national security",
+    "science",
+    "technology"
+   ],
+   "landing_page_url": "https://www.forbes.com/fdc/securedrop.html",
+   "directory_url": "https://securedrop.org/directory/forbes/"
+  },
+  {
+   "title": "Forbidden Stories",
+   "slug": "forbidden-stories",
+   "onion": "fg25fqpu2dnxp24xs3jlcley4hp2inshpzek44q3czkhq3zffoqk26id.onion",
+   "onion_name": "forbiddenstories.securedrop.tor.onion",
+   "description": "An international consortium of investigative journalists.",
+   "languages": [
+    "English",
+    "French",
+    "Spanish"
+   ],
+   "countries": [],
+   "topics": [
+    "civil liberties",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "human rights",
+    "multimedia",
+    "threats against journalists"
+   ],
+   "landing_page_url": "https://forbiddenstories.org/safebox-network-tutorial/",
+   "directory_url": "https://securedrop.org/directory/forbidden-stories/"
+  },
+  {
+   "title": "Greekleaks",
+   "slug": "greekleaks",
+   "onion": "jatasaqcoe7lqdpcyxo7vl3e5tdvl5jgmtadfat77i25qdj6z6a4ulad.onion",
+   "onion_name": "greekleaks.securedrop.tor.onion",
+   "description": "Greekleaks is run by the Greek investigative journalism network Reporters United",
+   "languages": [
+    "Arabic",
+    "English",
+    "French",
+    "German",
+    "Greek"
+   ],
+   "countries": [
+    "Europe",
+    "Greece"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "environment",
+    "government",
+    "human rights",
+    "law enforcement",
+    "national security",
+    "social justice"
+   ],
+   "landing_page_url": "https://reportersunited.gr/greekleaks/",
+   "directory_url": "https://securedrop.org/directory/greekleaks/"
+  },
+  {
+   "title": "Kenneth R. Rosen",
+   "slug": "kennethrrosen",
+   "onion": "dpsw5tvlh2pccviydqw2cz5tjszd34zcdj322oikydqvgsqwitxup7yd.onion",
+   "onion_name": "kennethrrosen.securedrop.tor.onion",
+   "description": "Author, Independent Journalist",
+   "languages": [
+    "English",
+    "Italian"
+   ],
+   "countries": [],
+   "topics": [
+    "arctic",
+    "civil liberties",
+    "conflict",
+    "foreign policy",
+    "human rights",
+    "national security"
+   ],
+   "landing_page_url": "https://kennethrrosen.com/securedrop/",
+   "directory_url": "https://securedrop.org/directory/kennethrrosen/"
+  },
+  {
+   "title": "New York Times",
+   "slug": "new-york-times",
+   "onion": "ej3kv4ebuugcmuwxctx5ic7zxh73rnxt42soi3tdneu2c2em55thufqd.onion",
+   "onion_name": "nytimes.securedrop.tor.onion",
+   "description": "The New York Times is an American newspaper based in New York City.",
+   "languages": [
+    "Chinese",
+    "English",
+    "Spanish"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "arts",
+    "business",
+    "environment",
+    "food",
+    "government",
+    "health",
+    "science",
+    "sports",
+    "technology",
+    "travel"
+   ],
+   "landing_page_url": "https://www.nytimes.com/tips",
+   "directory_url": "https://securedrop.org/directory/new-york-times/"
+  },
+  {
+   "title": "News24",
+   "slug": "news24",
+   "onion": "uhmj4j5pnwbpmkebfze3qgjmkum465fvok376nxtpku5yvyv5takz6qd.onion",
+   "onion_name": "news24.securedrop.tor.onion",
+   "description": "South Africa's most trusted digital news brand for breaking news and award-winning journalism",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "South Africa"
+   ],
+   "topics": [
+    "business",
+    "corruption",
+    "crime",
+    "criminal justice",
+    "cybersecurity",
+    "government",
+    "human rights",
+    "law enforcement",
+    "national security"
+   ],
+   "landing_page_url": "https://www.news24.com/tips",
+   "directory_url": "https://securedrop.org/directory/news24/"
+  },
+  {
+   "title": "NRK",
+   "slug": "nrk",
+   "onion": "537ztcntpbmspja4mkpxldpsoc46mqlssnsaklqnfw3gnlpj5glcjgid.onion",
+   "onion_name": "nrk.securedrop.tor.onion",
+   "description": "NRK is Norway's public broadcaster (TV, radio, online), offering news and in-depth journalism.",
+   "languages": [
+    "English",
+    "French",
+    "German",
+    "Norwegian",
+    "Spanish"
+   ],
+   "countries": [
+    "Norway"
+   ],
+   "topics": [
+    "business",
+    "corruption",
+    "crime",
+    "government",
+    "national security"
+   ],
+   "landing_page_url": "https://www.nrk.no/varsle/",
+   "directory_url": "https://securedrop.org/directory/nrk/"
+  },
+  {
+   "title": "ProPublica",
+   "slug": "propublica",
+   "onion": "33xu4yhum2eiisxm6fntaslayop76fvaqgt3ak5dakdm3t7cub25cead.onion",
+   "onion_name": "propublica.securedrop.tor.onion",
+   "description": "ProPublica is an independent, nonprofit newsroom producing investigative journalism in the Unit",
+   "languages": [
+    "English",
+    "Spanish"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "celebrities",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "cybersecurity",
+    "entertainment",
+    "health",
+    "human rights",
+    "inequality",
+    "law enforcement",
+    "local",
+    "multimedia",
+    "national security",
+    "regional",
+    "religion",
+    "science",
+    "social justice",
+    "technology"
+   ],
+   "landing_page_url": "https://propublica.org/tips",
+   "directory_url": "https://securedrop.org/directory/propublica/"
+  },
+  {
+   "title": "Stefania Maurizi",
+   "slug": "stefania-maurizi",
+   "onion": "jxsb4ovmavjy3r64bak4ha63xwggf3nzf3vikvs23r2avm5rhzmaqtqd.onion",
+   "onion_name": "maurizi.securedrop.tor.onion",
+   "description": "Italian investigative journalist with expertise on high-profile leaks and whistleblowers",
+   "languages": [
+    "All languages",
+    "English",
+    "French",
+    "Italian"
+   ],
+   "countries": [
+    "Europe",
+    "Italy",
+    "UK",
+    "USA"
+   ],
+   "topics": [
+    "civil liberties",
+    "corruption",
+    "cybersecurity",
+    "environment",
+    "government",
+    "human rights",
+    "inequality",
+    "law enforcement",
+    "national security",
+    "science",
+    "social justice",
+    "suppression of dissent",
+    "technology"
+   ],
+   "landing_page_url": "https://stefaniamaurizi.it/en-contactme.html",
+   "directory_url": "https://securedrop.org/directory/stefania-maurizi/"
+  },
+  {
+   "title": "Süddeutsche Zeitung",
+   "slug": "süddeutsche-zeitung",
+   "onion": "udhauo3m3fh7v6yfiuornjzxn3fh6vlp4ooo3wogvghcnv5xik6mnayd.onion",
+   "onion_name": null,
+   "description": "German daily newspaper",
+   "languages": [
+    "English",
+    "German"
+   ],
+   "countries": [
+    "Germany"
+   ],
+   "topics": [
+    "business",
+    "corruption",
+    "crime",
+    "cybersecurity",
+    "government",
+    "health",
+    "human rights",
+    "inequality",
+    "national security",
+    "science",
+    "tax evasion"
+   ],
+   "landing_page_url": "https://www.sueddeutsche.de/projekte/kontakt/",
+   "directory_url": "https://securedrop.org/directory/s%C3%BCddeutsche-zeitung/"
+  },
+  {
+   "title": "The Economist",
+   "slug": "the-economist",
+   "onion": "mxmddqsh4jnr4gjan37ayin3fu5ecnejxge4wjhj4i45qq5djbxdjtad.onion",
+   "onion_name": "theeconomist.securedrop.tor.onion",
+   "description": "An international newspaper focusing on current affairs, international business, politics, tech",
+   "languages": [
+    "All languages"
+   ],
+   "countries": [],
+   "topics": [
+    "business",
+    "corruption",
+    "crime",
+    "cybersecurity",
+    "environment",
+    "government",
+    "human rights",
+    "national security",
+    "science",
+    "technology"
+   ],
+   "landing_page_url": "https://www.economist.com/securedrop/",
+   "directory_url": "https://securedrop.org/directory/the-economist/"
+  },
+  {
+   "title": "The Globe and Mail",
+   "slug": "globe-and-mail",
+   "onion": "a4zum5ydurvljrohxqp2rjjal5kro4ge2q2qizuonf2jubkhcr627gad.onion",
+   "onion_name": "theglobeandmail.securedrop.tor.onion",
+   "description": "The Globe and Mail is a Canadian newspaper.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "Canada"
+   ],
+   "topics": [
+    "business",
+    "criminal justice",
+    "environment",
+    "government",
+    "health",
+    "human rights",
+    "inequality",
+    "law enforcement",
+    "national security",
+    "social justice",
+    "technology"
+   ],
+   "landing_page_url": "https://sec.theglobeandmail.com/securedrop/",
+   "directory_url": "https://securedrop.org/directory/globe-and-mail/"
+  },
+  {
+   "title": "The Guardian",
+   "slug": "guardian",
+   "onion": "xp44cagis447k3lpb4wwhcqukix6cgqokbuys24vmxmbzmaq2gjvc2yd.onion",
+   "onion_name": "theguardian.securedrop.tor.onion",
+   "description": "The Guardian is a British daily newspaper.",
+   "languages": [
+    "All languages",
+    "English"
+   ],
+   "countries": [
+    "UK",
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "environment",
+    "government",
+    "health",
+    "national security",
+    "technology"
+   ],
+   "landing_page_url": "https://www.theguardian.com/securedrop",
+   "directory_url": "https://securedrop.org/directory/guardian/"
+  },
+  {
+   "title": "The Washington Post",
+   "slug": "washington-post",
+   "onion": "vfnmxpa6fo4jdpyq3yneqhglluweax2uclvxkytfpmpkp5rsl75ir5qd.onion",
+   "onion_name": "washingtonpost.securedrop.tor.onion",
+   "description": "The Washington Post is an American daily newspaper published in Washington, DC.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "environment",
+    "government",
+    "health",
+    "science",
+    "technology"
+   ],
+   "landing_page_url": "https://www.washingtonpost.com/securedrop",
+   "directory_url": "https://securedrop.org/directory/washington-post/"
+  },
+  {
+   "title": "Whistleblow.co",
+   "slug": "whistleblowco",
+   "onion": "zuybtx2nop5cxfz4gyc7hzxpterf3pvf6zixe5cscajhlgqrexpkcoqd.onion",
+   "onion_name": "whistleblowco.securedrop.tor.onion",
+   "description": "A whistleblower news and legal resource in the United States.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corporate fraud",
+    "cybersecurity",
+    "government",
+    "government fraud",
+    "health",
+    "healthcare fraud",
+    "national security",
+    "securities fraud",
+    "technology"
+   ],
+   "landing_page_url": "https://www.whistleblow.co/whistleblowco-securedrop/",
+   "directory_url": "https://securedrop.org/directory/whistleblowco/"
+  },
+  {
+   "title": "Whistleblower Aid",
+   "slug": "whistleblower-aid",
+   "onion": "kogbxf4ysay2qzozmg7ar45ijqmj2vxrwqa4upzqq2i7sqj7wv7wcdqd.onion",
+   "onion_name": "whistlebloweraid.securedrop.tor.onion",
+   "description": "Nonprofit law firm representing whistleblowers from federal government and private companies.",
+   "languages": [
+    "English"
+   ],
+   "countries": [
+    "USA"
+   ],
+   "topics": [
+    "business",
+    "civil liberties",
+    "corruption",
+    "crime",
+    "environment",
+    "government",
+    "human rights",
+    "inequality",
+    "law enforcement",
+    "national security"
+   ],
+   "landing_page_url": "https://whistlebloweraid.org/become-a-whistleblower/securedrop/",
+   "directory_url": "https://securedrop.org/directory/whistleblower-aid/"
+  }
+ ]
+}

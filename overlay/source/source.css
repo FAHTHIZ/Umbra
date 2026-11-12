@@ -1,0 +1,15 @@
+.warnbox { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.group ul { margin: 0; padding-left: 20px; }
+.group li { margin: 6px 0; }
+.iso li::marker { content: "✓  "; color: var(--ok); }
+.toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; }
+.toolbar h2 { margin: 0; }
+#filter { flex: 1; min-width: 220px; max-width: 360px; font: inherit; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg); }
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.org { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.org h3 { margin: 0; font-size: 15px; }
+.org p { margin: 0; font-size: 13px; color: var(--mute); }
+.org .tags { font-size: 12px; color: var(--mute); }
+.org code { font-size: 11px; word-break: break-all; color: var(--mute); }
+.org button { align-self: flex-start; margin-top: 4px; }
+code { font-family: ui-monospace, monospace; }

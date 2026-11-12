@@ -137,6 +137,25 @@ def patch_privacy_omni(omni: Omni) -> None:
     add_first_window_category(omni, PRIVACY_CATEGORY, "Umbra Privacy startup")
 
 
+SOURCE_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraSource.sys.mjs UmbraSource.init"
+)
+
+
+def patch_source_omni(omni: Omni) -> None:
+    """Umbra Source (SecureDrop directory + isolated launcher) -> chrome://browser/content/umbra-source/."""
+    src = os.path.join(OVERLAY, "source")
+    for name in sorted(os.listdir(src)):
+        with open(os.path.join(src, name), "rb") as f:
+            data = f.read()
+        if name.endswith(".sys.mjs"):
+            omni.put("modules/umbra/" + name, data, "Umbra Source module")
+        else:
+            omni.put("chrome/browser/content/browser/umbra-source/" + name, data, "Umbra Source page")
+    add_first_window_category(omni, SOURCE_CATEGORY, "Umbra Source startup")
+
+
 UPDATE_CATEGORY = (
     "category browser-first-window-ready "
     "resource:///modules/umbra/UmbraUpdateNotice.sys.mjs UmbraUpdateNotice.init"
@@ -171,6 +190,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     omni.put("defaults/preferences/umbra-prefs.js", prefs, "Umbra prefs layer")
     patch_access_omni(omni)
     patch_privacy_omni(omni)
+    patch_source_omni(omni)
     patch_update_omni(omni)
 
 
