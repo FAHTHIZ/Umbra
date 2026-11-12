@@ -1,0 +1,13 @@
+{
+  "comment": "Pinned upstream foundation. Bump via tools/umbra_build upstream-check. Every artifact is verified against the Tor Browser signing key AND the pinned sha256 before use.",
+  "version": "16.0.1",
+  "base_url": "https://dist.torproject.org/torbrowser/16.0.1/",
+  "signing_key_fingerprint": "EF6E286DDA85EA2A4BA7DE684E2C6E8793298290",
+  "signing_key_wkd": "torbrowser@torproject.org",
+  "artifacts": {
+    "linux-x86_64": {
+      "file": "tor-browser-linux-x86_64-16.0.1.tar.xz",
+      "sha256": "5b36ad610c20c81faa72caf27d1cd3a11f14a327c320b4cec581400016ba78b0"
+    }
+  }
+}
