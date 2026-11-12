@@ -16,7 +16,7 @@
 
 <p align="center"><img src="docs/assets/umbra-home.png" width="760" alt="Umbra home page with search provider switcher and Explore directory"></p>
 
-> **Honest status.** Umbra 0.1 is a real, working browser for **Linux x86-64**. Windows, macOS and Android are on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
+> **Honest status.** Umbra 0.1 is a real, working browser for **Linux (x86-64 and aarch64)**. Windows, macOS and Android are on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
 
 ## Why Umbra
 
@@ -27,13 +27,13 @@
 - **Verified supply chain.** Every build checks the upstream OpenPGP signature against a pinned key **and** a pinned SHA-256, then produces deterministic output.
 - **No telemetry.** Umbra's own pages make zero network requests. The only background request is an anonymous daily release check over Tor, which you can turn off.
 
-## Install (Linux x86-64)
+## Install (Linux x86-64 / aarch64)
 
 ```bash
 # 1. Download the latest release and its checksum file
 #    https://github.com/FAHTHIZ/Umbra/releases
 sha256sum -c SHA256SUMS
-tar xf umbra-*-linux-x86_64.tar.xz
+tar xf umbra-*-linux-*.tar.xz
 cd umbra
 ./start-umbra.desktop            # launch
 ./start-umbra.desktop --register-app   # optional: add Umbra to your app menu

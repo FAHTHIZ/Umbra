@@ -124,3 +124,13 @@ def test_access_startup_registration_fails_loudly_on_upstream_drift(tmp_path):
     omni = Omni(str(_fake_browser_omni(tmp_path, manifest="# empty\n")))
     with pytest.raises(PatchError):
         patch_access_omni(omni)
+
+
+def test_lock_pins_every_platform():
+    import json
+    import re
+    lock = json.load(open(os.path.join(os.path.dirname(__file__), "..", "..", "upstream", "tor-browser.lock.json")))
+    assert {"linux-x86_64", "linux-aarch64"} <= set(lock["artifacts"])
+    for plat, art in lock["artifacts"].items():
+        assert re.fullmatch(r"[0-9a-f]{64}", art["sha256"]), plat
+        assert lock["version"] in art["file"] and plat in art["file"], plat

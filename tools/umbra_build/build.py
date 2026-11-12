@@ -267,7 +267,11 @@ def build(platform: str = "linux-x86_64", cache: str = None, out_dir: str = None
         pkg = os.path.join(out_dir, f"umbra-{UMBRA_VERSION}-{platform}.tar.xz")
         deterministic_tar(app, pkg)
         report["package"] = {"file": os.path.basename(pkg), "sha256": sha256_file(pkg)}
-        with open(os.path.join(out_dir, "SHA256SUMS"), "a") as f:
-            f.write(f"{report['package']['sha256']}  {report['package']['file']}\n")
+        sums = os.path.join(out_dir, "SHA256SUMS")
+        lines = open(sums).read().splitlines() if os.path.exists(sums) else []
+        lines = [l for l in lines if not l.endswith("  " + report["package"]["file"])]
+        lines.append(f"{report['package']['sha256']}  {report['package']['file']}")
+        with open(sums, "w") as f:
+            f.write("\n".join(sorted(lines, key=lambda l: l.split("  ", 1)[-1])) + "\n")
     report["app_dir"] = app
     return report

@@ -10,7 +10,8 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - ✅ Deterministic tar.xz packaging + SHA256SUMS
 - ✅ Anchored source patches (build fails on upstream drift)
 - ✅ Linux x86-64 desktop build
-- 📋 Linux aarch64, Windows, macOS overlay builds (same pipeline, different extract/repack steps)
+- ✅ Linux aarch64 build: pinned and verified upstream; browser omni.ja byte-identical to the tested x86-64 one. CI builds **and runs** the full integration, parity and leak suites natively on `ubuntu-24.04-arm`
+- 📋 Windows x86-64 (portable .exe → repack), macOS (.dmg, needs re-signing; see ROADMAP)
 - 📋 Android (source track; see `android/README.md`)
 - 📋 Source track: `tor-browser-build` fork, Umbra MAR signing keys, reproducible builds
 

@@ -1,12 +1,12 @@
 # Installing Umbra
 
-## Linux x86-64 (supported)
+## Linux x86-64 and aarch64 (supported)
 
 Requirements: a 64-bit glibc distribution (Ubuntu 22.04+, Debian 12+, Fedora 38+ or similar), GTK 3, and about 500 MB of disk space.
 
-1. Download `umbra-<version>-linux-x86_64.tar.xz` and `SHA256SUMS` from [Releases](https://github.com/FAHTHIZ/Umbra/releases).
+1. Download `umbra-<version>-linux-x86_64.tar.xz` (or `linux-aarch64` for 64-bit ARM: Raspberry Pi 4/5 with a 64-bit OS, ARM laptops) and `SHA256SUMS` from [Releases](https://github.com/FAHTHIZ/Umbra/releases).
 2. Verify: `sha256sum -c --ignore-missing SHA256SUMS`
-3. Extract: `tar xf umbra-*-linux-x86_64.tar.xz`
+3. Extract: `tar xf umbra-*-linux-*.tar.xz`
 4. Run: `cd umbra && ./start-umbra.desktop`
 5. Optional menu entry: `./start-umbra.desktop --register-app`
 

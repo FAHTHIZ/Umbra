@@ -23,8 +23,15 @@ jobs:
       - run: python -m pytest -q tests/unit
 
   build-and-test:
-    runs-on: ubuntu-24.04
     needs: unit
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { platform: linux-x86_64, runner: ubuntu-24.04, geckodriver: linux64 }
+          - { platform: linux-aarch64, runner: ubuntu-24.04-arm, geckodriver: linux-aarch64 }
+    runs-on: ${{ matrix.runner }}
+    env: { UMBRA_PLATFORM: "${{ matrix.platform }}" }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,22 +41,24 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - name: geckodriver
         run: |
-          curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | sudo tar xz -C /usr/local/bin
+          curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-${{ matrix.geckodriver }}.tar.gz | sudo tar xz -C /usr/local/bin
       - uses: actions/cache@v4
         with:
           path: .cache/*.tar.xz*
-          key: upstream-${{ hashFiles('upstream/tor-browser.lock.json') }}
+          key: upstream-${{ matrix.platform }}-${{ hashFiles('upstream/tor-browser.lock.json') }}
       - name: Build (verifies upstream signature + sha256)
-        run: python -m tools.umbra_build build
-      - name: Integration tests
+        run: python -m tools.umbra_build build --platform ${{ matrix.platform }}
+      - name: Integration tests (incl. fingerprint parity vs upstream)
         run: python -m pytest -q tests/integration
       - name: Network leak tests
         run: python -m pytest -q tests/leak
       - name: Benchmark vs upstream
+        if: matrix.platform == 'linux-x86_64'
         run: python bench/benchmark.py --runs 5 --out bench/results/ci.json
       - uses: actions/upload-artifact@v4
         with:
-          name: umbra-linux-x86_64
+          name: umbra-${{ matrix.platform }}
+          if-no-files-found: ignore
           path: |
             dist/*.tar.xz
             dist/SHA256SUMS
