@@ -51,7 +51,7 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - 🧪 Local page inspection (login, registration, paywall, checkout, cookie-dialog metadata) — `overlay/access/content-frame.js`
 - 🧪 Local payment-provider and suspicious-destination indicators — no credentials or card values read
 - 🧪 Ad/tracker host filtering and cosmetic cleanup — opt-in to preserve Tor fingerprint parity
-- 🧪 Browser packaging and startup registration — `tests/unit/test_build_tools.py`; fresh-browser launch verification pending
+- 🧪 Browser packaging and startup registration — `tests/unit/test_build_tools.py`; browser smoke tests added, CI execution pending
 - 📋 Full ABP/uBlock ruleset compatibility and signed local rule updates
 - 📋 Controlled HTTPS + v3 onion end-to-end tests with no external onion metadata leakage
 
