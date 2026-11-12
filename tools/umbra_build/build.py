@@ -73,6 +73,19 @@ def patch_toolkit_omni(omni: Omni) -> None:
         omni.edit_text(n, brand_ftl, "branding")
 
 
+def patch_access_omni(omni: Omni) -> None:
+    """Package the native Access Engine into the browser's existing chrome resources."""
+    access = os.path.join(OVERLAY, "access")
+    for name in ("AccessEngine.sys.mjs", "FilterRules.sys.mjs"):
+        source = os.path.join(access, name)
+        with open(source, "rb") as f:
+            omni.put("modules/umbra/" + name, f.read(), "Umbra Access Engine module")
+    for name in ("content-frame.js", "dashboard.html", "dashboard.js", "dashboard.css"):
+        source = os.path.join(access, name)
+        with open(source, "rb") as f:
+            omni.put("chrome/browser/content/umbra-access/" + name, f.read(), "Umbra Access Engine UI")
+
+
 def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     home = os.path.join(OVERLAY, "home")
     for f in sorted(os.listdir(home)):
@@ -91,6 +104,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     prefs = open(os.path.join(OVERLAY, "prefs", "umbra-prefs.js")).read()
     prefs = prefs.replace("@UMBRA_VERSION@", UMBRA_VERSION).replace("@UPSTREAM_VERSION@", upstream_version)
     omni.put("defaults/preferences/umbra-prefs.js", prefs, "Umbra prefs layer")
+    patch_access_omni(omni)
 
 
 class PatchError(RuntimeError):
@@ -116,6 +130,21 @@ def patch_tree(app: str) -> None:
     policy flips dom.webserial.enabled and makes Umbra fingerprintable vs
     upstream Tor Browser (caught by tests/integration/test_parity.py).
     """
+    # Register the Access Engine once after the first browser window is ready.
+    # The engine itself is loaded from browser omni.ja and remains local-only.
+    manifest = os.path.join(app, "Browser", "components", "BrowserComponents.manifest")
+    if not os.path.isfile(manifest):
+        raise PatchError(f"expected browser component manifest not found: {manifest}")
+    with open(manifest, encoding="utf-8") as f:
+        manifest_text = f.read()
+    access_entry = (
+        "category browser-first-window-ready "
+        "resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
+    )
+    if access_entry not in manifest_text:
+        with open(manifest, "a", encoding="utf-8") as f:
+            f.write("\\n" + access_entry + "\\n")
+
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
     for size in (16, 32, 48, 64, 128):
         with open(os.path.join(icons, f"default{size}.png"), "wb") as f:
