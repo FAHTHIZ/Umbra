@@ -26,7 +26,8 @@ Living document. Update it in the same commit as any architectural change.
 | `tools/umbra_build/` | Build pipeline: `fetch` → `verify` → `extract` → `overlay` → `package` |
 | `overlay/search/` | Search engine config (Firefox search-config v2 format). OnionSearch is default |
 | `overlay/home/` | Umbra home page that replaces `about:tor` content. Strict CSP, no remote loads |
-| `overlay/explore/` | Curated onion directory. Every address is v3-checksum-validated in tests |\n| `overlay/access/` | Native Access Engine: local request rules, content-frame inspection, dashboard and payment/login indicators |
+| `overlay/explore/` | Curated onion directory. Every address is v3-checksum-validated in tests |
+| `overlay/access/` | Native Access Engine: local request rules, content-frame inspection, dashboard and payment/login indicators |
 | `overlay/prefs/umbra-prefs.js` | Non-fingerprintable prefs only (UI, search UX, update URLs, tab unloading) |
 | `overlay/patches/patches.json` | Anchored JS patches. Build fails if an anchor isn't found exactly once |
 | `tests/unit` | Fast, no browser: config, onions, prefs policy, build tools |
@@ -57,7 +58,8 @@ Running the same lock file and the same overlay twice produces byte-identical `o
 | Module | v0.1 state | Where |
 |---|---|---|
 | Umbra Search | Implemented | `overlay/search`, home page switcher, address bar |
-| Umbra Explore | Implemented (curated directory) | `overlay/explore`, home page |\n| Umbra Access Engine | Experimental; packaged in browser overlay, filtering opt-in | `overlay/access`, browser chrome dashboard |
+| Umbra Explore | Implemented (curated directory) | `overlay/explore`, home page |
+| Umbra Access Engine | Experimental; packaged in browser overlay, filtering opt-in | `overlay/access`, browser chrome dashboard |
 | Umbra Privacy | Partial: upstream security-level and connection panes, linked from home | `about:preferences#privacy`, `#connection` |
 | Umbra Vault | Upstream bookmarks/passwords; persistent-history opt-in via upstream setting | — |
 | Umbra Downloads | Upstream downloads manager (pause/resume/progress) | `about:downloads` |
