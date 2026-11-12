@@ -86,6 +86,22 @@ def patch_access_omni(omni: Omni) -> None:
             omni.put("chrome/browser/content/umbra-access/" + name, f.read(), "Umbra Access Engine UI")
 
 
+def patch_access_manifest(app: str) -> None:
+    """Register the engine once at first-window-ready in BrowserComponents.manifest."""
+    manifest = os.path.join(app, "Browser", "components", "BrowserComponents.manifest")
+    if not os.path.isfile(manifest):
+        raise PatchError(f"expected browser component manifest not found: {manifest}")
+    with open(manifest, encoding="utf-8") as f:
+        manifest_text = f.read()
+    access_entry = (
+        "category browser-first-window-ready "
+        "resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
+    )
+    if access_entry not in manifest_text:
+        with open(manifest, "a", encoding="utf-8") as f:
+            f.write("\n" + access_entry + "\n")
+
+
 def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     home = os.path.join(OVERLAY, "home")
     for f in sorted(os.listdir(home)):
@@ -130,20 +146,8 @@ def patch_tree(app: str) -> None:
     policy flips dom.webserial.enabled and makes Umbra fingerprintable vs
     upstream Tor Browser (caught by tests/integration/test_parity.py).
     """
-    # Register the Access Engine once after the first browser window is ready.
-    # The engine itself is loaded from browser omni.ja and remains local-only.
-    manifest = os.path.join(app, "Browser", "components", "BrowserComponents.manifest")
-    if not os.path.isfile(manifest):
-        raise PatchError(f"expected browser component manifest not found: {manifest}")
-    with open(manifest, encoding="utf-8") as f:
-        manifest_text = f.read()
-    access_entry = (
-        "category browser-first-window-ready "
-        "resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
-    )
-    if access_entry not in manifest_text:
-        with open(manifest, "a", encoding="utf-8") as f:
-            f.write("\n" + access_entry + "\n")
+    # Register the Access Engine through Gecko's startup category manager.
+    patch_access_manifest(app)
 
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
     for size in (16, 32, 48, 64, 128):
