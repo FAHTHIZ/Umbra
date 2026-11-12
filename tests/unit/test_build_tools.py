@@ -83,6 +83,12 @@ def test_access_engine_is_packaged_into_browser_omni(tmp_path):
         assert "chrome/browser/content/umbra-access/dashboard.js" in names
         assert "chrome/browser/content/umbra-access/dashboard.css" in names
         assert b"UmbraAccessEngine" in archive.read("modules/umbra/AccessEngine.sys.mjs")
+        dashboard = archive.read("chrome/browser/content/umbra-access/dashboard.html")
+        assert b"connect-src 'none'" in dashboard
+        assert b"form-action 'none'" in dashboard
+        frame_script = archive.read("chrome/browser/content/umbra-access/content-frame.js")
+        assert b"localStorage" not in frame_script
+        assert b"document.cookie" not in frame_script
 
 
 def test_access_filtering_is_opt_in_for_tor_fingerprint_safety():
