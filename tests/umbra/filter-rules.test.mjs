@@ -13,7 +13,9 @@ test("onion host recognition requires a 56-character v3 label", () => {
   assert.equal(isOnionHostname("a".repeat(56) + ".onion"), true);
   assert.equal(isOnionHostname("a".repeat(55) + ".onion"), false);
   assert.equal(isOnionHostname("abcdefghijklmnop.onion"), false);
-  assert.equal(isOnionHostname("a".repeat(56) + ".onion.attacker.test"), false);\n  assert.equal(isOnionHostname("1".repeat(56) + ".onion"), false);\n  assert.equal(isOnionHostname("z".repeat(56) + ".onion"), true);
+  assert.equal(isOnionHostname("a".repeat(56) + ".onion.attacker.test"), false);
+  assert.equal(isOnionHostname("1".repeat(56) + ".onion"), false);
+  assert.equal(isOnionHostname("z".repeat(56) + ".onion"), true);
 });
 
 test("hostname normalization is stable", () => {
