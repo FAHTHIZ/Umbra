@@ -243,6 +243,8 @@ function onWindowReady(subject) {
           button.className = "toolbarbutton-1 chromeclass-toolbar-additional";
           button.setAttribute("label", "Access");
           button.setAttribute("tooltiptext", "Umbra Access Engine");
+          // Without an icon the button renders as an empty slot in icon-only toolbars.
+          button.style.listStyleImage = "url(chrome://browser/skin/tracking-protection.svg)";
           button.addEventListener("command", () => openDashboard(document.defaultView));
           return button;
         }

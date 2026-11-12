@@ -54,3 +54,9 @@ def test_toggle_roundtrip(drv):
       E.setEnabled(false); const off=E.getState().enabled;
       return {on, off};""")
     assert r == {"on": True, "off": False}
+
+
+def test_toolbar_button_has_icon(drv):
+    img = chrome_eval(drv, f"""const b = Services.wm.getMostRecentWindow('navigator:browser').document.getElementById('{ID}');
+        return b.ownerDocument.defaultView.getComputedStyle(b).listStyleImage;""")
+    assert "tracking-protection.svg" in img, img
