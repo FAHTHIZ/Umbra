@@ -16,7 +16,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 gnupg xz-utils
       - run: pip install -r requirements-dev.txt
-      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | sudo tar xz -C /usr/local/bin
       - run: python -m pytest -q tests/unit
       - run: python -m tools.umbra_build build
       - run: python -m pytest -q tests/integration tests/leak

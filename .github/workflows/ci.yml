@@ -34,7 +34,7 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - name: geckodriver
         run: |
-          curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+          curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | sudo tar xz -C /usr/local/bin
       - uses: actions/cache@v4
         with:
           path: .cache/*.tar.xz*
@@ -65,7 +65,7 @@ jobs:
         with: { python-version: "3.12" }
       - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libgtk-3-0t64 libdbus-glib-1-2 libasound2t64 gnupg xz-utils
       - run: pip install -r requirements-dev.txt
-      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | tar xz -C /usr/local/bin
+      - run: curl -sSfL https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz | sudo tar xz -C /usr/local/bin
       - uses: actions/cache@v4
         with:
           path: .cache/*.tar.xz*
