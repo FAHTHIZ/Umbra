@@ -24,3 +24,22 @@ The submodule is pinned to an immutable upstream commit so the upstream source c
 checked out reproducibly. Build tooling/CI must initialize submodules before compiling
 or packaging the engine. Do not copy Ghostery's extension UI, telemetry, or remote
 tracker lookups into Umbra.
+
+## Consent-O-Matic
+
+- Upstream: https://github.com/cavi-au/Consent-O-Matic
+- Pinned upstream commit: `8ca8500d26434c586039e126ad091e1bfccd205d`
+- Upstream version at this pin: `1.1.5`
+- License: MIT
+- Integrated source path: `vendor/consent-o-matic` (Git submodule)
+
+This upstream is included as a source/rule reference for the Gecko-native consent
+adapter. Reuse its CMP detector/rule definitions and preference model; do not ship
+its browser-extension manifest, browser-specific background APIs, telemetry or
+build output as if it were a drop-in Gecko component. Adapt only the minimal required
+logic into Umbra's chrome/content architecture and preserve its MIT notice.
+
+Consent handling must be user-configured. The default behavior is detection and a
+visible choice; automatic rejection of optional categories is available only after
+the user explicitly enables that preference. Never silently accept all, forge a
+consent signal, or click controls outside a recognized CMP rule.

@@ -1,3 +1,7 @@
 [submodule "vendor/ghostery-adblocker"]
 	path = vendor/ghostery-adblocker
 	url = https://github.com/ghostery/adblocker.git
+
+[submodule "vendor/consent-o-matic"]
+	path = vendor/consent-o-matic
+	url = https://github.com/cavi-au/Consent-O-Matic.git

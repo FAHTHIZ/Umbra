@@ -18,7 +18,7 @@ Links:
 - https://github.com/ghostery/adblocker/wiki/Compatibility-Matrix
 - https://www.npmjs.com/package/@ghostery/adblocker
 
-**Decision:** Adopt Ghostery Adblocker as the preferred candidate after a pinned, reproducible build integration and a Gecko-specific adapter are implemented. Parse only locally vendored or locally updated lists. Do not use its remote-list convenience methods at runtime for onion browsing. Its GPL-licensed scriptlet companion packages must be evaluated separately before inclusion.
+**Decision:** Ghostery Adblocker is now pinned as a Git submodule at `vendor/ghostery-adblocker` (commit `6f0610bf5eec1f31c4975ce0e707cdf47023e5b5`, v2.20.3). It is not yet bundled into `omni.ja` or connected to Gecko request interception. Parse only locally vendored or locally updated lists. Do not use its remote-list convenience methods at runtime for onion browsing. Its GPL-licensed scriptlet companion packages must be evaluated separately before inclusion.
 
 ## Projects reviewed
 
@@ -28,7 +28,7 @@ Links:
 | [AdGuard Browser Extension](https://github.com/AdguardTeam/AdguardBrowserExtension) | GPL-3.0; active repository | Mature rule processing, scriptlets, cosmetic filtering and browser integration | Study and compare. Avoid copying GPL implementation code into the current project license without resolving distribution obligations. |
 | [Ghostery Adblocker](https://github.com/ghostery/adblocker) | MPL-2.0; active, published package | Embeddable parser/matcher, EasyList/uBO syntax compatibility, request matching and cosmetic rules | Preferred engine candidate. Not yet bundled in the current build; current starter host rules remain in place until the adapter is tested. |
 | [EasyList](https://github.com/easylist/easylist) / [EasyPrivacy](https://easylist.to/pages/licence.html) | Dual-licensed GPL-3.0-or-later or CC BY-SA 3.0-or-later for the named lists; active community maintenance | High-quality advertising and tracker rules | Vendor pinned snapshots only with attribution, license files, source commit, date and checksums. Avoid live runtime fetches in onion sessions. |
-| [Consent-O-Matic](https://github.com/cavi-au/Consent-O-Matic) | Open-source consent automation project | CMP detection and preference-aware consent handling | Study its CMP patterns. Umbra must never fabricate consent or silently accept all cookies; default to detection and explicit user choices. |
+| [Consent-O-Matic](https://github.com/cavi-au/Consent-O-Matic) | MIT; pinned source submodule at `vendor/consent-o-matic` (`8ca8500d26434c586039e126ad091e1bfccd205d`) | Large CMP detector/rule catalogue and preference-aware consent automation | Selected as the consent-rule source. Adapt its rule definitions into the native Gecko frame inspector; do not ship its extension wrapper as a drop-in. Detection is default; any automated reject action requires explicit opt-in. |
 | [Hover Paywalls](https://github.com/nang-dev/hover-paywalls-browser-extension) | Deprecated by maintainers | Historical site-specific rules | Do not integrate. |
 | [Bypass Paywalls](https://github.com/EdgeN8v/bypass-paywalls) | MIT-licensed repository | Historical site-specific page handling | Do not integrate paywall circumvention. Use only the general lesson that site-specific rules need tests and maintenance. |
 | [Frankensurf](https://github.com/yail259/frankensurf) | Apache-2.0 repository | Retrieval orchestration and fallback concepts | Do not run cloud retrieval for current-page analysis. Any future public-source discovery must be user-initiated and must never submit onion URLs or page contents. |
@@ -46,12 +46,12 @@ Links:
 
 ## Current implementation gap
 
-The current `overlay/access/FilterRules.sys.mjs` contains a small hand-maintained starter list. The Ghostery engine has not yet been bundled. Before calling filtering mature, the project needs:
+The current `overlay/access/FilterRules.sys.mjs` contains a small hand-maintained starter list. The Ghostery engine source is pinned as a submodule but has not yet been bundled into `omni.ja` or connected to Gecko. Before calling filtering mature, the project needs:
 
-- A pinned Ghostery release and complete dependency/license inventory.
+- A reproducible Ghostery bundle and complete dependency/license inventory.
 - A reproducible Node/Rollup bundle step compatible with the existing Python build.
 - A Gecko request adapter mapping Gecko content policy types to Ghostery `Request` types.
-- A local, integrity-checked ruleset snapshot with attribution and update metadata.
+- A local, integrity-checked ruleset snapshot with attribution and update metadata; EasyList/EasyPrivacy assets already present in the pinned Ghostery source must be individually license-checked.
 - Tests for network exceptions, first-party context, redirects, CSP, cosmetic rules, onion requests and fail-closed Tor routing.
 - Browser-level performance measurements and fingerprint-parity tests.
 

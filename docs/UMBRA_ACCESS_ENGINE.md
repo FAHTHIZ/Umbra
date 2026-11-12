@@ -52,7 +52,7 @@ Blocking third-party resources and modifying the DOM are observable by websites.
 ## Current limitations
 
 - The built-in domain list is a small starter set, not EasyList/EasyPrivacy and not a complete content-blocking engine.
-- The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates. Ghostery Adblocker is the selected candidate for a later pinned MPL-2.0 integration, but is not bundled in this build.
+- The engine does not yet parse full ABP/uBlock filter syntax, use scriptlets, or support remotely fetched rule updates. Ghostery Adblocker v2.20.3 is now pinned as a Git submodule at `vendor/ghostery-adblocker`, but it is not yet bundled in `omni.ja` or connected to Gecko. Consent-O-Matic is also pinned at `vendor/consent-o-matic` as a source/rule reference; its extension wrapper is not a drop-in Gecko component.
 - Cosmetic cleanup recognizes only a narrow set of obvious promotional overlay patterns.
 - The reader-view and alternative-source workflow is not a paywall bypass. It only uses content already publicly available or sources the user explicitly searches for.
 - The toolbar and dashboard are packaged by the overlay build. Browser smoke tests now cover local page inspection, toolbar registration and dashboard loading; their CI execution and broader UI verification remain outstanding.
