@@ -42,7 +42,7 @@ export function normalizeHostname(hostname) {
 
 export function isOnionHostname(hostname) {
   const host = normalizeHostname(hostname);
-  return host.endsWith(".onion") && host.split(".")[0].length === 56;
+  // v3 onion service hostnames use one 56-character base32 label. This checks\n  // syntax only; it does not verify the address checksum/public-key relation.\n  return /^[a-z2-7]{56}\\.onion$/.test(host);
 }
 
 export function hostMatches(hostname, ruleDomain) {
