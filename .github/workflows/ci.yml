@@ -43,7 +43,7 @@ jobs:
         run: python -m pytest -q tests/leak
       - name: Benchmark vs upstream
         run: python bench/benchmark.py --runs 5 --out bench/results/ci.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: umbra-linux-x86_64
           path: |
