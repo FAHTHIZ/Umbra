@@ -11,18 +11,6 @@ export class UmbraAccessChild extends JSWindowActorChild {
     }
   }
 
-  actorCreated() {
-    this.contentWindow.addEventListener("DOMContentLoaded", this, true);
-    this.contentWindow.addEventListener("pageshow", this, true);
-  }
-
-  didDestroy() {
-    try {
-      this.contentWindow.removeEventListener("DOMContentLoaded", this, true);
-      this.contentWindow.removeEventListener("pageshow", this, true);
-    } catch (_) {}
-  }
-
   scan() {
     const win = this.contentWindow;
     const doc = win?.document;
@@ -95,7 +83,10 @@ export class UmbraAccessChild extends JSWindowActorChild {
         const current = new URL(win.location.href);
         const onion = target.hostname.toLowerCase().endsWith(".onion");
         if (target.protocol === "http:" && !onion) suspiciousIndicators.push("insecure-payment-action");
-        const recognized = [...providers].length > 0;
+        const recognized = providerHosts.some(([domain]) =>
+          target.hostname.toLowerCase() === domain ||
+          target.hostname.toLowerCase().endsWith("." + domain)
+        );
         if (target.origin !== current.origin && !recognized) {
           suspiciousIndicators.push("unrecognized-payment-destination");
         }
