@@ -6,6 +6,7 @@ import pytest
 
 from tools.umbra_build.branding import brand_ftl, brand_properties, icon_png
 from tools.umbra_build.omni import Omni
+from tools.umbra_build.build import patch_access_omni
 from tools.umbra_build.verify import VerificationError, verify_sha256
 
 
@@ -62,3 +63,29 @@ def test_icon_sizes():
     import io
     for s in (16, 128):
         assert Image.open(io.BytesIO(icon_png(s))).size == (s, s)
+
+
+
+def test_access_engine_is_packaged_into_browser_omni(tmp_path):
+    src = tmp_path / "browser-omni.ja"
+    with zipfile.ZipFile(src, "w"):
+        pass
+    omni = Omni(str(src))
+    patch_access_omni(omni)
+    out = tmp_path / "patched-omni.ja"
+    omni.save(str(out))
+    with zipfile.ZipFile(out) as archive:
+        names = set(archive.namelist())
+        assert "modules/umbra/AccessEngine.sys.mjs" in names
+        assert "modules/umbra/FilterRules.sys.mjs" in names
+        assert "chrome/browser/content/umbra-access/content-frame.js" in names
+        assert "chrome/browser/content/umbra-access/dashboard.html" in names
+        assert "chrome/browser/content/umbra-access/dashboard.js" in names
+        assert "chrome/browser/content/umbra-access/dashboard.css" in names
+        assert b"UmbraAccessEngine" in archive.read("modules/umbra/AccessEngine.sys.mjs")
+
+
+def test_access_filtering_is_opt_in_for_tor_fingerprint_safety():
+    prefs = open(os.path.join(os.path.dirname(__file__), "..", "..", "overlay", "prefs", "umbra-prefs.js")).read()
+    assert 'pref("umbra.access.enabled", false);' in prefs
+    assert 'pref("umbra.access.cosmetic", false);' in prefs
