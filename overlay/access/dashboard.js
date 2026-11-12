@@ -1,4 +1,3 @@
-import { Services } from "resource://gre/modules/Services.sys.mjs";
 import { UmbraAccessEngine } from "resource:///modules/umbra/AccessEngine.sys.mjs";
 
 const $ = id => document.getElementById(id);

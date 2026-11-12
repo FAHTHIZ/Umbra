@@ -9,7 +9,6 @@
  * - top-level document navigation is never blocked by the starter rules.
  */
 
-const { Services } = ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs");
 const { HOST_RULES } = ChromeUtils.importESModule("resource:///modules/umbra/FilterRules.sys.mjs");
 const { interfaces: Ci, results: Cr } = Components;
 
@@ -230,8 +229,10 @@ const pageReportListener = {
 
 function onWindowReady(subject) {
   try {
-    const { CustomizableUI } = ChromeUtils.importESModule("resource:///modules/CustomizableUI.sys.mjs");
-    if (!toolbarCreated && !CustomizableUI.getWidget(TOOLBAR_ID)) {
+    const { CustomizableUI } = ChromeUtils.importESModule("moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs");
+    // getWidget() returns a wrapper for any id (provider "xul" when unknown),
+    // so check that our API widget is not registered yet.
+    if (!toolbarCreated && CustomizableUI.getWidget(TOOLBAR_ID)?.provider !== CustomizableUI.PROVIDER_API) {
       CustomizableUI.createWidget({
         id: TOOLBAR_ID,
         type: "custom",
@@ -247,6 +248,20 @@ function onWindowReady(subject) {
         }
       });
       toolbarCreated = true;
+      // Tor Browser ships a saved toolbar layout, so defaultArea alone never
+      // places a widget created after startup. Place it once; afterwards the
+      // user's own customization (move/remove) is respected.
+      if (!Services.prefs.getBoolPref("umbra.access.toolbarPlaced", false)) {
+        if (!CustomizableUI.getPlacementOfWidget(TOOLBAR_ID)) {
+          const anchor = CustomizableUI.getPlacementOfWidget("new-identity-button");
+          CustomizableUI.addWidgetToArea(
+            TOOLBAR_ID,
+            CustomizableUI.AREA_NAVBAR,
+            anchor && anchor.area === CustomizableUI.AREA_NAVBAR ? anchor.position + 1 : undefined
+          );
+        }
+        Services.prefs.setBoolPref("umbra.access.toolbarPlaced", true);
+      }
     }
   } catch (error) {
     Cu.reportError(error);

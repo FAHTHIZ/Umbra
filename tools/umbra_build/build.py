@@ -73,33 +73,38 @@ def patch_toolkit_omni(omni: Omni) -> None:
         omni.edit_text(n, brand_ftl, "branding")
 
 
+ACCESS_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
+)
+
+
 def patch_access_omni(omni: Omni) -> None:
-    """Package the native Access Engine into the browser's existing chrome resources."""
+    """Package the native Access Engine into browser/omni.ja.
+
+    - modules/umbra/*.sys.mjs           -> resource:///modules/umbra/
+    - chrome/browser/content/browser/umbra-access/* -> chrome://browser/content/umbra-access/
+      (the "browser" chrome package maps to browser/content/browser/)
+    - startup hook: one category line in components/components.manifest
+      (Tor Browser 16 has no on-disk BrowserComponents.manifest).
+    """
     access = os.path.join(OVERLAY, "access")
-    for name in ("AccessEngine.sys.mjs", "FilterRules.sys.mjs", "AccessSignals.sys.mjs"):
-        source = os.path.join(access, name)
-        with open(source, "rb") as f:
-            omni.put("modules/umbra/" + name, f.read(), "Umbra Access Engine module")
-    for name in ("content-frame.js", "dashboard.html", "dashboard.js", "dashboard.css"):
-        source = os.path.join(access, name)
-        with open(source, "rb") as f:
-            omni.put("chrome/browser/content/browser/umbra-access/" + name, f.read(), "Umbra Access Engine UI")
+    for name in sorted(os.listdir(access)):
+        with open(os.path.join(access, name), "rb") as f:
+            data = f.read()
+        if name.endswith(".sys.mjs"):
+            omni.put("modules/umbra/" + name, data, "Umbra Access Engine module")
+        elif name.endswith((".js", ".html", ".css", ".svg")):
+            omni.put("chrome/browser/content/browser/umbra-access/" + name, data, "Umbra Access Engine UI")
 
+    def add_category(text: str) -> str:
+        if ACCESS_CATEGORY in text:
+            return text
+        if "category browser-first-window-ready" not in text:
+            raise PatchError("components.manifest has no browser-first-window-ready entries; upstream changed")
+        return text.rstrip("\n") + "\n" + ACCESS_CATEGORY + "\n"
 
-def patch_access_manifest(app: str) -> None:
-    """Register the engine once at first-window-ready in BrowserComponents.manifest."""
-    manifest = os.path.join(app, "Browser", "components", "BrowserComponents.manifest")
-    if not os.path.isfile(manifest):
-        raise PatchError(f"expected browser component manifest not found: {manifest}")
-    with open(manifest, encoding="utf-8") as f:
-        manifest_text = f.read()
-    access_entry = (
-        "category browser-first-window-ready "
-        "resource:///modules/umbra/AccessEngine.sys.mjs UmbraAccessEngine.init"
-    )
-    if access_entry not in manifest_text:
-        with open(manifest, "a", encoding="utf-8") as f:
-            f.write("\n" + access_entry + "\n")
+    omni.edit_text("components/components.manifest", add_category, "Umbra Access Engine startup")
 
 
 def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
@@ -147,7 +152,6 @@ def patch_tree(app: str) -> None:
     upstream Tor Browser (caught by tests/integration/test_parity.py).
     """
     # Register the Access Engine through Gecko's startup category manager.
-    patch_access_manifest(app)
 
     icons = os.path.join(app, "Browser", "browser", "chrome", "icons", "default")
     for size in (16, 32, 48, 64, 128):
