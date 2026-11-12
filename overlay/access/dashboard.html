@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Umbra Access Engine</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script type="module" src="dashboard.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="top">
+      <div class="mark" aria-hidden="true">◐</div>
+      <div>
+        <p class="eyebrow">UMBRA / PRIVACY TOOLS</p>
+        <h1>Access Engine</h1>
+        <p class="sub">Local page inspection and optional content filtering.</p>
+      </div>
+      <span class="local-pill">LOCAL ONLY</span>
+    </header>
+
+    <section class="notice" role="note">
+      <strong>Privacy trade-off</strong>
+      <p>Page inspection is local and does not send the current address or page contents to a service. Enabling ad or tracker blocking can make your browser behave differently from other Tor Browser users, which may make you more distinguishable. Keep it off for higher-anonymity browsing.</p>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Protection controls</h2><span id="engine-status" class="status">Inspection active</span></div>
+      <label class="toggle-row">
+        <span><strong>Enable network filtering</strong><small>Block known ad and tracker subresource requests using local rules.</small></span>
+        <input id="enabled" type="checkbox">
+      </label>
+      <label class="toggle-row nested">
+        <span><strong>Block advertising requests</strong><small>Known advertising domains only.</small></span>
+        <input id="block-ads" type="checkbox">
+      </label>
+      <label class="toggle-row nested">
+        <span><strong>Block tracking requests</strong><small>Known analytics and tracking domains only.</small></span>
+        <input id="block-trackers" type="checkbox">
+      </label>
+      <label class="toggle-row">
+        <span><strong>Cosmetic cleanup</strong><small>Hide a narrow set of obvious promotional overlays. This can be detectable by websites.</small></span>
+        <input id="cosmetic" type="checkbox">
+      </label>
+    </section>
+
+    <section class="section">
+      <h2>Session counters</h2>
+      <div class="stats">
+        <article><b id="ads-count">0</b><span>Ads blocked</span></article>
+        <article><b id="trackers-count">0</b><span>Trackers blocked</span></article>
+        <article><b id="overlays-count">0</b><span>Overlays hidden</span></article>
+        <article><b id="onion-count">0</b><span>Onion pages inspected</span></article>
+      </div>
+      <p class="muted">Counters exist in memory only and reset when the browser session ends or you clear them.</p>
+    </section>
+
+    <section class="section">
+      <h2>Current page inspection</h2>
+      <p id="page-kind" class="muted">No page context available.</p>
+      <div id="findings" class="findings" aria-live="polite"></div>
+      <p class="muted">Detection is heuristic. A detected provider is not a payment endorsement; a warning is not proof of fraud. Umbra never reads form values, card numbers, passwords or authentication tokens.</p>
+      <div class="actions">
+        <button id="exception" type="button" disabled>Temporary site exception</button>
+        <button id="reader" type="button" disabled>Open reader view</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Find public alternatives</h2>
+      <p class="muted">Search only for text you enter. Umbra does not attach the current page address, onion hostname or page contents.</p>
+      <form id="alternative-form">
+        <label class="sr-only" for="alternative-query">Search query</label>
+        <input id="alternative-query" maxlength="200" placeholder="Enter a title, publisher or topic" autocomplete="off">
+        <button type="submit">Search OnionSearch</button>
+      </form>
+      <p class="muted">Search results are untrusted. Verify sources independently.</p>
+    </section>
+
+    <footer>
+      <span>Umbra Access Engine · Local inspection</span>
+      <button id="clear" class="quiet" type="button">Clear counters</button>
+    </footer>
+  </main>
+</body>
+</html>
