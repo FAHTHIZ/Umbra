@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src chrome:; style-src chrome:; img-src chrome:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Umbra Vault</title>
+  <link rel="stylesheet" href="chrome://browser/content/umbra-privacy/privacy.css">
+  <link rel="stylesheet" href="vault.css">
+  <script type="module" src="vault.js"></script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="chrome://branding/content/about-logo.svg" alt="" width="40" height="40">
+      <div>
+        <h1>Umbra Vault</h1>
+        <p class="sub">Encrypted backup of your bookmarks and saved logins, in one file on this device. Nothing is uploaded.</p>
+      </div>
+    </header>
+
+    <section class="group">
+      <h2>Export</h2>
+      <label><input type="checkbox" id="x-bookmarks" checked> Bookmarks</label>
+      <label><input type="checkbox" id="x-logins" checked> Saved logins (asks for your Primary Password if you've set one)</label>
+      <p class="meta" id="logins-note" hidden>Saved logins are off. Like Tor Browser, Umbra doesn't store passwords by default (no certificate or key database on disk), so there are none to export.</p>
+      <div class="row">
+        <input type="password" id="x-pass" placeholder="Passphrase (at least 12 characters)" autocomplete="new-password" aria-label="Passphrase">
+        <input type="password" id="x-pass2" placeholder="Repeat passphrase" autocomplete="new-password" aria-label="Repeat passphrase">
+      </div>
+      <button id="export">Export encrypted file…</button>
+      <p class="status" id="x-status" role="status"></p>
+    </section>
+
+    <section class="group">
+      <h2>Import</h2>
+      <p class="meta">Bookmarks go into a new folder under Other Bookmarks. Logins you already have are skipped.</p>
+      <div class="row">
+        <input type="password" id="i-pass" placeholder="Passphrase" autocomplete="current-password" aria-label="Import passphrase">
+      </div>
+      <button id="import">Choose file and import…</button>
+      <p class="status" id="i-status" role="status"></p>
+    </section>
+
+    <section class="group">
+      <h2>How it's protected</h2>
+      <ul>
+        <li>AES-256-GCM encryption with a key derived using PBKDF2-HMAC-SHA-256 (600,000 iterations, random salt), all from the browser's built-in, audited NSS crypto. Umbra doesn't use any custom cryptography.</li>
+        <li>The file format and settings are authenticated, so any change to the file is detected.</li>
+        <li>If you forget the passphrase, the file can't be recovered. Nobody, including Umbra, can reset it.</li>
+        <li>Saved logins are only as safe as the passphrase. A long, random passphrase matters most.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

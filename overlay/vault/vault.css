@@ -1,0 +1,8 @@
+.group label { display: block; margin: 6px 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.row input { flex: 1; min-width: 220px; font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--fg); }
+.status { min-height: 1.2em; margin: 8px 0 0; font-size: 14px; }
+.status.ok { color: var(--ok); }
+.status.bad { color: var(--bad); }
+.group ul { margin: 0; padding-left: 20px; }
+.group li { margin: 6px 0; }

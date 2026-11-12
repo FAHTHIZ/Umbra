@@ -156,6 +156,25 @@ def patch_source_omni(omni: Omni) -> None:
     add_first_window_category(omni, SOURCE_CATEGORY, "Umbra Source startup")
 
 
+VAULT_CATEGORY = (
+    "category browser-first-window-ready "
+    "resource:///modules/umbra/UmbraVault.sys.mjs UmbraVault.init"
+)
+
+
+def patch_vault_omni(omni: Omni) -> None:
+    """Umbra Vault (encrypted bookmarks/logins export) -> chrome://browser/content/umbra-vault/."""
+    src = os.path.join(OVERLAY, "vault")
+    for name in sorted(os.listdir(src)):
+        with open(os.path.join(src, name), "rb") as f:
+            data = f.read()
+        if name.endswith(".sys.mjs"):
+            omni.put("modules/umbra/" + name, data, "Umbra Vault module")
+        else:
+            omni.put("chrome/browser/content/browser/umbra-vault/" + name, data, "Umbra Vault page")
+    add_first_window_category(omni, VAULT_CATEGORY, "Umbra Vault startup")
+
+
 UPDATE_CATEGORY = (
     "category browser-first-window-ready "
     "resource:///modules/umbra/UmbraUpdateNotice.sys.mjs UmbraUpdateNotice.init"
@@ -191,6 +210,7 @@ def patch_browser_omni(omni: Omni, upstream_version: str) -> None:
     patch_access_omni(omni)
     patch_privacy_omni(omni)
     patch_source_omni(omni)
+    patch_vault_omni(omni)
     patch_update_omni(omni)
 
 
