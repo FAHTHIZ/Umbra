@@ -105,3 +105,24 @@ def test_icons_render(tmp_path):
     assert Image.open(tmp_path / "mipmap-mdpi" / "ic_launcher.webp").size == (48, 48)
     assert "0b0d12" in (tmp_path / "drawable" / "ic_launcher_background.xml").read_text()
     assert len(changed) == 7
+
+
+def test_native_soname_fix(tmp_path):
+    import shutil, subprocess
+    import pytest
+    if not shutil.which("gcc"):
+        pytest.skip("gcc not available")
+    src = tmp_path / "t.c"
+    src.write_text("const char *zlibVersion(void);\nconst char *v(void){return zlibVersion();}\n")
+    so = tmp_path / "t.so"
+    r = subprocess.run(["gcc", "-shared", "-fPIC", "-o", str(so), str(src), "-l:libz.so.1"], capture_output=True)
+    if r.returncode:
+        pytest.skip("zlib headers not available")
+    data = so.read_bytes()
+    assert b"libz.so.1" in [n for _, n in android._needed(data)]
+    fixed, ch = android.fix_native_sonames(data)
+    assert ch == [("libz.so.1", "libz.so")]
+    assert len(fixed) == len(data)
+    names = [n for _, n in android._needed(fixed)]
+    assert b"libz.so" in names and b"libz.so.1" not in names
+    assert android.fix_native_sonames(fixed)[1] == []

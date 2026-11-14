@@ -20,6 +20,8 @@ import sys
 import time
 
 PKG = "org.umbra.browser"
+LABEL = "Umbra"
+TOR_DEAD = "The Tor process has stopped working"
 
 
 def adb(*args, check=True, timeout=120) -> str:
@@ -30,8 +32,8 @@ def adb(*args, check=True, timeout=120) -> str:
 
 
 def shot(out: str, name: str) -> None:
-    with open(os.path.join(out, name + ".png"), "wb") as f:
-        f.write(subprocess.run(["adb", "exec-out", "screencap", "-p"], capture_output=True, timeout=60).stdout)
+    adb("shell", "screencap", "-p", "/sdcard/shot.png", check=False)
+    adb("pull", "/sdcard/shot.png", os.path.join(out, name + ".png"), check=False)
 
 
 def ui(out: str, name: str) -> str:
@@ -42,13 +44,29 @@ def ui(out: str, name: str) -> str:
     return x
 
 
+def nodes(xml: str):
+    import xml.etree.ElementTree as ET
+    try:
+        root = ET.fromstring(xml[xml.index("<?xml"):] if "<?xml" in xml else xml)
+    except (ET.ParseError, ValueError):
+        return []
+    return list(root.iter("node"))
+
+
+def texts(xml: str) -> list:
+    return [t for n in nodes(xml) for t in (n.get("text"), n.get("content-desc")) if t]
+
+
 def tap_text(xml: str, labels) -> str | None:
+    all_nodes = nodes(xml)
     for label in labels:
-        for m in re.finditer(r'<node [^>]*?(?:text|content-desc)="([^"]*)"[^>]*?bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', xml):
-            if m.group(1).strip().lower() == label.lower():
-                x1, y1, x2, y2 = map(int, m.groups()[1:])
-                adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
-                return label
+        for n in all_nodes:
+            if label.lower() in ((n.get("text") or "").strip().lower(), (n.get("content-desc") or "").strip().lower()):
+                m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", n.get("bounds", ""))
+                if m:
+                    x1, y1, x2, y2 = map(int, m.groups())
+                    adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+                    return label
     return None
 
 
@@ -72,12 +90,24 @@ def crashed() -> str:
     return log if PKG in log and "FATAL EXCEPTION" in log else ""
 
 
+def save_tor_log(out: str) -> None:
+    log = adb("logcat", "-d", check=False)
+    with open(os.path.join(out, "logcat.txt"), "w") as f:
+        f.write(log)
+    for line in log.splitlines():
+        if re.search(r"TorAndroidIntegration|libTor|CANNOT LINK|Bootstrapped", line):
+            print("   log:", line[-220:])
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("apk")
     ap.add_argument("--out", default="android-artifacts")
     ap.add_argument("--tor", action="store_true", help="also connect to Tor and load a page")
+    ap.add_argument("--package", default=PKG, help="package id (use org.torproject.torbrowser for an upstream control run)")
+    ap.add_argument("--label", default=LABEL)
     a = ap.parse_args()
+    globals()["PKG"] = a.package
     os.makedirs(a.out, exist_ok=True)
     adb("wait-for-device")
     adb("logcat", "-c", check=False)
@@ -107,26 +137,37 @@ def main() -> int:
     badging = subprocess.run([find_aapt2(), "dump", "badging", a.apk], capture_output=True, text=True).stdout
     label = re.search(r"application-label:'([^']*)'", badging)
     print("   ", label and label.group(1))
-    assert label and label.group(1) == "Umbra", "launcher label is not Umbra"
+    assert label and label.group(1) == a.label, f"launcher label is not {a.label}"
 
     if not a.tor:
         return 0
     print("4. connect to Tor")
     for i in range(6):
         x = ui(a.out, f"02-connect-{i}")
-        hit = tap_text(x, ["Connect", "CONNECT", "Got it", "Continue", "Not now", "Skip"])
+        print("   screen:", " | ".join(texts(x))[:300])
+        if TOR_DEAD in x:
+            print("   FAIL: the bundled tor process exited")
+            save_tor_log(a.out)
+            return 1
+        hit = tap_text(x, ["Connect", "Got it", "Continue", "Not now", "Skip"])
         print("   tapped", hit)
-        time.sleep(4)
-        if hit in ("Connect", "CONNECT"):
+        time.sleep(5)
+        if hit == "Connect":
             break
-    deadline = time.time() + 240
+    deadline = time.time() + 300
     connected = False
     while time.time() < deadline:
         time.sleep(10)
         x = ui(a.out, "03-bootstrap")
-        if re.search(r'(Search or enter address|Search or type|resource-id="[^"]*toolbar)', x) and "Connecting" not in x:
+        t = " | ".join(texts(x))
+        if TOR_DEAD in t:
+            print("   FAIL: the bundled tor process exited")
+            save_tor_log(a.out)
+            return 1
+        if re.search(r"Search or enter address|Search or type|Search with", t) and "Connecting" not in t:
             connected = True
             break
+    print("   last screen:", t[:300])
     shot(a.out, "03-after-bootstrap")
     print("   connected" if connected else "   bootstrap UI not detected (see screenshots)")
     adb("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "https://check.torproject.org/", PKG)
@@ -139,8 +180,7 @@ def main() -> int:
     if crashed() or not alive():
         print(crashed() or "process died")
         return 1
-    with open(os.path.join(a.out, "logcat.txt"), "w") as f:
-        f.write(adb("logcat", "-d", check=False))
+    save_tor_log(a.out)
     return 0 if connected else 2
 
 

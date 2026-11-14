@@ -120,6 +120,64 @@ def patch_apktool_yml(text: str, version_name: str) -> str:
     return text
 
 
+# ---------------------------------------------------------------- native libraries
+
+# Android ships zlib as libz.so; there is no libz.so.1 on any Android release.
+ANDROID_SONAME_FIXES = {b"libz.so.1": b"libz.so"}
+
+
+def _needed(data: bytes) -> list:
+    """DT_NEEDED names of a little-endian ELF64 or ELF32 shared object/executable."""
+    import struct
+    if data[:4] != b"\x7fELF":
+        raise AndroidBuildError("not an ELF file")
+    is64 = data[4] == 2
+    if is64:
+        shoff, = struct.unpack_from("<Q", data, 0x28)
+        shentsize, shnum = struct.unpack_from("<HH", data, 0x3A)
+    else:
+        shoff, = struct.unpack_from("<I", data, 0x20)
+        shentsize, shnum = struct.unpack_from("<HH", data, 0x2E)
+    secs = []
+    for i in range(shnum):
+        o = shoff + i * shentsize
+        if is64:
+            name, typ, _flags, _addr, off, size, link = struct.unpack_from("<IIQQQQI", data, o)
+        else:
+            name, typ, _flags, _addr, off, size, link = struct.unpack_from("<IIIIIII", data, o)
+        secs.append((typ, off, size, link))
+    out = []
+    for typ, off, size, link in secs:
+        if typ != 6:  # SHT_DYNAMIC
+            continue
+        stroff = secs[link][1]
+        fmt, step = ("<qQ", 16) if is64 else ("<iI", 8)
+        for j in range(0, size, step):
+            tag, val = struct.unpack_from(fmt, data, off + j)
+            if tag == 0:
+                break
+            if tag == 1:  # DT_NEEDED
+                end = data.index(b"\0", stroff + val)
+                out.append((stroff + val, data[stroff + val:end]))
+    return out
+
+
+def fix_native_sonames(data: bytes) -> tuple[bytes, list]:
+    """Point DT_NEEDED entries at libraries Android actually provides.
+
+    Rewrites the name in place in .dynstr (the new name is shorter and NUL-padded),
+    so no offsets, sizes or code change. Returns (data, [(old, new), ...]).
+    """
+    buf = bytearray(data)
+    changes = []
+    for off, name in _needed(data):
+        new = ANDROID_SONAME_FIXES.get(name)
+        if new:
+            buf[off:off + len(name)] = new + b"\0" * (len(name) - len(new))
+            changes.append((name.decode(), new.decode()))
+    return bytes(buf), changes
+
+
 # ---------------------------------------------------------------- strings
 
 def brand_strings(text: str) -> str:
@@ -344,6 +402,21 @@ def build_android(platform: str, cache: str | None = None, out_dir: str | None =
                     n += 1
         report["changes"].append(f"strings: app name in {n} locales")
         report["changes"] += ["icon: " + c for c in write_icons(res)]
+
+        libroot = os.path.join(dec, "lib")
+        for abi in sorted(os.listdir(libroot)) if os.path.isdir(libroot) else []:
+            for fn in sorted(os.listdir(os.path.join(libroot, abi))):
+                p = os.path.join(libroot, abi, fn)
+                with open(p, "rb") as f:
+                    data = f.read()
+                fixed, ch = fix_native_sonames(data)
+                if ch:
+                    with open(p, "wb") as f:
+                        f.write(fixed)
+                    report["changes"] += [f"lib/{abi}/{fn}: DT_NEEDED {a} -> {b}" for a, b in ch]
+                    report.setdefault("native_fixes", []).append({"file": f"lib/{abi}/{fn}", "needed": ch,
+                                                                  "upstream_sha256": hashlib.sha256(data).hexdigest(),
+                                                                  "sha256": hashlib.sha256(fixed).hexdigest()})
 
         assets = os.path.join(dec, "assets")
         plugdir = os.path.join(assets, "searchplugins")
