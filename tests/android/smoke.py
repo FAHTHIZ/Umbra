@@ -76,6 +76,40 @@ def tap_text(xml: str, labels) -> str | None:
     return None
 
 
+def tap_id(xml: str, rid: str) -> bool:
+    for n in nodes(xml):
+        if n.get("resource-id") == rid:
+            m = re.match(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", n.get("bounds", ""))
+            if m:
+                x1, y1, x2, y2 = map(int, m.groups())
+                adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
+                return True
+    return False
+
+
+def type_in_address_bar(out: str, text: str) -> bool:
+    """Type into the toolbar the way a user would, then press Enter."""
+    x = ui(out, "toolbar")
+    if not tap_id(x, "ADDRESSBAR_URL_BOX") and not tap_text(x, ["Search or enter address"]):
+        return False
+    time.sleep(2)
+    adb("shell", "input", "text", text.replace(" ", "%s"))
+    time.sleep(1)
+    adb("shell", "input", "keyevent", "66")
+    return True
+
+
+def wait_for_text(out: str, name: str, needle: str, seconds: int = 120) -> str:
+    deadline = time.time() + seconds
+    t = ""
+    while time.time() < deadline:
+        time.sleep(8)
+        t = " | ".join(texts(ui(out, name)))
+        if needle.lower() in t.lower():
+            return t
+    return ""
+
+
 def find_aapt2() -> str:
     import shutil
     sdk = os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT") or ""
@@ -188,20 +222,23 @@ def main() -> int:
         save_tor_log(a.out)
         return 1
     print("   connected: Bootstrapped 100%")
-    verified = False
-    adb("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "https://check.torproject.org/", PKG)
-    for i in range(9):
-        time.sleep(10)
-        t = " | ".join(texts(ui(a.out, "04-check-torproject")))
-        if "Congratulations" in t:
-            verified = True
-            break
-        tap_text(ui(a.out, "04-check-torproject"), ["Got it", "Not now", "Dismiss"])
+    tap_text(ui(a.out, "03-home"), ["Close"])  # dismiss the upstream donation card
+    time.sleep(2)
+
+    print("5. load check.torproject.org from the address bar")
+    type_in_address_bar(a.out, "https://check.torproject.org/")
+    t = wait_for_text(a.out, "04-check-torproject", "Congratulations")
     shot(a.out, "04-check-torproject")
-    print("   check.torproject.org:", "Congratulations. This browser is configured to use Tor." if verified else t[:300])
-    adb("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "https://onionsearch.io/", PKG)
-    time.sleep(30)
-    shot(a.out, "05-onionsearch")
+    verified = bool(t)
+    print("   ", "Congratulations. This browser is configured to use Tor." if verified else "page text not found (see screenshot)")
+
+    print("6. search from the address bar (default engine)")
+    type_in_address_bar(a.out, "tor project")
+    t = wait_for_text(a.out, "05-search", "onionsearch", 90)
+    shot(a.out, "05-search")
+    searched = bool(t)
+    print("   ", "results from onionsearch.io" if searched else "OnionSearch result page not detected (see screenshot)")
+    verified = verified and searched
     if crashed() or not alive():
         print(crashed() or "process died")
         return 1
