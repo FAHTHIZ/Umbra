@@ -17,7 +17,7 @@ def _js(code):
     if not node:
         pytest.skip("node not installed")
     r = subprocess.run([node, "--input-type=module", "-e", f"import * as C from {json.dumps('file://' + CORE)};\n{code}"],
-                       capture_output=True, text=True, check=True)
+                       capture_output=True, text=True, encoding="utf-8", check=True)
     return json.loads(r.stdout)
 
 

@@ -89,6 +89,8 @@ jobs:
         with:
           path: .cache/*.exe*
           key: upstream-windows-x86_64-${{ hashFiles('upstream/tor-browser.lock.json') }}
+      - name: Unit tests on Windows (encodings, paths)
+        run: python -m pytest -q tests/unit
       - name: Build (verifies upstream signature + sha256)
         run: python -m tools.umbra_build build --platform windows-x86_64
       - name: Integration tests (incl. fingerprint parity vs upstream Tor Browser for Windows)
