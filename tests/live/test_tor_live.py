@@ -46,10 +46,29 @@ def test_exit_is_tor(tor_drv):
     assert data.get("IsTor") is True, data
 
 
+ONION_TARGETS = [
+    "https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/",
+    "http://2gzyxa5ihm7nsggfxnu52rck2vv4rvmdlkiu3zzui5du4xyclen53wid.onion/",  # torproject.org
+]
+
+
 def test_onion_service_navigation(tor_drv):
+    # Onion circuits are slow and occasionally time out on CI runners; one success
+    # out of a few attempts across two well-known services proves onion routing works.
+    from selenium.common.exceptions import WebDriverException
     tor_drv.set_page_load_timeout(120)
-    tor_drv.get("https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/")
-    assert "duckduckgo" in tor_drv.current_url
+    errors = []
+    for attempt in range(3):
+        for url in ONION_TARGETS:
+            try:
+                tor_drv.get(url)
+            except WebDriverException as e:
+                errors.append(f"{url}: {str(e).splitlines()[0]}")
+                continue
+            host = url.split("/")[2]
+            assert host in tor_drv.current_url
+            return
+    raise AssertionError("no onion service reachable:\n" + "\n".join(errors))
 
 
 def test_default_search_reaches_onionsearch(tor_drv):
