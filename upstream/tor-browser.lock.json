@@ -16,6 +16,25 @@
     "windows-x86_64": {
       "file": "tor-browser-windows-x86_64-portable-16.0.1.exe",
       "sha256": "fbef840ba111409213dec2291e3594a43b82525545cdef0490a5750f24f5f232"
+    },
+    "android-aarch64": {
+      "file": "tor-browser-android-aarch64-16.0.1.apk",
+      "sha256": "5e892c341828827d802741bf00d1d50d5a614731827fa9ad53fd6b7c52db5949"
+    },
+    "android-armv7": {
+      "file": "tor-browser-android-armv7-16.0.1.apk",
+      "sha256": "c1bdcbefc96fd405787ffeec3163c62671a0cbac1e68d817a858d6ac4c973c35"
+    },
+    "android-x86_64": {
+      "file": "tor-browser-android-x86_64-16.0.1.apk",
+      "sha256": "bd661fdf8fca03c6a61dd685dab10e38943ab813c113f024b246b1b2c6b625cf"
+    }
+  },
+  "android_tools": {
+    "apktool": {
+      "url": "https://github.com/iBotPeaches/Apktool/releases/download/v2.12.1/apktool_2.12.1.jar",
+      "sha256": "66cf4524a4a45a7f56567d08b2c9b6ec237bcdd78cee69fd4a59c8a0243aeafa",
+      "license": "Apache-2.0"
     }
   }
 }
