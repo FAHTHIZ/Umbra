@@ -1,9 +1,9 @@
-# Access Engine upstream integration handoff
+# Access Engine upstream integration plan
 
-Status: **upstream sources pinned; native adapters and settings wiring remain agent work.**
+Status: **upstream sources pinned; native adapters and settings wiring are planned.**
 Last reviewed: 2026-11-12.
 
-This file is the implementation contract for the agent continuing Umbra. Do not create
+This file is the implementation contract for the Access Engine. Do not create
 a second Access Engine. Extend the existing `overlay/access/` implementation.
 
 ## Selected upstream components (pinned in this repository)
@@ -117,4 +117,4 @@ Add each switch to Umbra Settings and the Access Engine dashboard. Use these exa
 | [Unwalled](https://github.com/nimanch/unwalled) | Detection is interesting, but it automatically redirects to archive snapshots and has minimal project history; implement detection-only signals in Umbra |
 | [zapret](https://github.com/bol-van/zapret2) | Network-layer DPI tool, unrelated to browser page inspection; do not alter Tor transport |
 
-The pinned sources are inputs for the agent's implementation, not a claim that their features are already active in Umbra.
+The pinned sources are inputs for the implementation, not a claim that their features are already active in Umbra.

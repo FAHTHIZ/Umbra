@@ -1,6 +1,6 @@
 # Umbra Access Engine — priority implementation brief
 
-Status: **agent handoff / implementation required**  
+Status: **design brief; partly implemented**  
 Priority: **core browser capability**  
 Applies to: existing `overlay/access/` engine; extend it, do not create a competing engine.
 
@@ -94,7 +94,7 @@ The current repository contains two pinned upstream Git submodules:
 - Ghostery Adblocker: `vendor/ghostery-adblocker`, commit `6f0610bf5eec1f31c4975ce0e707cdf47023e5b5`, MPL-2.0.
 - Consent-O-Matic: `vendor/consent-o-matic`, commit `8ca8500d26434c586039e126ad091e1bfccd205d`, MIT.
 
-These are reproducible upstream source references, **not GitHub forks owned by FAHTHIZ**. The current GitHub integration used for this work does not expose a fork-creation operation. Do not mislabel submodules as forks. Keep the upstream pins unless the maintainer explicitly creates and approves maintained forks; if forks are later created, preserve upstream attribution, license files, exact source history and a documented sync strategy.
+These are reproducible upstream source references, **not GitHub forks owned by FAHTHIZ**. Do not mislabel submodules as forks. Keep the upstream pins unless the maintainer explicitly creates and approves maintained forks; if forks are later created, preserve upstream attribution, license files, exact source history and a documented sync strategy.
 
 Do not stack multiple full adblock engines. Ghostery is the selected filter engine; Consent-O-Matic is the selected CMP rule source. Additional projects should be added only when they provide a distinct, mature capability and pass licensing, privacy, Gecko-compatibility and onion-safety review.
 
@@ -123,6 +123,6 @@ Do not stack multiple full adblock engines. Ghostery is the selected filter engi
 - Performance benchmark reports p50/p95/p99 and memory on documented hardware; no top-level navigation waits on DOM inspection or remote work.
 - CI initializes submodules, verifies their pins/licenses, builds the bundle and runs the full test matrix.
 
-## Agent handoff summary
+## Summary
 
 Build the complete local, modular Access Engine described here. The purpose is to make browsing feel cleaner and more direct in seconds, not to defeat legitimate authorization. Prioritize extremely fast local matching, zero remote page-analysis dependencies, independent settings, safe fallbacks and onion-service compatibility. A page that might be important to a whistleblower must not be broken by an overconfident cosmetic or blocking rule.
