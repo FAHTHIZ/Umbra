@@ -13,7 +13,8 @@ Rule: nothing gets marked ✅ without a test or a reproducible measurement in th
 - ✅ Linux aarch64 build: pinned and verified upstream; browser omni.ja byte-identical to the tested x86-64 one. CI builds **and runs** the full integration, parity and leak suites natively on `ubuntu-24.04-arm`
 - 🧪 Windows x86-64 portable zip: pinned and verified upstream portable .exe → 7z → same overlay → deterministic zip (verified locally: anchored patches apply; byte-reproducible). CI runs the integration and parity suites on `windows-2025`. The exe icon stays upstream's (Authenticode)
 - 📋 macOS (.dmg): modifying the bundle breaks Tor Project's notarized signature, so it needs an Umbra Developer ID plus notarization (owner decision: Apple account)
-- 📋 Android (source track; see `android/README.md`)
+- ✅ Android (aarch64, armv7, x86_64): verified Tor Browser for Android APK, rebranded (`org.umbra.browser`, name, icons), OnionSearch default + desktop providers, engine and omni.ja byte-identical, tor identical except its zlib dependency name (`libz.so.1` → `libz.so`, so it links on Android), signed with the Umbra key. `tests/unit/test_android.py`; CI `android` job boots the x86_64 APK in an emulator, connects to Tor and loads pages (`tests/android/smoke.py`)
+- 📋 Android source build (Umbra pages and modules inside the app)
 - 📋 Source track: `tor-browser-build` fork, Umbra MAR signing keys, reproducible builds
 
 ## Browser experience

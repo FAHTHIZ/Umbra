@@ -26,7 +26,7 @@ Verified Linux build, OnionSearch default plus 12 providers, Umbra home and Expl
 
 ## v1.0 — Source track
 - Fork of `tor-browser-build` with Umbra branding compiled in. Own MAR signing keys, in-app updates, reproducible builds verified by independent rebuilders.
-- **Android**: Fenix-based Tor Browser for Android with the Umbra overlay applied at source level.
+- **Android**: ✅ rebranded, re-signed Tor Browser for Android shipped in 0.1. 📋 Source-level build to bring the Umbra pages and modules into the app, plus F-Droid repo.
 
 ## Continuous
 - Track every Tor Browser stable release within 24h (upstream-watch).

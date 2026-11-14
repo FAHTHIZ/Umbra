@@ -16,7 +16,7 @@
 
 <p align="center"><img src="docs/assets/umbra-home.png" width="760" alt="Umbra home page with search provider switcher and Explore directory"></p>
 
-> **Honest status.** Umbra 0.1 is a real, working browser for **Linux (x86-64 and aarch64)**. A Windows portable build is experimental. macOS and Android are on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
+> **Honest status.** Umbra 0.1 is a real, working browser for **Linux (x86-64 and aarch64)** and **Android (arm64, armv7, x86_64)**. A Windows portable build is experimental. macOS is on the [roadmap](docs/ROADMAP.md). Tor reduces what networks and websites can learn about you. **It doesn't guarantee anonymity.** Read the [threat model](docs/THREAT_MODEL.md).
 
 ## Why Umbra
 
@@ -28,7 +28,11 @@
 - **Built-in tools, one click away.** The **Umbra** toolbar button opens Privacy (a live protection dashboard), Desk (research notes kept only in memory), Assistant (a local page summary with no AI model and no network), Vault (encrypted bookmark export), Source (reach journalists via SecureDrop in an isolated instance) and Investigate (an onion-only instance with evidence capture).
 - **No telemetry.** Umbra's own pages make zero network requests. The only background request is an anonymous daily release check over Tor, which you can turn off.
 
-## Install (Linux x86-64 / aarch64)
+## Install on Android
+
+Download `umbra-<version>-android-aarch64.apk` from [Releases](https://github.com/FAHTHIZ/Umbra/releases), open it on your phone, allow the install, then open **Umbra** and tap **Connect**. It installs next to Tor Browser, not over it. Use the `armv7` APK on old 32-bit phones. Details and the signing-certificate fingerprint are in [android/README.md](android/README.md).
+
+## Install on Linux (x86-64 / aarch64)
 
 ```bash
 # 1. Download the latest release and its checksum file
@@ -88,9 +92,19 @@ Integration and leak tests need [geckodriver](https://github.com/mozilla/geckodr
 | Umbra Assistant (local extractive summary, outline, onion/link extraction; no AI model) | 🧪 experimental, tested |
 | Linux aarch64 | ✅ CI-tested on native arm64 |
 | Windows x86-64 (portable zip) | 🧪 experimental, CI-tested |
-| macOS / Android | 📋 planned |
+| Android (arm64, armv7, x86_64): Tor Browser for Android, rebranded, OnionSearch default, own app id and signing key | ✅ emulator-tested in CI (install, launch, Tor bootstrap, page load) |
+| macOS | 📋 planned |
 
 The full, honest list is in [docs/CHECKLIST.md](docs/CHECKLIST.md).
+
+## Is it faster or more secure than Tor Browser?
+
+Straight answer: **neither, by design. It's as fast and as secure as Tor Browser, and it adds features on top.**
+
+- **Speed.** Umbra uses the same Tor network and the same browser engine, so pages load at the same speed. Tor's speed comes from relays you don't control: each request crosses three volunteer relays. No browser built on Tor can be meaningfully faster without weakening anonymity, for example by using fewer hops. Umbra won't do that. Measured on the same machine, startup and memory match Tor Browser, and Umbra's home page loads about twice as fast because it's lighter ([PERFORMANCE.md](docs/PERFORMANCE.md)).
+- **Security.** Umbra doesn't change Tor's routing, DNS handling, circuit isolation, security levels or anti-fingerprinting. CI checks this on every commit against 500+ upstream security preferences, plus leak tests. If Umbra changed what websites see, its users would stand out from Tor Browser users and be **less** anonymous. Matching Tor Browser exactly is the goal.
+- **What Umbra adds.** OnionSearch and 12 providers, a curated and checksum-verified onion directory, a privacy dashboard, memory-only notes, encrypted bookmark export, SecureDrop access in an isolated instance, and an onion-only investigation mode. Every addition runs locally and makes no network requests of its own.
+- **Trust.** You trust Umbra's build in addition to the Tor Project's. To limit that trust, every build verifies the upstream OpenPGP signature and SHA-256, the overlay is small and public, and desktop builds are deterministic.
 
 ## Onion investigation
 
@@ -127,7 +141,7 @@ toolkit/       pinned investigation upstreams + isolated container toolkit
 tests/         unit · integration · leak · live
 bench/         benchmark harness + recorded results
 docs/          architecture, threat model, security, roadmap, checklist, ideas
-android/       Android plan (source track)
+android/       Android build notes (rebranded, re-signed Tor Browser for Android)
 ```
 
 ## Contributing

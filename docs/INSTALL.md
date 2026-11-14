@@ -29,6 +29,15 @@ Umbra 0.x has **no automatic updater**. Upstream's updater is disabled because i
 
 Notes: the executables keep Tor Project's original Authenticode signatures, so the taskbar and .exe icon still show Tor Browser's icon. Umbra only changes the signed program's data files (`omni.ja`) and adds window icons.
 
-## macOS, Android
+## Android
+
+1. Download `umbra-<version>-android-aarch64.apk` (use `armv7` on old 32-bit phones, `x86_64` on emulators and Chromebooks) and `SHA256SUMS` from [Releases](https://github.com/FAHTHIZ/Umbra/releases).
+2. Optional check on a computer: `sha256sum -c --ignore-missing SHA256SUMS`, then `apksigner verify --print-certs umbra-*.apk`. The certificate SHA-256 digest must be `eea28ca897b00d4b65f187124993c55614136968fa09e2efb77922525758645b`.
+3. Open the APK on the phone and allow "Install unknown apps" when asked.
+4. Open **Umbra**, tap **Connect** (or configure a bridge first), then search or type an address.
+
+Umbra uses its own app id (`org.umbra.browser`), so Tor Browser can stay installed. To update, install the newer APK over the old one; your data is kept. See [android/README.md](../android/README.md).
+
+## macOS
 
 Not available yet. See the [roadmap](ROADMAP.md). Please don't use unofficial builds that claim to be Umbra.

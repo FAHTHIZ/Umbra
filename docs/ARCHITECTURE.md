@@ -43,7 +43,7 @@ Living document. Update it in the same commit as any architectural change.
 | `tests/leak` | Canary SOCKS + `/proc` socket monitor: proxy-only egress, remote DNS, fail-closed, circuit isolation |
 | `bench/` | Umbra vs upstream benchmark on identical hardware |
 | `.github/workflows/` | CI, release, daily upstream watch |
-| `android/` | Android plan (source track) |
+| `android/` | Android build notes; the build is `tools/umbra_build/android.py` |
 
 ## Build pipeline
 

@@ -234,7 +234,7 @@ def main() -> int:
 
     print("6. search from the address bar (default engine)")
     type_in_address_bar(a.out, "tor project")
-    t = wait_for_text(a.out, "05-search", "onionsearch", 90)
+    t = wait_for_text(a.out, "05-search", "Clearnet", 90)  # OnionSearch result tabs: Onions | Clearnet | News
     shot(a.out, "05-search")
     searched = bool(t)
     print("   ", "results from onionsearch.io" if searched else "OnionSearch result page not detected (see screenshot)")

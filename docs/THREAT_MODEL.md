@@ -42,10 +42,12 @@ Umbra inherits Tor Browser's design and threat model ([Tor Browser design docume
 
 ## Known limitations (v0.1)
 
-- Desktop Linux x86-64 is the only verified build. Windows, macOS and Android are planned (see ROADMAP).
+- Verified builds: Linux x86-64 and aarch64, and Android (emulator-tested). Windows is experimental; macOS is planned (see ROADMAP).
 - No in-app updater (see risk 1).
 - Live Tor bootstrap is tested in CI, where relays are reachable, not in every development environment.
-- Umbra Desk, Source and Assistant are design documents, not code.
+- Umbra Desk, Source, Vault, Assistant and Investigate are implemented and tested, but new and experimental.
+- Android APKs are re-signed with Umbra's key. Anyone holding that key could ship an update Android accepts, so the key is kept only in the release pipeline's secrets and an offline backup. Check the certificate digest in `android/README.md` before installing.
+- The Umbra pages and modules aren't on Android yet; Android is Tor Browser for Android with Umbra branding and search.
 - Access Engine page inspection and its starter rules are experimental; no production security audit or end-to-end onion-site compatibility test has been completed.
 
 
