@@ -32,8 +32,13 @@ def adb(*args, check=True, timeout=120) -> str:
 
 
 def shot(out: str, name: str) -> None:
-    adb("shell", "screencap", "-p", "/sdcard/shot.png", check=False)
-    adb("pull", "/sdcard/shot.png", os.path.join(out, name + ".png"), check=False)
+    dst = os.path.join(out, name + ".png")
+    adb("shell", "screencap", "-p", "/data/local/tmp/shot.png", check=False)
+    adb("pull", "/data/local/tmp/shot.png", dst, check=False)
+    if not os.path.exists(dst) or os.path.getsize(dst) < 100:
+        # headless swiftshader emulators often return an empty framebuffer to screencap
+        adb("emu", "screenrecord", "screenshot", os.path.abspath(dst), check=False)
+    print(f"   screenshot {name}: {os.path.getsize(dst) if os.path.exists(dst) else 0} bytes")
 
 
 def ui(out: str, name: str) -> str:
@@ -58,7 +63,8 @@ def texts(xml: str) -> list:
 
 
 def tap_text(xml: str, labels) -> str | None:
-    all_nodes = nodes(xml)
+    # prefer clickable widgets (a "Connect" icon and a "Connect" button can share a label)
+    all_nodes = sorted(nodes(xml), key=lambda n: n.get("clickable") != "true")
     for label in labels:
         for n in all_nodes:
             if label.lower() in ((n.get("text") or "").strip().lower(), (n.get("content-desc") or "").strip().lower()):
@@ -95,8 +101,13 @@ def save_tor_log(out: str) -> None:
     with open(os.path.join(out, "logcat.txt"), "w") as f:
         f.write(log)
     for line in log.splitlines():
-        if re.search(r"TorAndroidIntegration|libTor|CANNOT LINK|Bootstrapped", line):
+        if re.search(r"CANNOT LINK|Bootstrapped|\[(warn|err)\]", line):
             print("   log:", line[-220:])
+
+
+def bootstrap_progress() -> int:
+    pct = [int(m) for m in re.findall(r"Bootstrapped (\d+)%", adb("logcat", "-d", "-s", "TorAndroidIntegration", check=False))]
+    return max(pct) if pct else -1
 
 
 def main() -> int:
@@ -164,16 +175,30 @@ def main() -> int:
             print("   FAIL: the bundled tor process exited")
             save_tor_log(a.out)
             return 1
-        if re.search(r"Search or enter address|Search or type|Search with", t) and "Connecting" not in t:
+        pct = bootstrap_progress()
+        print(f"   bootstrap {pct}%")
+        if pct == 100:
             connected = True
+            time.sleep(10)
             break
-    print("   last screen:", t[:300])
+    print("   last screen:", " | ".join(texts(ui(a.out, "03-bootstrap")))[:300])
     shot(a.out, "03-after-bootstrap")
-    print("   connected" if connected else "   bootstrap UI not detected (see screenshots)")
+    if not connected:
+        print("   FAIL: tor did not reach Bootstrapped 100%")
+        save_tor_log(a.out)
+        return 1
+    print("   connected: Bootstrapped 100%")
+    verified = False
     adb("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "https://check.torproject.org/", PKG)
-    time.sleep(40)
+    for i in range(9):
+        time.sleep(10)
+        t = " | ".join(texts(ui(a.out, "04-check-torproject")))
+        if "Congratulations" in t:
+            verified = True
+            break
+        tap_text(ui(a.out, "04-check-torproject"), ["Got it", "Not now", "Dismiss"])
     shot(a.out, "04-check-torproject")
-    ui(a.out, "04-check-torproject")
+    print("   check.torproject.org:", "Congratulations. This browser is configured to use Tor." if verified else t[:300])
     adb("shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "https://onionsearch.io/", PKG)
     time.sleep(30)
     shot(a.out, "05-onionsearch")
@@ -181,7 +206,7 @@ def main() -> int:
         print(crashed() or "process died")
         return 1
     save_tor_log(a.out)
-    return 0 if connected else 2
+    return 0 if verified else 2
 
 
 if __name__ == "__main__":
